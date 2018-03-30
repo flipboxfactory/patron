@@ -1,0 +1,40 @@
+{% import "_includes/forms" as forms %}
+{{ forms.textField({
+    label: "Base Authorization Url"|t('patron'),
+    instructions: "The base URL for authorizing a client."|t('patron'),
+    id: 'baseAuthorizationUrl',
+    name: 'baseAuthorizationUrl',
+    value: settings.baseAuthorizationUrl,
+    errors: settings.getErrors('baseAuthorizationUrl'),
+    required: true
+}) }}
+
+{{ forms.textField({
+    label: "Base Access Token Url"|t('patron'),
+    instructions: "The base URL for requesting an access token."|t('patron'),
+    id: 'baseAccessTokenUrl',
+    name: 'baseAccessTokenUrl',
+    value: settings.baseAccessTokenUrl,
+    errors: settings.getErrors('baseAccessTokenUrl'),
+    required: true
+}) }}
+
+{{ forms.textField({
+    label: "Base Resource Owner Details Url"|t('patron'),
+    instructions: "The base URL for requesting the resource owner's details."|t('patron'),
+    id: 'baseResourceOwnerDetailsUrl',
+    name: 'baseResourceOwnerDetailsUrl',
+    value: settings.baseResourceOwnerDetailsUrl,
+    errors: settings.getErrors('baseResourceOwnerDetailsUrl'),
+    required: true
+}) }}
+
+{{ forms.textareaField({
+    label: "Default Scopes"|t('patron'),
+    instructions: "A space delimited list of scopes."|t('patron'),
+    rows: 4,
+    id: 'defaultScopes',
+    name: 'defaultScopes',
+    value: settings.getDefaultScopes()|join(' '),
+    errors: settings.getErrors('defaultScopes')
+}) }}

@@ -1,0 +1,110 @@
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% block actionButton %}
+    <div class="btngroup submit right">
+        <input type="submit" class="btn submit" value="{{ 'Save'|t('app') }}">
+
+        <div class="btn submit menubtn"></div>
+        <div class="menu">
+            <ul>
+                <li><a class="formsubmit" data-redirect="{{ continueEditingUrl }}">
+                        {{ "Save and continue editing"|t('app') }}
+                        {{ forms.optionShortcutLabel('S') }}
+                    </a></li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <input type="hidden" name="action"
+           value="{{ baseActionPath }}/{% if provider.id %}update{% else %}create{% endif %}">
+    {{ redirectInput(baseCpPath) }}
+
+    {% if provider.id %}<input type="hidden" name="provider" value="{{ provider.id }}">{% endif %}
+
+    {{ forms.textField({
+        label: "Handle"|t('patron'),
+        instructions: "The unique reference to this provider."|t('patron'),
+        class: "code",
+        id: 'handle',
+        name: 'handle',
+        value: provider.handle,
+        errors: provider.getErrors('handle'),
+        autofocus: true,
+        required: true
+    }) }}
+
+    {{ forms.textField({
+        label: "Client Id"|t('patron'),
+        instructions: "The client/consumer Id assigned to you from the provider."|t('patron'),
+        id: 'clientId',
+        name: 'clientId',
+        value: provider.clientId,
+        errors: provider.getErrors('clientId'),
+        required: true
+    }) }}
+
+    {{ forms.textField({
+        label: "Client Secret"|t('patron'),
+        instructions: "The client/consumer secret assigned to you from the provider."|t('patron'),
+        id: 'clientSecret',
+        name: 'clientSecret',
+        type: 'password',
+        value: provider.clientSecret,
+        errors: provider.getErrors('clientSecret')
+    }) }}
+
+    {{ forms.selectField({
+        first: true,
+        label: "Provider"|t('patron'),
+        id: 'class',
+        name: 'class',
+        showAllOption: true,
+        value: provider.class,
+        options: providerOptions,
+        errors: provider.getErrors('class'),
+        required: true
+    }) }}
+
+    {% js %}
+        new Craft.ProviderSwitcher($("#class"), $("#settings"));
+    {% endjs %}
+
+    <div id="settings">
+        {% include "patron/_cp/provider/_settings" with {
+            provider: provider
+        } only %}
+    </div>
+
+{% endblock %}
+
+{% block details %}
+    <div id="settings" class="meta">
+        {{ forms.lightswitchField({
+            label: "Enabled"|t('app'),
+            id: 'enabled',
+            name: 'enabled',
+            on: provider.id ? provider.enabled : true,
+            errors: provider.getErrors('enabled')
+        }) }}
+    </div>
+
+    {% if provider.id %}
+        <hr>
+        <div class="meta read-only">
+            <div class="data">
+                <h5 class="heading">{{ "Created at"|t('app') }}</h5>
+                <div class="value">{{ provider.dateCreated|datetime('short') }}</div>
+            </div>
+            <div class="data">
+                <h5 class="heading">{{ "Updated at"|t('app') }}</h5>
+                <div class="value">{{ provider.dateUpdated|datetime('short') }}</div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% hook 'patron.clients.edit.sidebar' %}
+
+{% endblock %}

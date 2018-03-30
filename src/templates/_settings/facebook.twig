@@ -1,0 +1,11 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.textField({
+    label: "Graph API Version"|t('patron'),
+    instructions: "The Graph API Version"|t('patron'),
+    id: 'graphApiVersion',
+    name: 'graphApiVersion',
+    value: settings.graphApiVersion,
+    errors: settings.getErrors('graphApiVersion'),
+    required: true
+}) }}

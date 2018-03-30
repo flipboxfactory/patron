@@ -1,0 +1,153 @@
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% block actionButton %}
+    <div class="buttons right">
+        <a href="{{ url(baseCpPath ~ '/new') }}" class="btn submit add icon">{{ "New provider"|t('patron') }}</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    {% from "patron/ember/circle-icon" import circleIcon %}
+    <div class="card-items">
+        {% for provider in providers %}
+            {% set icon %}
+                {{ circleIcon(
+                    (provider['icon'] is defined and provider['icon'] ? provider['icon'] : null),
+                provider.displayName,
+                provider.enabled ? 'active' : 'suspended'
+                ) }}
+            {% endset %}
+            {% embed "patron/ember/card" with {
+                id: provider.id,
+                name: provider.displayName
+            } %}
+                {% block cardIcon %}
+                    {{ icon }}
+                {% endblock %}
+                {% block cardTitleContent %}
+                    <a href="{{ url(baseCpPath ~ '/' ~ provider.id) }}">{{ provider.displayName }}</a>
+                {% endblock %}
+                {% block cardSubTitleContent %}
+                    {{ provider.handle }}
+                {% endblock %}
+                {% block cardActionFormContent %}
+                    <div class="menubtn" data-icon="settings" title="Actions" tabindex="0"
+                         role="combobox"></div>
+                    <div class="menu">
+                        <ul>
+                            {% if provider.isDisabled() %}
+                                <li>
+                                    <a class="formsubmit"
+                                       data-param="provider"
+                                       data-value="{{ provider.id }}"
+                                       data-action="{{ baseActionPath }}/enable"
+                                       data-redirect="{{ continueEditingUrl|hash }}">
+                                        {{ "Enable"|t('patron') }}
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a class="formsubmit"
+                                       data-param="provider"
+                                       data-value="{{ provider.id }}"
+                                       data-action="{{ baseActionPath }}/disable"
+                                       data-redirect="{{ continueEditingUrl|hash }}">
+                                        {{ "Disable"|t('patron') }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                        <hr>
+                        <ul>
+                            <li>
+                                <a class="formsubmit"
+                                   data-param="provider"
+                                   data-value="{{ provider.id }}"
+                                   data-action="{{ baseActionPath }}/delete"
+                                   data-redirect="{{ continueEditingUrl|hash }}" class="delete"
+                                   title="{{ 'Delete'|t('patron') }}" role="button">
+                                    {{ "Delete"|t('patron') }}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                {% endblock %}
+            {% endembed %}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{#{% block content %}#}
+
+    {#<p id="noproviders"{% if providers|length %} class="hidden"{% endif %}>#}
+        {#{{ "No providers exist yet."|t('app') }}#}
+    {#</p>#}
+
+    {#<table id="providers" class="data fullwidth collapsible{% if providers|length == 0 %} hidden{% endif %}">#}
+        {#<thead>#}
+        {#<th scope="col">{{ "Name"|t('patron') }}</th>#}
+        {#<th scope="col">{{ "Handle"|t('patron') }}</th>#}
+        {#<th scope="col">{{ "Client Id"|t('patron') }}</th>#}
+        {#<th scope="col">{{ "Tokens"|t('patron') }}</th>#}
+        {#<td class="thin"></td>#}
+        {#</thead>#}
+        {#<tbody>#}
+        {#{% for provider in providers %}#}
+            {#<tr data-id="{{ provider.id }}" data-name="{{ provider.getDisplayName()|t('patron') }}">#}
+                {#<th scope="row" data-title="{{ 'Name'|t('patron') }}">#}
+                    {#<span class="status{% if provider.enabled %} active{% endif %}"></span>#}
+                    {#<a href="{{ url(baseCpPath ~ '/' ~ provider.id) }}">{{ provider.getDisplayName()|t('patron') }}</a>#}
+                {#</th>#}
+                {#<td data-title="{{ 'Handle'|t('patron') }}"><code>{{ provider.handle }}</code></td>#}
+                {#<td data-title="{{ 'Client Id'|t('patron') }}"><code>{{ provider.providerId }}</code></td>#}
+                {#<td data-title="{{ 'Secret'|t('patron') }}">#}
+                    {#{% set tokenCount = provider.tokens|length %}{{ tokenCount }}#}
+                {#</td>#}
+                {#<td class="thin">#}
+                    {#<form method="post" accept-charset="UTF-8">#}
+                        {#{{ csrfInput() }}#}
+                        {#<div class="btn menubtn" data-icon="settings" title="Actions" tabindex="0"#}
+                             {#role="combobox"></div>#}
+                        {#<div class="menu">#}
+                            {#<ul>#}
+                                {#<li>{% if provider.enabled %}#}
+                                        {#<a class="formsubmit"#}
+                                           {#data-param="id"#}
+                                           {#data-value="{{ provider.id }}"#}
+                                           {#data-action="{{ baseActionPath }}/disable"#}
+                                           {#data-redirect="{{ continueEditingUrl|hash }}">#}
+                                            {#{{ "Disable"|t('patron') }}#}
+                                        {#</a>#}
+                                    {#{% else %}#}
+                                        {#<a class="formsubmit"#}
+                                           {#data-param="id"#}
+                                           {#data-value="{{ provider.id }}"#}
+                                           {#data-action="{{ baseActionPath }}/enable"#}
+                                           {#data-redirect="{{ continueEditingUrl|hash }}">#}
+                                            {#{{ "Enable"|t('patron') }}#}
+                                        {#</a>#}
+                                    {#{% endif %}#}
+                                {#</li>#}
+                            {#</ul>#}
+                            {#<hr>#}
+                            {#<ul>#}
+                                {#<li>#}
+                                    {#<a class="formsubmit"#}
+                                       {#data-param="id"#}
+                                       {#data-value="{{ provider.id }}"#}
+                                       {#data-action="{{ baseActionPath }}/delete"#}
+                                       {#data-redirect="{{ continueEditingUrl|hash }}" class="delete"#}
+                                       {#title="{{ 'Delete'|t('patron') }}" role="button">#}
+                                        {#{{ "Delete"|t('patron') }}#}
+                                    {#</a>#}
+                                {#</li>#}
+                            {#</ul>#}
+                        {#</div>#}
+                    {#</form>#}
+                {#</td>#}
+            {#</tr>#}
+        {#{% endfor %}#}
+        {#</tbody>#}
+    {#</table>#}
+{#{% endblock %}#}

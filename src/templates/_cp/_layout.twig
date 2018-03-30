@@ -1,0 +1,27 @@
+{% extends "_layouts/cp" %}
+
+{#{% block sidebar %}#}
+
+
+    {#{% set baseCpPath = 'patron/configuration' %}#}
+    {#{% set selected = selected is defined ? selected : craft.app.request.getSegment(3) %}#}
+    {#{% set nav = {#}
+    {#general : {#}
+    {#label: 'General',#}
+    {#uri: ''#}
+    {#},#}
+    {#security : {#}
+    {#label: 'Providers',#}
+    {#uri: 'provider'#}
+    {#}#}
+    {#} %}#}
+    {#<nav>#}
+        {#<ul>#}
+            {#<li class="heading"><span>Navigation</span></li>#}
+            {#{% for navKey, navItem in nav %}#}
+                {#<li><a tabindex="0"{% if selected == navItem.uri %} class="sel"{% endif %}#}
+                       {#href="{{ url(baseCpPath ~ (navItem.uri ? '/'~navItem.uri : '')) }}">{{ navItem.label }}</a></li>#}
+            {#{% endfor %}#}
+        {#</ul>#}
+    {#</nav>#}
+{#{% endblock %}#}
