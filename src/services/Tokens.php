@@ -16,6 +16,7 @@ use flipbox\ember\services\traits\objects\Accessor;
 use flipbox\patron\db\TokenQuery;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider as ProviderRecord;
+use flipbox\patron\records\Token;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use yii\base\Component;
@@ -121,43 +122,44 @@ class Tokens extends Component
      */
     public function findByProvider(AbstractProvider $provider)
     {
-        return $this->getQuery()
-            ->leftJoin(ProviderRecord::tableName() . ' p', 'p.id=t.providerId')
-            ->where([
-                'p.class' => get_class($provider)
-            ]);
-    }
+        if (null === ($providerId = Patron::getInstance()->getProviders()->getId($provider))) {
+            return null;
+        }
 
+        return $this->findByCriteria(['providerId' => $providerId]);
+    }
 
 
     /*******************************************
      * CREATE
      *******************************************/
 
-//    /**
-//     * @param array $config
-//     * @param string|null $toScenario
-//     * @return AccessToken
-//     */
-//    public function create($config = [], string $toScenario = null): AccessToken
-//    {
-//        // Treat records as known data and set via config
-//        if ($config instanceof AccessTokenRecord) {
-//            return $this->createFromRecord($config, $toScenario);
-//        }
-//
-//        if (!is_array($config)) {
-//            $config = ArrayHelper::toArray($config, [], false);
-//        }
-//
-//        return $this->createAccessToken($config);
-//    }
+    /**
+     * @param array $config
+     * @return AccessToken
+     */
+    public function create($config = []): AccessToken
+    {
+        if ($config instanceof Token) {
+            $config = $this->prepareConfigFromRecord($config);
+        }
+
+        if (!is_array($config)) {
+            $config = ArrayHelper::toArray($config, [], false);
+        }
+
+        $class = static::objectClass();
+
+        return new $class(
+            $this->prepareConfig($config)
+        );
+    }
 
     /**
      * @param array $config
      * @return array
      */
-    protected function prepareConfig(array &$config): array
+    protected function prepareConfig(array $config = []): array
     {
         $config['revoked'] = !(bool)ArrayHelper::remove($config, 'enabled', true);
         $config['access_token'] = ArrayHelper::remove($config, 'accessToken');
