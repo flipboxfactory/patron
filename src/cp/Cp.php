@@ -8,7 +8,6 @@ use craft\web\View;
 use Flipbox\OAuth2\Client\Provider\Guardian;
 use flipbox\patron\events\RegisterProviders;
 use flipbox\patron\Patron;
-use flipbox\twig\TriggerExtension;
 use League\OAuth2\Client\Provider\Facebook;
 use League\OAuth2\Client\Provider\Github;
 use League\OAuth2\Client\Provider\Google;
@@ -34,14 +33,6 @@ class Cp extends Module
     public function init()
     {
         parent::init();
-
-        // Add in our Twig extensions
-        $twig = Craft::$app->getView()->getTwig();
-        if (!$twig->hasExtension(TriggerExtension::class)) {
-            $twig->addExtension(
-                new TriggerExtension()
-            );
-        }
 
         // Ember templates
         Event::on(
