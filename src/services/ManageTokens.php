@@ -11,29 +11,34 @@ namespace flipbox\patron\services;
 use flipbox\ember\helpers\ArrayHelper;
 use flipbox\ember\services\traits\records\Accessor;
 use flipbox\patron\db\TokenQuery;
+use flipbox\patron\Patron;
 use flipbox\patron\records\Token;
+use League\OAuth2\Client\Provider\AbstractProvider;
+use League\OAuth2\Client\Token\AccessToken;
 use yii\base\Component;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
  * @since 1.0.0
  *
- * @method Token create(array $attributes = [], string $toScenario = null)
+ * @method Token create(array $attributes = [])
  * @method TokenQuery getQuery($config = [])
- * @method Token find($identifier, string $toScenario = null)
- * @method Token get($identifier, string $toScenario = null)
- * @method Token findByCondition($condition = [], string $toScenario = null)
- * @method Token getByCondition($condition = [], string $toScenario = null)
- * @method Token findByCriteria($criteria = [], string $toScenario = null)
- * @method Token getByCriteria($criteria = [], string $toScenario = null)
- * @method Token[] findAllByCondition($condition = [], string $toScenario = null)
- * @method Token[] getAllByCondition($condition = [], string $toScenario = null)
- * @method Token[] findAllByCriteria($criteria = [], string $toScenario = null)
- * @method Token[] getAllByCriteria($criteria = [], string $toScenario = null)
+ * @method Token parentFind($identifier)
+ * @method Token get($identifier)
+ * @method Token findByCondition($condition = [])
+ * @method Token getByCondition($condition = [])
+ * @method Token findByCriteria($criteria = [])
+ * @method Token getByCriteria($criteria = [])
+ * @method Token[] findAllByCondition($condition = [])
+ * @method Token[] getAllByCondition($condition = [])
+ * @method Token[] findAllByCriteria($criteria = [])
+ * @method Token[] getAllByCriteria($criteria = [])
  */
 class ManageTokens extends Component
 {
-    use Accessor;
+    use Accessor {
+        find as parentFind;
+    }
 
     /**
      * @inheritdoc
@@ -59,6 +64,52 @@ class ManageTokens extends Component
         }
 
         return $config;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function find($identifier)
+    {
+        if ($identifier instanceof AccessToken) {
+            return $this->findByAccessToken($identifier);
+        }
+
+        if ($identifier instanceof AbstractProvider) {
+            return $this->findByProvider($identifier);
+        }
+
+        return $this->parentFind($identifier);
+    }
+
+    /*******************************************
+     * FIND/GET BY ACCESS TOKEN
+     *******************************************/
+
+    /**
+     * @param AccessToken $accessToken
+     * @return Token|null
+     */
+    public function findByAccessToken(AccessToken $accessToken)
+    {
+        return $this->findByCriteria(['accessToken' => $accessToken->getToken()]);
+    }
+
+    /*******************************************
+     * FIND/GET BY PROVIDER
+     *******************************************/
+
+    /**
+     * @param AbstractProvider $provider
+     * @return Token|null
+     */
+    public function findByProvider(AbstractProvider $provider)
+    {
+        if (null === ($providerId = Patron::getInstance()->getProviders()->getId($provider))) {
+            return null;
+        }
+
+        return $this->findByCriteria(['providerId' => $providerId]);
     }
 
     /*******************************************

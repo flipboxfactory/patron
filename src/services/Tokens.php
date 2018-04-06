@@ -113,7 +113,7 @@ class Tokens extends Component
     }
 
     /*******************************************
-     * FIND/GET BY STRING
+     * FIND/GET BY PROVIDER
      *******************************************/
 
     /**
