@@ -19,7 +19,7 @@
                 this.$spinner.removeClass('hidden');
 
                 Craft.postActionRequest(
-                    'patron/cp/provider/settings',
+                    'patron/cp/providers/settings',
                     Craft.cp.$primaryForm.serialize(),
                     $.proxy(function (response, textStatus) {
                         this.$spinner.addClass('hidden');

@@ -1,6 +1,10 @@
 Changelog
 =========
 
+## Unreleased
+### Fixed
+- Provider switching was calling the wrong endpoint
+
 ## 1.0.0-rc.2 - 2018-04-06
 ### Added
 - `flipbox\patron\services\ManageTokens::find()` will find a token based on another AccessToken
