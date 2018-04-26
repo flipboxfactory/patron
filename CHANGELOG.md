@@ -1,7 +1,7 @@
 Changelog
 =========
 
-## Unreleased
+## 1.0.0-rc.3 - 2018-04-26
 ### Fixed
 - Provider switching was calling the wrong endpoint
 
