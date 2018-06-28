@@ -14,12 +14,14 @@ use craft\helpers\DateTimeHelper;
 use craft\helpers\Json;
 use flipbox\ember\services\traits\objects\Accessor;
 use flipbox\patron\db\TokenQuery;
+use flipbox\patron\events\PersistTokenEvent;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider as ProviderRecord;
 use flipbox\patron\records\Token;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use yii\base\Component;
+use yii\base\Event;
 use yii\db\QueryInterface;
 
 /**
@@ -42,6 +44,16 @@ class Tokens extends Component
     use Accessor {
         find as parentFind;
     }
+
+    /**
+     * The before persist token event name
+     */
+    const EVENT_BEFORE_PERSIST_TOKEN = 'beforePersistToken';
+
+    /**
+     *  The after persist token event name
+     */
+    const EVENT_AFTER_PERSIST_TOKEN = 'afterPersistToken';
 
     /**
      * @inheritdoc
@@ -79,25 +91,48 @@ class Tokens extends Component
 
     /**
      * @param AccessToken $accessToken
-     * @param int $providerId
+     * @param AbstractProvider $provider
      * @return bool
      * @throws \Exception
      */
     public function persistNewToken(
         AccessToken $accessToken,
-        int $providerId
+        AbstractProvider $provider
     ): bool {
+
         $config = [
             'accessToken' => $accessToken->getToken(),
             'refreshToken' => $accessToken->getRefreshToken(),
-            'providerId' => $providerId,
+            'providerId' => Patron::getInstance()->getProviders()->getId($provider),
             'values' => $accessToken->getValues(),
             'dateExpires' => $accessToken->getExpires(),
             'enabled' => true
         ];
 
         $record = Patron::getInstance()->manageTokens()->create($config);
-        return $record->save();
+
+        $event = new PersistTokenEvent([
+            'token' => $accessToken,
+            'record' => $record
+        ]);
+
+        Event::trigger(
+            get_class($provider),
+            self::EVENT_BEFORE_PERSIST_TOKEN,
+            $event
+        );
+
+        if(!$record->save()) {
+            return false;
+        }
+
+        Event::trigger(
+            get_class($provider),
+            self::EVENT_AFTER_PERSIST_TOKEN,
+            $event
+        );
+
+        return true;
     }
 
     /**

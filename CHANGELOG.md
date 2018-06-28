@@ -1,5 +1,8 @@
 Changelog
 =========
+## Unreleased
+### Added
+- `flipbox\patron\events\PersistTokenEvent` event is triggered before and after storing a new token. 
 
 ## 1.0.0-rc.3 - 2018-04-26
 ### Fixed

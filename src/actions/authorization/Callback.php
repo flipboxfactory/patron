@@ -48,7 +48,6 @@ class Callback extends Action
 
         return $this->runInternal(
             $code,
-            $identifier,
             $provider
         );
     }
@@ -62,30 +61,27 @@ class Callback extends Action
      */
     public function runInternal(
         $code,
-        $identifier,
         AbstractProvider $provider
     ) {
         if (($access = $this->checkAccess($provider)) !== true) {
             return $access;
         }
 
-        return $this->performAction($code, $identifier, $provider);
+        return $this->performAction($code, $provider);
     }
 
     /**
      * @param $code
-     * @param $identifier
      * @param AbstractProvider $provider
      * @return AccessToken
      * @throws HttpException
      */
     public function performAction(
         $code,
-        $identifier,
         AbstractProvider $provider
     ): AccessToken {
 
-        return $this->handleExceptions(function () use ($code, $identifier, $provider) {
+        return $this->handleExceptions(function () use ($code, $provider) {
 
             // Get token via authorization code grant.
             $accessToken = $provider->getAccessToken(
@@ -98,7 +94,7 @@ class Callback extends Action
             // Save token
             Patron::getInstance()->getTokens()->persistNewToken(
                 $accessToken,
-                $identifier
+                $provider
             );
 
             return $accessToken;
