@@ -9,6 +9,7 @@
 namespace flipbox\patron\events;
 
 use flipbox\patron\records\Token;
+use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use yii\base\Event;
 
@@ -22,6 +23,11 @@ class PersistTokenEvent extends Event
      * @var AccessToken
      */
     public $token;
+
+    /**
+     * @var AbstractProvider
+     */
+    public $provider;
 
     /**
      * @var Token

@@ -1,0 +1,14 @@
+{
+  "name": "patron",
+  "version": "1.0.0",
+  "description": "An OAuth2 Client for Craft CMS",
+  "scripts": {
+    "dev": "vuepress dev docs",
+    "build": "vuepress build docs"
+  },
+  "author": "Flipbox Digital",
+  "license": "MIT",
+  "devDependencies": {
+    "vuepress": "^0.10.0"
+  }
+}

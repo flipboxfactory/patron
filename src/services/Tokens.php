@@ -113,6 +113,7 @@ class Tokens extends Component
 
         $event = new PersistTokenEvent([
             'token' => $accessToken,
+            'provider' => $provider,
             'record' => $record
         ]);
 

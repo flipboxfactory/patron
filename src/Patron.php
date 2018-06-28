@@ -21,6 +21,12 @@ use yii\base\Event;
  * @since 1.0.0
  *
  * @method SettingsModel getSettings()
+ *
+ * @property services\Providers $providers
+ * @property services\Tokens $tokens
+ * @property services\ManageProviders $manageProviders
+ * @property services\ManageTokens $manageTokens
+ * @property services\Session $session
  */
 class Patron extends Plugin
 {
@@ -30,6 +36,21 @@ class Patron extends Plugin
     public function init()
     {
         parent::init();
+
+        // Components
+        $this->setComponents([
+            'providers' => services\Providers::class,
+            'tokens' => services\Tokens::class,
+            'manageProviders' => services\ManageProviders::class,
+            'manageTokens' => services\ManageTokens::class,
+            'session' => services\Session::class
+        ]);
+
+        // Modules
+        $this->setModules([
+            'cp' => cp\Cp::class
+
+        ]);
 
         // Template variables
         Event::on(
@@ -89,43 +110,59 @@ class Patron extends Plugin
     /*******************************************
      * SERVICES
      *******************************************/
+
     /**
+     * @noinspection PhpDocMissingThrowsInspection
      * @return services\Providers
      */
-    public function getProviders()
+    public function getProviders(): services\Providers
     {
+        /** @noinspection PhpUnhandledExceptionInspection */
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->get('providers');
     }
 
     /**
+     * @noinspection PhpDocMissingThrowsInspection
      * @return services\Tokens
      */
-    public function getTokens()
+    public function getTokens(): services\Tokens
     {
+        /** @noinspection PhpUnhandledExceptionInspection */
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->get('tokens');
     }
 
     /**
+     * @noinspection PhpDocMissingThrowsInspection
      * @return services\ManageProviders
      */
-    public function manageProviders()
+    public function manageProviders(): services\ManageProviders
     {
+        /** @noinspection PhpUnhandledExceptionInspection */
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->get('manageProviders');
     }
 
     /**
+     * @noinspection PhpDocMissingThrowsInspection
      * @return services\ManageTokens
      */
-    public function manageTokens()
+    public function manageTokens(): services\ManageTokens
     {
+        /** @noinspection PhpUnhandledExceptionInspection */
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->get('manageTokens');
     }
 
     /**
+     * @noinspection PhpDocMissingThrowsInspection
      * @return services\Session
      */
-    public function getSession()
+    public function getSession(): services\Session
     {
+        /** @noinspection PhpUnhandledExceptionInspection */
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->get('session');
     }
 
