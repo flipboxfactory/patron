@@ -123,7 +123,7 @@ class Tokens extends Component
             $event
         );
 
-        if(!$record->save()) {
+        if (!$record->save()) {
             return false;
         }
 
