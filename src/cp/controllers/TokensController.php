@@ -65,6 +65,7 @@ class TokensController extends AbstractController
     /**
      * @param null $token
      * @return array
+     * @throws \flipbox\ember\exceptions\NotFoundException
      */
     public function actionModal($token = null): array
     {
@@ -72,12 +73,10 @@ class TokensController extends AbstractController
             $token = Craft::$app->getRequest()->getBodyParam('token');
         }
 
-        $token = Patron::getInstance()->manageTokens()->get($token);
-
         $view = $this->getView();
         return [
             'html' => Patron::getInstance()->getSettings()->getTokenView()->render([
-                'token' => $token
+                'token' => Patron::getInstance()->manageTokens()->get($token)
             ]),
             'headHtml' => $view->getHeadHtml(),
             'footHtml' => $view->getBodyHtml()

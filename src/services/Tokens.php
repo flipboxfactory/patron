@@ -16,7 +16,6 @@ use flipbox\ember\services\traits\objects\Accessor;
 use flipbox\patron\db\TokenQuery;
 use flipbox\patron\events\PersistTokenEvent;
 use flipbox\patron\Patron;
-use flipbox\patron\records\Provider as ProviderRecord;
 use flipbox\patron\records\Token;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
@@ -106,6 +105,7 @@ class Tokens extends Component
             'providerId' => Patron::getInstance()->getProviders()->getId($provider),
             'values' => $accessToken->getValues(),
             'dateExpires' => $accessToken->getExpires(),
+            'environment' => Patron::getInstance()->getSettings()->getEnvironment(),
             'enabled' => true
         ];
 

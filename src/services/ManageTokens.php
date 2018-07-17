@@ -8,11 +8,13 @@
 
 namespace flipbox\patron\services;
 
+use Craft;
 use flipbox\ember\helpers\ArrayHelper;
 use flipbox\ember\services\traits\records\Accessor;
 use flipbox\patron\db\TokenQuery;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Token;
+use flipbox\patron\records\TokenEnvironment;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use yii\base\Component;
@@ -63,6 +65,11 @@ class ManageTokens extends Component
             $config['enabled'] = null;
         }
 
+        // Allow all environments when managing
+        if (!array_key_exists('environment', $config)) {
+            $config['environment'] = null;
+        }
+
         return $config;
     }
 
@@ -110,6 +117,54 @@ class ManageTokens extends Component
         }
 
         return $this->findByCriteria(['providerId' => $providerId]);
+    }
+
+    /*******************************************
+     * ENVIRONMENTS
+     *******************************************/
+
+    /**
+     * @param Token $token
+     * @return bool
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function saveEnvironments(Token $token)
+    {
+        $successful = true;
+
+        /** @var TokenEnvironment[] $allProviders */
+        $allProviders = $token->hasMany(
+            TokenEnvironment::class,
+            ['providerId' => 'id']
+        )->indexBy('environment')
+            ->all();
+
+        foreach ($token->environments as $model) {
+            ArrayHelper::remove($allProviders, $model->environment);
+            $model->providerId = $token->getId();
+
+            if (!$model->save()) {
+                $successful = false;
+                // Log the errors
+                $error = Craft::t(
+                    'patron',
+                    "Couldn't save environment due to validation errors:"
+                );
+                foreach ($model->getFirstErrors() as $attributeError) {
+                    $error .= "\n- " . Craft::t('patron', $attributeError);
+                }
+
+                $token->addError('sites', $error);
+            }
+        }
+
+        // Delete old records
+        foreach ($allProviders as $settings) {
+            $settings->delete();
+        }
+
+        return $successful;
     }
 
     /*******************************************

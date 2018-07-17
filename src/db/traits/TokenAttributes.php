@@ -9,6 +9,8 @@
 namespace flipbox\patron\db\traits;
 
 use craft\helpers\Db;
+use flipbox\patron\records\Token;
+use flipbox\patron\records\TokenEnvironment;
 use yii\db\Expression;
 
 /**
@@ -36,6 +38,11 @@ trait TokenAttributes
      * @var string|string[]|null The refresh token(s). Prefix IDs with "not " to exclude them.
      */
     public $refreshToken;
+
+    /**
+     * @var string|string[]|null The environment(s). Prefix with "not " to exclude them.
+     */
+    public $environment;
 
     /**
      * Adds an additional WHERE condition to the existing one.
@@ -90,6 +97,16 @@ trait TokenAttributes
     }
 
     /**
+     * @param $environment
+     * @return $this
+     */
+    public function environment($environment)
+    {
+        $this->environment = $environment;
+        return $this;
+    }
+
+    /**
      *
      */
     protected function applyConditions()
@@ -105,5 +122,27 @@ trait TokenAttributes
                 $this->andWhere(Db::parseParam($attribute, $value));
             }
         }
+
+        $this->applyEnvironmentParam();
+    }
+
+    /**
+     * Apply environment params
+     */
+    protected function applyEnvironmentParam()
+    {
+        if (empty($this->environment)) {
+            return;
+        }
+
+        $alias = TokenEnvironment::tableAlias();
+
+        $this->leftJoin(
+            TokenEnvironment::tableName() . ' ' . $alias,
+            '[[' . $alias . '.tokenId]] = [[' . Token::tableAlias() . '.id]]'
+        );
+        $this->andWhere(
+            Db::parseParam($alias . '.environment', $this->environment)
+        );
     }
 }

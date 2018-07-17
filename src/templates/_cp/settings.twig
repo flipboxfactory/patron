@@ -1,0 +1,58 @@
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% block content %}
+    <input type="hidden" name="action" value="{{ baseActionPath }}/save">
+    {{ redirectInput(baseCpPath) }}
+
+    <div class="readable">
+        <h2>Settings</h2>
+    </div>
+
+    {% set cols = {
+    'value' : {
+        type: 'singleline',
+        heading: 'Value',
+        width: '50'
+    }} %}
+
+    {% set rows = [] %}
+    {% for environment in settings.environments %}
+        {% set rows = rows|merge([{value: environment}]) %}
+    {% endfor %}
+    {{ forms.editableTableField({
+        label: "Environments"|t('patron'),
+        instructions: "Enter each environment on a new row."|t('patron'),
+        id: 'environments',
+        name: 'environments',
+        addRowLabel: "Add an environment"|t('patron'),
+        cols: cols,
+        rows: rows,
+        errors: settings.getErrors('environments')
+    }) }}
+
+    {{ forms.textField({
+        label: "Callback Url Path"|t('patron'),
+        instructions: "A vanity callback url path. (Ex: oauth/callback): "|t('patron'),
+        class: "code",
+        id: 'callbackUrlPath',
+        name: 'callbackUrlPath',
+        value: settings.callbackUrlPath,
+        errors: settings.getErrors('callbackUrlPath'),
+        autofocus: true,
+    }) }}
+
+    <hr/>
+
+    <div class="readable">
+        <h2>General Info</h2>
+        <table class="data fullwidth fixed-layout">
+            <tbody>
+            <tr>
+                <th class="light">Callback Url</th>
+                <td>{{ settings.callbackUrl }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

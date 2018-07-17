@@ -12,7 +12,8 @@ use craft\db\Query;
 use craft\db\QueryAbortedException;
 use flipbox\ember\db\traits\AuditAttributes;
 use flipbox\ember\db\traits\FixedOrderBy;
-use flipbox\patron\records\Provider as ProviderRecord;
+use flipbox\patron\Patron;
+use flipbox\patron\records\Provider;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -27,7 +28,14 @@ class ProviderQuery extends Query
     /**
      * @inheritdoc
      */
-    public $orderBy = ['dateCreated' => SORT_DESC];
+    public function __construct($config = [])
+    {
+        $this->orderBy = [Provider::tableAlias() . '.dateCreated' => SORT_DESC];
+        $this->from([Provider::tableName() . ' ' . Provider::tableAlias()]);
+        $this->select = [Provider::tableAlias() . '.*'];
+
+        parent::__construct($config);
+    }
 
     /**
      * @inheritdoc
@@ -36,13 +44,8 @@ class ProviderQuery extends Query
     {
         parent::init();
 
-        if ($this->select === null) {
-            $this->select = ['*'];
-        }
-
-        // Set table name
-        if ($this->from === null) {
-            $this->from([ProviderRecord::tableName()]);
+        if ($this->environment === null) {
+            $this->environment = Patron::getInstance()->getSettings()->getEnvironment();
         }
     }
 

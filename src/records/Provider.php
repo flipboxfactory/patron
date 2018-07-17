@@ -11,6 +11,8 @@ namespace flipbox\patron\records;
 use Craft;
 use craft\helpers\Template;
 use flipbox\ember\helpers\ModelHelper;
+use flipbox\ember\helpers\ObjectHelper;
+use flipbox\ember\helpers\QueryHelper;
 use flipbox\ember\records\ActiveRecordWithId;
 use flipbox\ember\records\traits\StateAttribute;
 use flipbox\ember\traits\HandleRules;
@@ -30,6 +32,7 @@ use Twig_Markup;
  * @property string $class
  * @property array $settings
  * @property Token[] tokens
+ * @property ProviderEnvironment[] $environments
  */
 class Provider extends ActiveRecordWithId
 {
@@ -59,9 +62,11 @@ class Provider extends ActiveRecordWithId
     /**
      * @inheritdoc
      * @return ProviderActiveQuery
+     * @throws \yii\base\InvalidConfigException
      */
     public static function find()
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return Craft::createObject(ProviderActiveQuery::class, [get_called_class()]);
     }
 
@@ -119,16 +124,101 @@ class Provider extends ActiveRecordWithId
     }
 
     /**
-     * Get all of the tokens that belong to the authorization.
+     * Get all of the associated tokens.
      *
+     * @param array $config
      * @return \yii\db\ActiveQuery
      */
-    public function getTokens()
+    public function getTokens(array $config = [])
     {
-        return $this->hasMany(
+        $query = $this->hasMany(
             Token::class,
             ['providerId' => 'id']
         );
+
+        if (!empty($config)) {
+            QueryHelper::configure(
+                $query,
+                $config
+            );
+        }
+
+        return $query;
+    }
+
+    /**
+     * Get all of the associated environments.
+     *
+     * @param array $config
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEnvironments(array $config = [])
+    {
+        $query = $this->hasMany(
+            ProviderEnvironment::class,
+            ['providerId' => 'id']
+        )->indexBy('environment');
+
+        if (!empty($config)) {
+            QueryHelper::configure(
+                $query,
+                $config
+            );
+        }
+
+        return $query;
+    }
+
+    /**
+     * @param array $environments
+     * @return $this
+     */
+    public function setEnvironments(array $environments = [])
+    {
+        $records = [];
+        foreach (array_filter($environments) as $key => $environment) {
+            $records[] = $this->resolveEnvironment($key, $environment);
+        }
+
+        $this->populateRelation('environments', $records);
+        return $this;
+    }
+
+    /**
+     * @param string $key
+     * @param $environment
+     * @return ProviderEnvironment
+     */
+    protected function resolveEnvironment(string $key, $environment): ProviderEnvironment
+    {
+        if (!$record = $this->environments[$key] ?? null) {
+            $record = new ProviderEnvironment();
+        }
+
+        if (!is_array($environment)) {
+            $environment = ['environment' => $environment];
+        }
+
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return ObjectHelper::populate(
+            $record,
+            $environment
+        );
+    }
+
+    /*******************************************
+     * EVENTS
+     *******************************************/
+
+
+    /**
+     * @inheritdoc
+     * @throws \Throwable
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        Patron::getInstance()->manageProviders()->saveEnvironments($this);
+        parent::afterSave($insert, $changedAttributes);
     }
 
     /**

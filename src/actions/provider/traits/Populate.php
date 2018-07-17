@@ -28,7 +28,8 @@ trait Populate
             'scopes',
             'class',
             'settings',
-            'enabled'
+            'enabled',
+            'environments'
         ];
     }
 }

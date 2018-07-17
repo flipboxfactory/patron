@@ -8,6 +8,7 @@
 
 namespace flipbox\patron\services;
 
+use Craft;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 use flipbox\ember\helpers\ModelHelper;
@@ -20,6 +21,7 @@ use flipbox\patron\providers\Facebook as FacebookSettings;
 use flipbox\patron\providers\Guardian as GuardianSettings;
 use flipbox\patron\providers\SettingsInterface;
 use flipbox\patron\records\Provider;
+use flipbox\patron\records\ProviderEnvironment;
 use League\OAuth2\Client\Provider\Facebook as FacebookProvider;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
@@ -103,6 +105,11 @@ class ManageProviders extends Component
             $config['enabled'] = null;
         }
 
+        // Allow all environments when managing
+        if (!array_key_exists('environment', $config)) {
+            $config['environment'] = null;
+        }
+
         return $config;
     }
 
@@ -176,6 +183,56 @@ class ManageProviders extends Component
 
         return $model;
     }
+
+
+    /*******************************************
+     * ENVIRONMENTS
+     *******************************************/
+
+    /**
+     * @param Provider $provider
+     * @return bool
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function saveEnvironments(Provider $provider)
+    {
+        $successful = true;
+
+        /** @var ProviderEnvironment[] $allProviders */
+        $allProviders = $provider->hasMany(
+            ProviderEnvironment::class,
+            ['providerId' => 'id']
+        )->indexBy('environment')
+            ->all();
+
+        foreach ($provider->environments as $model) {
+            ArrayHelper::remove($allProviders, $model->environment);
+            $model->providerId = $provider->getId();
+
+            if (!$model->save()) {
+                $successful = false;
+                // Log the errors
+                $error = Craft::t(
+                    'patron',
+                    "Couldn't save environment due to validation errors:"
+                );
+                foreach ($model->getFirstErrors() as $attributeError) {
+                    $error .= "\n- " . Craft::t('patron', $attributeError);
+                }
+
+                $provider->addError('sites', $error);
+            }
+        }
+
+        // Delete old records
+        foreach ($allProviders as $settings) {
+            $settings->delete();
+        }
+
+        return $successful;
+    }
+
 
     /*******************************************
      * STATES

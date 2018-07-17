@@ -1,7 +1,7 @@
 {
   "name": "flipboxfactory/patron",
   "description": "An OAuth2 Client for Craft CMS",
-  "version": "1.0.0-rc.4",
+  "version": "1.0.0-rc.5",
   "type": "craft-plugin",
   "license": "MIT",
   "authors": [{
@@ -44,6 +44,6 @@
     "class": "flipbox\\patron\\Patron",
     "hasCpSettings": true,
     "hasCpSection": true,
-    "schemaVersion": "1.0.0"
+    "schemaVersion": "1.1.0"
   }
 }

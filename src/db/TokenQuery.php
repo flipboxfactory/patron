@@ -12,6 +12,7 @@ use craft\db\Query;
 use craft\db\QueryAbortedException;
 use flipbox\ember\db\traits\AuditAttributes;
 use flipbox\ember\db\traits\FixedOrderBy;
+use flipbox\patron\Patron;
 use flipbox\patron\records\Token;
 
 /**
@@ -27,7 +28,14 @@ class TokenQuery extends Query
     /**
      * @inheritdoc
      */
-    public $orderBy = ['dateExpires' => SORT_DESC];
+    public function __construct($config = [])
+    {
+        $this->orderBy = [Token::tableAlias() . '.dateCreated' => SORT_DESC];
+        $this->from([Token::tableName() . ' ' . Token::tableAlias()]);
+        $this->select = [Token::tableAlias() . '.*'];
+
+        parent::__construct($config);
+    }
 
     /**
      * @inheritdoc
@@ -36,9 +44,8 @@ class TokenQuery extends Query
     {
         parent::init();
 
-        // Set table name
-        if ($this->from === null) {
-            $this->from([Token::tableName()]);
+        if ($this->environment === null) {
+            $this->environment = Patron::getInstance()->getSettings()->getEnvironment();
         }
     }
 

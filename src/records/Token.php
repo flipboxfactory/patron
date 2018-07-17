@@ -14,9 +14,12 @@ use craft\helpers\Db;
 use craft\validators\DateTimeValidator;
 use DateTime;
 use flipbox\ember\helpers\ModelHelper;
+use flipbox\ember\helpers\ObjectHelper;
+use flipbox\ember\helpers\QueryHelper;
 use flipbox\ember\records\ActiveRecordWithId;
 use flipbox\ember\records\traits\StateAttribute;
 use flipbox\patron\db\TokenActiveQuery;
+use flipbox\patron\Patron;
 use yii\db\ActiveQueryInterface;
 
 /**
@@ -27,6 +30,7 @@ use yii\db\ActiveQueryInterface;
  * @property string $refreshToken
  * @property DateTime|null $dateExpires
  * @property array $values
+ * @property TokenEnvironment[] $environments
  */
 class Token extends ActiveRecordWithId
 {
@@ -40,9 +44,11 @@ class Token extends ActiveRecordWithId
     /**
      * @inheritdoc
      * @return TokenActiveQuery
+     * @throws \yii\base\InvalidConfigException
      */
     public static function find()
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return Craft::createObject(TokenActiveQuery::class, [get_called_class()]);
     }
 
@@ -63,38 +69,31 @@ class Token extends ActiveRecordWithId
         return DateTimeHelper::isInThePast($dateExpires);
     }
 
+    /*******************************************
+     * EVENTS
+     *******************************************/
+
     /**
      * @inheritdoc
      */
     public function beforeSave($insert)
     {
         // Prepare date value
-        $this->prepareDateExpires();
+        $this->dateExpires = Db::prepareDateForDb($this->dateExpires);
 
         return parent::beforeSave($insert);
     }
 
     /**
-     * Prepare date value for storage
-     * @return void
+     * @inheritdoc
+     * @throws \Throwable
      */
-    protected function prepareDateExpires()
+    public function afterSave($insert, $changedAttributes)
     {
-        $this->dateExpires = Db::prepareDateForDb($this->dateExpires);
+        Patron::getInstance()->manageTokens()->saveEnvironments($this);
+        parent::afterSave($insert, $changedAttributes);
     }
 
-    /**
-     * Get the associated Authorization
-     *
-     * @return ActiveQueryInterface
-     */
-    public function getProvider()
-    {
-        return $this->hasOne(
-            Provider::class,
-            ['providerId' => 'id']
-        );
-    }
 
     /**
      * @inheritdoc
@@ -127,16 +126,8 @@ class Token extends ActiveRecordWithId
                 ],
                 [
                     [
-                        'dateExpires'
-                    ],
-                    'safe',
-                    'on' => [
-                        ModelHelper::SCENARIO_DEFAULT
-                    ]
-                ],
-                [
-                    [
-                        'providerId'
+                        'providerId',
+                        'accessToken'
                     ],
                     'required'
                 ],
@@ -149,15 +140,10 @@ class Token extends ActiveRecordWithId
                 ],
                 [
                     [
-                        'accessToken'
-                    ],
-                    'required'
-                ],
-                [
-                    [
                         'providerId',
                         'accessToken',
-                        'values'
+                        'values',
+                        'dateExpires'
                     ],
                     'safe',
                     'on' => [
@@ -165,6 +151,89 @@ class Token extends ActiveRecordWithId
                     ]
                 ]
             ]
+        );
+    }
+
+    /**
+     * Get the associated Authorization
+     *
+     * @param array $config
+     * @return ActiveQueryInterface
+     */
+    public function getProvider(array $config = [])
+    {
+        $query = $this->hasOne(
+            Provider::class,
+            ['providerId' => 'id']
+        );
+
+        if (!empty($config)) {
+            QueryHelper::configure(
+                $query,
+                $config
+            );
+        }
+
+        return $query;
+    }
+
+    /**
+     * Get all of the associated environments.
+     *
+     * @param array $config
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEnvironments(array $config = [])
+    {
+        $query = $this->hasMany(
+            TokenEnvironment::class,
+            ['tokenId' => 'id']
+        )->indexBy('environment');
+
+        if (!empty($config)) {
+            QueryHelper::configure(
+                $query,
+                $config
+            );
+        }
+
+        return $query;
+    }
+
+    /**
+     * @param array $environments
+     * @return $this
+     */
+    public function setEnvironments(array $environments = [])
+    {
+        $records = [];
+        foreach (array_filter($environments) as $key => $environment) {
+            $records[] = $this->resolveEnvironment($key, $environment);
+        }
+
+        $this->populateRelation('environments', $records);
+        return $this;
+    }
+
+    /**
+     * @param string $key
+     * @param $environment
+     * @return TokenEnvironment
+     */
+    protected function resolveEnvironment(string $key, $environment): TokenEnvironment
+    {
+        if (!$record = $this->environments[$key] ?? null) {
+            $record = new TokenEnvironment();
+        }
+
+        if (!is_array($environment)) {
+            $environment = ['environment' => $environment];
+        }
+
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return ObjectHelper::populate(
+            $record,
+            $environment
         );
     }
 }

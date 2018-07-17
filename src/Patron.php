@@ -11,6 +11,7 @@ namespace flipbox\patron;
 use Craft;
 use craft\base\Plugin;
 use craft\events\RegisterUrlRulesEvent;
+use craft\helpers\UrlHelper;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
 use flipbox\patron\models\Settings as SettingsModel;
@@ -96,15 +97,15 @@ class Patron extends Plugin
 
     /**
      * @inheritdoc
+     * @throws \yii\base\ExitException
      */
-    protected function settingsHtml()
+    public function getSettingsResponse()
     {
-        return Craft::$app->getView()->renderTemplate(
-            'patron/settings',
-            [
-                'settings' => $this->getSettings()
-            ]
+        Craft::$app->getResponse()->redirect(
+            UrlHelper::cpUrl('patron/settings')
         );
+
+        Craft::$app->end();
     }
 
     /*******************************************
@@ -168,6 +169,21 @@ class Patron extends Plugin
 
 
     /*******************************************
+     * MODULES
+     *******************************************/
+
+    /**
+     * @noinspection PhpDocMissingThrowsInspection
+     * @return cp\Cp
+     */
+    public function getCp(): cp\Cp
+    {
+        /** @noinspection PhpUnhandledExceptionInspection */
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getModule('cp');
+    }
+
+    /*******************************************
      * EVENTS
      *******************************************/
 
@@ -179,6 +195,9 @@ class Patron extends Plugin
         $event->rules = array_merge(
             $event->rules,
             [
+                // SETTINGS
+                'patron/settings' => 'patron/cp/view/settings/index',
+
                 'patron' => 'patron/cp/view/general/index',
                 'patron/providers' => 'patron/cp/view/providers/index',
                 'patron/providers/new' => 'patron/cp/view/providers/upsert',

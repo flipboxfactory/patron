@@ -10,6 +10,8 @@ namespace flipbox\patron\db\traits;
 
 use craft\db\QueryAbortedException;
 use craft\helpers\Db;
+use flipbox\patron\records\Provider;
+use flipbox\patron\records\ProviderEnvironment;
 use yii\db\Expression;
 
 /**
@@ -47,6 +49,11 @@ trait ProviderAttributes
      * @var string|string[]|null The client secret(s). Prefix IDs with "not " to exclude them.
      */
     public $clientSecret;
+
+    /**
+     * @var string|string[]|null The environment(s). Prefix with "not " to exclude them.
+     */
+    public $environment;
 
     /**
      * Adds an additional WHERE condition to the existing one.
@@ -121,6 +128,16 @@ trait ProviderAttributes
     }
 
     /**
+     * @param $environment
+     * @return $this
+     */
+    public function environment($environment)
+    {
+        $this->environment = $environment;
+        return $this;
+    }
+
+    /**
      * @throws QueryAbortedException
      */
     protected function applyConditions()
@@ -141,5 +158,33 @@ trait ProviderAttributes
                 $this->andWhere(Db::parseParam($attribute, $value));
             }
         }
+
+        $this->applyEnvironmentParam();
+    }
+
+    /*******************************************
+     * PARAMS
+     *******************************************/
+
+    /**
+     * Apply environment params
+     */
+    protected function applyEnvironmentParam()
+    {
+        if (empty($this->environment)) {
+            return;
+        }
+
+        $alias = ProviderEnvironment::tableAlias();
+
+        $this->leftJoin(
+            ProviderEnvironment::tableName() . ' ' . $alias,
+            '[[' . $alias . '.providerId]] = [[' . Provider::tableAlias() . '.id]]'
+        );
+        $this->andWhere(
+            Db::parseParam($alias . '.environment', $this->environment)
+        );
+
+        $this->distinct(true);
     }
 }

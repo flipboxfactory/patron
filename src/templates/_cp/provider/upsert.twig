@@ -4,15 +4,36 @@
 {% block actionButton %}
     <div class="btngroup submit right">
         <input type="submit" class="btn submit" value="{{ 'Save'|t('app') }}">
-
         <div class="btn submit menubtn"></div>
         <div class="menu">
-            <ul>
-                <li><a class="formsubmit" data-redirect="{{ continueEditingUrl }}">
-                        {{ "Save and continue editing"|t('app') }}
+            <ul role="listbox">
+                <li>
+                    <a class="formsubmit"
+                       data-redirect="{{ continueEditingUrl|hash }}">
                         {{ forms.optionShortcutLabel('S') }}
-                    </a></li>
+                        {{ "Save and continue editing"|t('app') }}
+                    </a>
+                </li>
+                <li>
+                    <a class="formsubmit"
+                       data-redirect="{{ (baseCpPath ~ '/new')|hash }}">
+                        {{ "Save and add another"|t('app') }}
+                    </a>
+                </li>
             </ul>
+            {% if provider.id %}
+                <hr/>
+                <ul role="listbox">
+                    <li>
+                        <a class="formsubmit error"
+                           data-action="{{ baseActionPath }}/delete"
+                           data-confirm="{{ 'Are you sure you want to delete this organization?'|t('organizations') }}"
+                           data-redirect="{{ baseCpPath|hash }}"
+                           role="option"
+                           tabindex="-1">{{ "Delete"|t('app') }}</a>
+                    </li>
+                </ul>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
@@ -104,6 +125,27 @@
             </div>
         </div>
     {% endif %}
+
+    <div id="environments" class="meta">
+        <h4 class="heading">{{ "Environments"|t('app') }}</h4>
+        {% set availableEnvironments = craft.patron.settings.environments %}
+        {% set environments = [] %}
+        {% for env in provider.environments %}
+            {% set environments = environments|merge([env.environment]) %}
+        {% endfor %}
+        {% namespace 'environments' %}
+            {% for environment in availableEnvironments %}
+                {{ forms.lightswitchField({
+                    label: environment|t('app'),
+                    id: environment,
+                    name: environment,
+                    value: environment,
+                    small: true,
+                    on: environment in environments
+                }) }}
+            {% endfor %}
+        {% endnamespace %}
+    </div>
 
     {% hook 'patron.clients.edit.sidebar' %}
 

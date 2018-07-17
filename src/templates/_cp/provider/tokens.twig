@@ -26,11 +26,14 @@
     <hr/>
 
     {% from _self import tr %}
-    {% set tokens = provider.tokens %}
+    {% set tokens = provider.getTokens({
+        'environment': null
+    }).all() %}
     <table id="tokens" class="data fullwidth collapsible{% if tokens|length == 0 %} hidden{% endif %}">
         <thead>
         <th scope="col">{{ "Access Token"|t('patron') }}</th>
         <th scope="col">{{ "Expires"|t('patron') }}</th>
+        <th scope="col">{{ "Environments"|t('patron') }}</th>
         <td class="thin"></td>
         </thead>
         <tbody>
@@ -45,18 +48,18 @@
 
 {% js %}
     new Craft.RowInfo(
-    $("#tokens tbody th a"),
-    {
-    modalSettings: {
-    desiredHeight: 200,
-    action: '{{ actionUrl("/patron/cp/tokens/modal") }}',
-    actionData: $.proxy(function (modal) {
-    return {token: modal.$target.data('id')}
-    }, this)
-    }
+        $("#tokens tbody th a"),
+        {
+            modalSettings: {
+                desiredHeight: 200,
+                action: '{{ actionUrl("/patron/cp/tokens/modal") }}',
+                actionData: $.proxy(function (modal) {
+                    return {token: modal.$target.data('id')
+                }
+            }, this)
+        }
     });
 {% endjs %}
-
 
 {% macro tr(token, baseActionPath, continueEditingUrl) %}
     {% set isActive = token.enabled and not token.hasExpired() ? 1 : 0 %}
@@ -72,7 +75,13 @@
         <td data-title="{{ 'Expires'|t('patron') }}">
             {{ token.dateExpires|date("c") }}
         </td>
-
+        <td data-title="{{ 'Environments'|t('patron') }}">
+            {% set environments = [] %}
+            {% for env in token.getEnvironments().all() %}
+                {% set environments = environments|merge([env.environment]) %}
+            {% endfor %}
+            <span style="font-size: 10px;">{{ environments|join(', ') }}</span>
+        </td>
         <td class="thin">
             <form method="post" accept-charset="UTF-8">
                 {{ csrfInput() }}

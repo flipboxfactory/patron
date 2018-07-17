@@ -44,6 +44,63 @@ class Settings extends Model
      */
     private $providerOverrideFileName = 'providers';
 
+    /**
+     * @var array
+     */
+    private $environments = [];
+
+    /**
+     * @var string
+     */
+    private $environment = null;
+
+    /*******************************************
+     * ENVIRONMENTS
+     *******************************************/
+
+    /**
+     * @return string
+     */
+    public function getEnvironment(): string
+    {
+        if ($this->environment === null) {
+            $this->environment = Craft::$app->getConfig()->env;
+        }
+
+        return $this->environment;
+    }
+
+    /**
+     * @param string $environment
+     * @return $this
+     */
+    public function setEnvironment(string $environment)
+    {
+        $this->environment = $environment;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEnvironments(): array
+    {
+        if (empty($this->environments)) {
+            $this->environments[] = Craft::$app->getConfig()->env;
+        }
+
+        return $this->environments;
+    }
+
+    /**
+     * @param array $environments
+     * @return $this
+     */
+    public function setEnvironments(array $environments)
+    {
+        $this->environments = $environments;
+        return $this;
+    }
 
     /*******************************************
      * PROVIDER OVERRIDE CONFIG
@@ -193,7 +250,9 @@ class Settings extends Model
         return array_merge(
             parent::attributes(),
             [
-                'callbackUrlPath'
+                'callbackUrlPath',
+                'environments',
+                'environment'
             ]
         );
     }

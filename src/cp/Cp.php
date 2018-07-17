@@ -34,6 +34,11 @@ class Cp extends Module
     {
         parent::init();
 
+        // Components
+        $this->setComponents([
+            'settings' => services\Settings::class
+        ]);
+
         // Ember templates
         Event::on(
             View::class,
@@ -49,6 +54,7 @@ class Cp extends Module
 
     /**
      * @inheritdoc
+     * @throws NotFoundHttpException
      */
     public function beforeAction($action)
     {
@@ -57,6 +63,21 @@ class Cp extends Module
         }
 
         return parent::beforeAction($action);
+    }
+
+    /*******************************************
+     * SERVICES
+     *******************************************/
+
+    /**
+     * @noinspection PhpDocMissingThrowsInspection
+     * @return services\Settings
+     */
+    public function getSettings(): services\Settings
+    {
+        /** @noinspection PhpUnhandledExceptionInspection */
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->get('settings');
     }
 
     /**

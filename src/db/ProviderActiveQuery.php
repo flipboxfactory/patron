@@ -11,6 +11,7 @@ namespace flipbox\patron\db;
 use craft\db\QueryAbortedException;
 use flipbox\ember\db\traits\AuditAttributes;
 use flipbox\ember\db\traits\FixedOrderBy;
+use flipbox\patron\Patron;
 use yii\db\ActiveQuery;
 
 /**
@@ -22,6 +23,18 @@ class ProviderActiveQuery extends ActiveQuery
     use traits\ProviderAttributes,
         FixedOrderBy,
         AuditAttributes;
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        parent::init();
+
+        if ($this->environment === null) {
+            $this->environment = Patron::getInstance()->getSettings()->getEnvironment();
+        }
+    }
 
     /**
      * @inheritdoc

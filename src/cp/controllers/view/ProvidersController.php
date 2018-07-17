@@ -66,6 +66,7 @@ class ProvidersController extends AbstractViewController
      * @param null $identifier
      * @param Provider|null $provider
      * @return \yii\web\Response
+     * @throws \flipbox\ember\exceptions\NotFoundException
      * @throws \yii\base\InvalidConfigException
      */
     public function actionUpsert($identifier = null, Provider $provider = null)
@@ -126,7 +127,10 @@ class ProvidersController extends AbstractViewController
         // Empty variables for template
         $variables = [];
 
-        $provider = $this->providerService()->get($identifier);
+        $provider = $this->providerService()->getByCondition([
+            'id' => $identifier,
+            'environment' => null
+        ]);
 
         $this->tokenVariables($variables, $provider);
 
@@ -235,9 +239,9 @@ class ProvidersController extends AbstractViewController
         // Breadcrumbs
         $variables['crumbs'][] = [
             'label' => Craft::t(
-                'patron',
-                "Edit"
-            ) . ": " . $provider->getDisplayName(),
+                    'patron',
+                    "Edit"
+                ) . ": " . $provider->getDisplayName(),
             'url' => UrlHelper::url(
                 $variables['baseCpPath'] . '/' . $provider->getId()
             )
@@ -267,9 +271,9 @@ class ProvidersController extends AbstractViewController
         // Breadcrumbs
         $variables['crumbs'][] = [
             'label' => Craft::t(
-                'patron',
-                "Edit"
-            ) . ": " . $provider->getDisplayName(),
+                    'patron',
+                    "Edit"
+                ) . ": " . $provider->getDisplayName(),
             'url' => UrlHelper::url(
                 $variables['baseCpPath'] . '/' . $provider->getId()
             )
