@@ -60,6 +60,20 @@ class Provider extends ActiveRecordWithId
     const CLIENT_SECRET_LENGTH = 100;
 
     /**
+     * @return string|null
+     */
+    public function getIcon()
+    {
+        if($this->class === null) {
+            return null;
+        }
+
+        return Patron::getInstance()->getCp()->getProviderIcon(
+            $this->class
+        );
+    }
+
+    /**
      * @inheritdoc
      * @return ProviderActiveQuery
      * @throws \yii\base\InvalidConfigException

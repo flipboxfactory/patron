@@ -88,6 +88,28 @@ class Patron extends Plugin
 
     /**
      * @inheritdoc
+     */
+    public function getCpNavItem()
+    {
+        return array_merge(
+            parent::getCpNavItem(),
+            [
+                'subnav' => [
+                    'patron.providers' => [
+                        'label' => Craft::t('patron', 'Providers'),
+                        'url' => 'patron/providers',
+                    ],
+                    'patron.settings' => [
+                        'label' => Craft::t('patron', 'Settings'),
+                        'url' => 'patron/settings',
+                    ]
+                ]
+            ]
+        );
+    }
+
+    /**
+     * @inheritdoc
      * @return SettingsModel
      */
     public function createSettingsModel()

@@ -74,6 +74,12 @@ abstract class AbstractViewController extends Controller
         // Set the "Continue Editing" URL
         $variables['continueEditingUrl'] = $this->getBaseCpPath();
 
+        // Select our sub-nav
+        if (!$activeSubNav = Craft::$app->getRequest()->getSegment(2)) {
+            $activeSubNav = 'providers';
+        }
+        $variables['selectedSubnavItem'] = 'patron.' . $activeSubNav;
+
         // Breadcrumbs
         $variables['crumbs'][] = [
             'label' => $variables['title'],

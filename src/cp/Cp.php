@@ -6,6 +6,7 @@ use Craft;
 use craft\events\RegisterTemplateRootsEvent;
 use craft\web\View;
 use Flipbox\OAuth2\Client\Provider\Guardian;
+use flipbox\patron\events\RegisterProviderIcon;
 use flipbox\patron\events\RegisterProviders;
 use flipbox\patron\Patron;
 use League\OAuth2\Client\Provider\Facebook;
@@ -26,6 +27,23 @@ class Cp extends Module
      * Event to register providers
      */
     const EVENT_REGISTER_PROVIDERS = 'registerProviders';
+
+    /**
+     * @var array
+     */
+    private $icons = [];
+
+    /**
+     * @var array
+     */
+    protected $defaultIcons = [
+        Google::class => '@vendor/flipboxfactory/patron/src/icons/google.svg',
+        LinkedIn::class => '@vendor/flipboxfactory/patron/src/icons/linkedin.svg',
+        Facebook::class => '@vendor/flipboxfactory/patron/src/icons/facebook.svg',
+        Instagram::class => '@vendor/flipboxfactory/patron/src/icons/instagram.svg',
+        Github::class => '@vendor/flipboxfactory/patron/src/icons/github.svg',
+        Guardian::class => '@vendor/flipboxfactory/patron/src/icons/guardian.svg',
+    ];
 
     /**
      * @inheritdoc
@@ -102,5 +120,28 @@ class Cp extends Module
         );
 
         return $event->providers;
+    }
+
+    /**
+     * @param string $class
+     * @return mixed
+     */
+    public function getProviderIcon(string $class)
+    {
+        if(!array_key_exists($class, $this->icons)) {
+            $event = new RegisterProviderIcon([
+                'icon' => $this->defaultIcons[$class] ?? null
+            ]);
+
+            Event::trigger(
+                $class,
+                RegisterProviderIcon::REGISTER_ICON,
+                $event
+            );
+
+            $this->icons[$class] = $event->icon;
+        }
+
+        return $this->icons[$class];
     }
 }

@@ -14,8 +14,8 @@
             {% set icon %}
                 {{ circleIcon(
                     (provider['icon'] is defined and provider['icon'] ? provider['icon'] : null),
-                provider.displayName,
-                provider.enabled ? 'active' : 'suspended'
+                    provider.displayName,
+                    provider.enabled ? 'active' : 'suspended'
                 ) }}
             {% endset %}
             {% embed "patron/ember/card" with {

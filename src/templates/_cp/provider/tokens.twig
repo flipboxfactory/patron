@@ -33,7 +33,7 @@
         <thead>
         <th scope="col">{{ "Access Token"|t('patron') }}</th>
         <th scope="col">{{ "Expires"|t('patron') }}</th>
-        <th scope="col">{{ "Environments"|t('patron') }}</th>
+        <th scope="col">{{ "Environment(s)"|t('patron') }}</th>
         <td class="thin"></td>
         </thead>
         <tbody>
@@ -73,9 +73,13 @@
             <a class="info-expand"></a>
         </th>
         <td data-title="{{ 'Expires'|t('patron') }}">
-            {{ token.dateExpires|date("c") }}
+            {% if token.dateExpires %}
+                {{ token.dateExpires|date("c") }}
+            {% else %}
+                &nbsp;
+            {% endif %}
         </td>
-        <td data-title="{{ 'Environments'|t('patron') }}">
+        <td data-title="{{ 'Environment(s)'|t('patron') }}">
             {% set environments = [] %}
             {% for env in token.getEnvironments().all() %}
                 {% set environments = environments|merge([env.environment]) %}

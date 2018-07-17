@@ -112,11 +112,14 @@ class Settings extends Model
      */
     public function getDefaultEnvironments(): array
     {
-        if (empty($this->environments)) {
+        if (empty($this->defaultEnvironments)) {
             $this->defaultEnvironments[] = Craft::$app->getConfig()->env;
         }
 
-        return $this->defaultEnvironments;
+        return array_intersect(
+            $this->getEnvironments(),
+            $this->defaultEnvironments
+        );
     }
 
     /**
