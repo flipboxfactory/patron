@@ -239,9 +239,9 @@ class ProvidersController extends AbstractViewController
         // Breadcrumbs
         $variables['crumbs'][] = [
             'label' => Craft::t(
-                    'patron',
-                    "Edit"
-                ) . ": " . $provider->getDisplayName(),
+                'patron',
+                "Edit"
+            ) . ": " . $provider->getDisplayName(),
             'url' => UrlHelper::url(
                 $variables['baseCpPath'] . '/' . $provider->getId()
             )
@@ -271,9 +271,9 @@ class ProvidersController extends AbstractViewController
         // Breadcrumbs
         $variables['crumbs'][] = [
             'label' => Craft::t(
-                    'patron',
-                    "Edit"
-                ) . ": " . $provider->getDisplayName(),
+                'patron',
+                "Edit"
+            ) . ": " . $provider->getDisplayName(),
             'url' => UrlHelper::url(
                 $variables['baseCpPath'] . '/' . $provider->getId()
             )

@@ -239,7 +239,7 @@ class ManageProviders extends Component
     {
         $environments = [];
 
-        foreach(Patron::getInstance()->getSettings()->getDefaultEnvironments() as $environment) {
+        foreach (Patron::getInstance()->getSettings()->getDefaultEnvironments() as $environment) {
             $environments[$environment] = new ProviderEnvironment([
                 'providerId' => $provider->getId(),
                 'environment' => $environment
@@ -257,7 +257,7 @@ class ManageProviders extends Component
     {
         $environments = $provider->environments;
 
-        if(empty($environments)) {
+        if (empty($environments)) {
             $environments = $this->defaultEnvironments($provider);
         }
 

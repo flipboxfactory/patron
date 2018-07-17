@@ -172,7 +172,7 @@ class ManageTokens extends Component
     {
         $environments = [];
 
-        foreach(Patron::getInstance()->getSettings()->getDefaultEnvironments() as $environment) {
+        foreach (Patron::getInstance()->getSettings()->getDefaultEnvironments() as $environment) {
             $environments[$environment] = new TokenEnvironment([
                 'tokenId' => $token->getId(),
                 'environment' => $environment
@@ -190,7 +190,7 @@ class ManageTokens extends Component
     {
         $environments = $token->environments;
 
-        if(empty($environments)) {
+        if (empty($environments)) {
             $environments = $this->defaultEnvironments($token);
         }
 
