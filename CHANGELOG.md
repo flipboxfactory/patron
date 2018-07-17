@@ -1,5 +1,9 @@
 Changelog
 =========
+## 1.0.0-rc.5 - 2018-07-17
+### Added
+- Providers and tokens can be associate to an 'environment' for better multi-environment support.
+
 ## 1.0.0-rc.4 - 2018-06-28
 ### Added
 - `flipbox\patron\events\PersistTokenEvent` event is triggered before and after storing a new token. 
