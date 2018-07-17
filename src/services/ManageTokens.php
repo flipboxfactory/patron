@@ -133,16 +133,13 @@ class ManageTokens extends Component
     {
         $successful = true;
 
-        /** @var TokenEnvironment[] $allProviders */
-        $allProviders = $token->hasMany(
-            TokenEnvironment::class,
-            ['providerId' => 'id']
-        )->indexBy('environment')
+        /** @var TokenEnvironment[] $allRecords */
+        $allRecords = $token->getEnvironments()
             ->all();
 
-        foreach ($token->environments as $model) {
-            ArrayHelper::remove($allProviders, $model->environment);
-            $model->providerId = $token->getId();
+        foreach ($this->resolveEnvironments($token) as $model) {
+            ArrayHelper::remove($allRecords, $model->environment);
+            $model->tokenId = $token->getId();
 
             if (!$model->save()) {
                 $successful = false;
@@ -160,11 +157,44 @@ class ManageTokens extends Component
         }
 
         // Delete old records
-        foreach ($allProviders as $settings) {
-            $settings->delete();
+        foreach ($allRecords as $record) {
+            $record->delete();
         }
 
         return $successful;
+    }
+
+    /**
+     * @param Token $token
+     * @return TokenEnvironment[]
+     */
+    protected function defaultEnvironments(Token $token): array
+    {
+        $environments = [];
+
+        foreach(Patron::getInstance()->getSettings()->getDefaultEnvironments() as $environment) {
+            $environments[$environment] = new TokenEnvironment([
+                'tokenId' => $token->getId(),
+                'environment' => $environment
+            ]);
+        }
+
+        return $environments;
+    }
+
+    /**
+     * @param Token $token
+     * @return array
+     */
+    protected function resolveEnvironments(Token $token): array
+    {
+        $environments = $token->environments;
+
+        if(empty($environments)) {
+            $environments = $this->defaultEnvironments($token);
+        }
+
+        return $environments;
     }
 
     /*******************************************

@@ -16,6 +16,7 @@ use flipbox\ember\services\traits\records\AccessorByString;
 use Flipbox\OAuth2\Client\Provider\Guardian as GuardianProvider;
 use flipbox\patron\db\ProviderQuery;
 use flipbox\patron\events\RegisterProviderSettings;
+use flipbox\patron\Patron;
 use flipbox\patron\providers\Base;
 use flipbox\patron\providers\Facebook as FacebookSettings;
 use flipbox\patron\providers\Guardian as GuardianSettings;
@@ -199,15 +200,12 @@ class ManageProviders extends Component
     {
         $successful = true;
 
-        /** @var ProviderEnvironment[] $allProviders */
-        $allProviders = $provider->hasMany(
-            ProviderEnvironment::class,
-            ['providerId' => 'id']
-        )->indexBy('environment')
+        /** @var ProviderEnvironment[] $allRecords */
+        $allRecords = $provider->getEnvironments()
             ->all();
 
-        foreach ($provider->environments as $model) {
-            ArrayHelper::remove($allProviders, $model->environment);
+        foreach ($this->resolveEnvironments($provider) as $model) {
+            ArrayHelper::remove($allRecords, $model->environment);
             $model->providerId = $provider->getId();
 
             if (!$model->save()) {
@@ -226,11 +224,44 @@ class ManageProviders extends Component
         }
 
         // Delete old records
-        foreach ($allProviders as $settings) {
-            $settings->delete();
+        foreach ($allRecords as $record) {
+            $record->delete();
         }
 
         return $successful;
+    }
+
+    /**
+     * @param Provider $provider
+     * @return ProviderEnvironment[]
+     */
+    protected function defaultEnvironments(Provider $provider): array
+    {
+        $environments = [];
+
+        foreach(Patron::getInstance()->getSettings()->getDefaultEnvironments() as $environment) {
+            $environments[$environment] = new ProviderEnvironment([
+                'providerId' => $provider->getId(),
+                'environment' => $environment
+            ]);
+        }
+
+        return $environments;
+    }
+
+    /**
+     * @param Provider $provider
+     * @return array
+     */
+    protected function resolveEnvironments(Provider $provider): array
+    {
+        $environments = $provider->environments;
+
+        if(empty($environments)) {
+            $environments = $this->defaultEnvironments($provider);
+        }
+
+        return $environments;
     }
 
 

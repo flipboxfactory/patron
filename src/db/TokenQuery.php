@@ -31,7 +31,7 @@ class TokenQuery extends Query
     public function __construct($config = [])
     {
         $this->orderBy = [Token::tableAlias() . '.dateCreated' => SORT_DESC];
-        $this->from([Token::tableName() . ' ' . Token::tableAlias()]);
+        $this->from = [Token::tableName() . ' ' . Token::tableAlias()];
         $this->select = [Token::tableAlias() . '.*'];
 
         parent::__construct($config);

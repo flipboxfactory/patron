@@ -10,7 +10,6 @@ namespace flipbox\patron\records;
 
 use Craft;
 use craft\helpers\DateTimeHelper;
-use craft\helpers\Db;
 use craft\validators\DateTimeValidator;
 use DateTime;
 use flipbox\ember\helpers\ModelHelper;
@@ -75,17 +74,6 @@ class Token extends ActiveRecordWithId
 
     /**
      * @inheritdoc
-     */
-    public function beforeSave($insert)
-    {
-        // Prepare date value
-        $this->dateExpires = Db::prepareDateForDb($this->dateExpires);
-
-        return parent::beforeSave($insert);
-    }
-
-    /**
-     * @inheritdoc
      * @throws \Throwable
      */
     public function afterSave($insert, $changedAttributes)
@@ -104,13 +92,6 @@ class Token extends ActiveRecordWithId
             parent::rules(),
             $this->stateRules(),
             [
-                //                [
-                //                    [
-                //                        'accessToken',
-                //                        'refreshToken'
-                //                    ],
-                //                    TokenValidator::class
-                //                ],
                 [
                     [
                         'accessToken',

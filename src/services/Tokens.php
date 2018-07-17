@@ -105,7 +105,6 @@ class Tokens extends Component
             'providerId' => Patron::getInstance()->getProviders()->getId($provider),
             'values' => $accessToken->getValues(),
             'dateExpires' => $accessToken->getExpires(),
-            'environment' => Patron::getInstance()->getSettings()->getEnvironment(),
             'enabled' => true
         ];
 

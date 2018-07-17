@@ -54,6 +54,11 @@ class Settings extends Model
      */
     private $environment = null;
 
+    /**
+     * @var array
+     */
+    private $defaultEnvironments = [];
+
     /*******************************************
      * ENVIRONMENTS
      *******************************************/
@@ -99,6 +104,28 @@ class Settings extends Model
     public function setEnvironments(array $environments)
     {
         $this->environments = $environments;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefaultEnvironments(): array
+    {
+        if (empty($this->environments)) {
+            $this->defaultEnvironments[] = Craft::$app->getConfig()->env;
+        }
+
+        return $this->defaultEnvironments;
+    }
+
+    /**
+     * @param array $environments
+     * @return $this
+     */
+    public function setDefaultEnvironments(array $environments)
+    {
+        $this->defaultEnvironments = $environments;
         return $this;
     }
 
@@ -251,6 +278,7 @@ class Settings extends Model
             parent::attributes(),
             [
                 'callbackUrlPath',
+                'defaultEnvironments',
                 'environments',
                 'environment'
             ]

@@ -31,7 +31,7 @@ class ProviderQuery extends Query
     public function __construct($config = [])
     {
         $this->orderBy = [Provider::tableAlias() . '.dateCreated' => SORT_DESC];
-        $this->from([Provider::tableName() . ' ' . Provider::tableAlias()]);
+        $this->from = [Provider::tableName() . ' ' . Provider::tableAlias()];
         $this->select = [Provider::tableAlias() . '.*'];
 
         parent::__construct($config);
