@@ -79,7 +79,7 @@ class AlterEnvironments extends Migration
             ])
             ->all();
 
-        foreach($records as $record) {
+        foreach ($records as $record) {
             $record->delete();
         }
     }
@@ -99,7 +99,7 @@ class AlterEnvironments extends Migration
             ])
             ->all();
 
-        foreach($records as $record) {
+        foreach ($records as $record) {
             $record->delete();
         }
     }
