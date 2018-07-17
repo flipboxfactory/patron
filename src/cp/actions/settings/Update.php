@@ -26,24 +26,6 @@ use yii\base\Model;
 class Update extends ModelCreate
 {
     /**
-     * @param BaseObject $settings
-     * @return bool
-     * @throws ModelNotFoundException
-     */
-    protected function ensureSettings(BaseObject $settings): bool
-    {
-        if (!$settings instanceof Settings) {
-            throw new ModelNotFoundException(sprintf(
-                "Settings must be an instance of '%s', '%s' given.",
-                Settings::class,
-                get_class($settings)
-            ));
-        }
-
-        return true;
-    }
-
-    /**
      * These are the default body params that we're accepting.  You can lock down specific Client attributes this way.
      *
      * @return array
@@ -113,6 +95,14 @@ class Update extends ModelCreate
      */
     protected function performAction(Model $model): bool
     {
+        if (!$model instanceof Settings) {
+            throw new ModelNotFoundException(sprintf(
+                "Settings must be an instance of '%s', '%s' given.",
+                Settings::class,
+                get_class($model)
+            ));
+        }
+
         return Patron::getInstance()->getCp()->getSettings()->save($model);
     }
 
@@ -123,24 +113,5 @@ class Update extends ModelCreate
     protected function newModel(array $config = []): Model
     {
         return Patron::getInstance()->getSettings();
-    }
-
-
-    /*******************************************
-     * POPULATE
-     *******************************************/
-
-    /**
-     * @param BaseObject $object
-     * @return BaseObject
-     * @throws ModelNotFoundException
-     */
-    protected function populate(BaseObject $object): BaseObject
-    {
-        if (true === $this->ensureSettings($object)) {
-            parent::populate($object);
-        }
-
-        return $object;
     }
 }

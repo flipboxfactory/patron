@@ -57,6 +57,27 @@ trait TokenAttributes
     abstract public function andWhere($condition, $params = []);
 
     /**
+     * Appends a LEFT OUTER JOIN part to the query.
+     * @param string|array $table the table to be joined.
+     *
+     * Use a string to represent the name of the table to be joined.
+     * The table name can contain a schema prefix (e.g. 'public.user') and/or table alias (e.g. 'user u').
+     * The method will automatically quote the table name unless it contains some parenthesis
+     * (which means the table is given as a sub-query or DB expression).
+     *
+     * Use an array to represent joining with a sub-query. The array must contain only one element.
+     * The value must be a [[Query]] object representing the sub-query while the corresponding key
+     * represents the alias for the sub-query.
+     *
+     * @param string|array $on the join condition that should appear in the ON part.
+     * Please refer to [[join()]] on how to specify this parameter.
+     * @param array $params the parameters (name => value) to be bound to the query
+     * @return $this the query object itself
+     */
+    abstract public function leftJoin($table, $on = '', $params = []);
+
+
+    /**
      * @param $enabled
      * @return $this
      */

@@ -26,12 +26,18 @@ class AlterEnvironments extends Migration
 
     /**
      * @inheritdoc
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function safeUp()
     {
+        $environments = Patron::getInstance()->getSettings()->getEnvironments();
+
+        $this->deleteOldEnvironments($environments);
+
         $type = $this->enum(
             self::COLUMN_NAME,
-            Patron::getInstance()->getSettings()->getEnvironments()
+            $environments
         )->notNull();
 
         $this->alterColumn(
@@ -45,6 +51,57 @@ class AlterEnvironments extends Migration
             self::COLUMN_NAME,
             $type
         );
+    }
+
+    /**
+     * @param array $environments
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    protected function deleteOldEnvironments(array $environments)
+    {
+        $this->deleteOldProviderEnvironments($environments);
+        $this->deleteOldTokenEnvironments($environments);
+    }
+
+    /**
+     * @param array $environments
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    private function deleteOldTokenEnvironments(array $environments)
+    {
+        $records = TokenEnvironment::find()
+            ->andWhere([
+                'NOT IN',
+                self::COLUMN_NAME,
+                $environments
+            ])
+            ->all();
+
+        foreach($records as $record) {
+            $record->delete();
+        }
+    }
+
+    /**
+     * @param array $environments
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    private function deleteOldProviderEnvironments(array $environments)
+    {
+        $records = ProviderEnvironment::find()
+            ->andWhere([
+                'NOT IN',
+                self::COLUMN_NAME,
+                $environments
+            ])
+            ->all();
+
+        foreach($records as $record) {
+            $record->delete();
+        }
     }
 
     /**
