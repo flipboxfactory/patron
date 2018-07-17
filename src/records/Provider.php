@@ -64,7 +64,7 @@ class Provider extends ActiveRecordWithId
      */
     public function getIcon()
     {
-        if($this->class === null) {
+        if ($this->class === null) {
             return null;
         }
 

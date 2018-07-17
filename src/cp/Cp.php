@@ -128,7 +128,7 @@ class Cp extends Module
      */
     public function getProviderIcon(string $class)
     {
-        if(!array_key_exists($class, $this->icons)) {
+        if (!array_key_exists($class, $this->icons)) {
             $event = new RegisterProviderIcon([
                 'icon' => $this->defaultIcons[$class] ?? null
             ]);
