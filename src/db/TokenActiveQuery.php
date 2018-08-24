@@ -12,6 +12,7 @@ use craft\db\QueryAbortedException;
 use flipbox\ember\db\traits\AuditAttributes;
 use flipbox\ember\db\traits\FixedOrderBy;
 use flipbox\patron\Patron;
+use flipbox\patron\records\Token;
 use yii\db\ActiveQuery;
 
 /**
@@ -30,6 +31,10 @@ class TokenActiveQuery extends ActiveQuery
     public function init()
     {
         parent::init();
+
+        if ($this->from === null) {
+            $this->from = [Token::tableName() . ' ' . Token::tableAlias()];
+        }
 
         if ($this->environment === null) {
             $this->environment = Patron::getInstance()->getSettings()->getEnvironment();

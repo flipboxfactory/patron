@@ -1,5 +1,10 @@
 Changelog
 =========
+
+## Unreleased
+### Fixed
+- Table alias was not set on Active Query.  Ref: [Issue 2](https://github.com/flipboxfactory/patron/issues/2)
+
 ## 1.0.0-rc.5 - 2018-07-17
 ### Added
 - Providers and tokens can be associate to an 'environment' for better multi-environment support.
