@@ -28,7 +28,7 @@ class Install extends Migration
         $this->addForeignKeys();
 
         // Table migrations
-        if(false === (new m180716_121422_environments())->safeUp()) {
+        if (false === (new m180716_121422_environments())->safeUp()) {
             return false;
         }
 
