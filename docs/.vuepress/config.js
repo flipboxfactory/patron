@@ -9,10 +9,17 @@ module.exports = {
         editLinks: true,
         search: true,
         searchMaxSuggestions: 10,
+        codeLanguages: {
+            twig: 'Twig',
+            php: 'PHP',
+            json: 'JSON',
+            // any other languages you want to include in code toggles...
+        },
         nav: [
-            {text: 'Details', link: 'https://flipboxdigital.com/software/hubspot'},
-            {text: 'Changelog', link: 'https://github.com/flipboxfactory/patron/blob/develop/CHANGELOG'},
-            {text: 'Documentation', link: '/'}
+            {text: 'Details', link: 'https://flipboxdigital.com/software/patron'},
+            {text: 'Documentation', link: 'https://patron.flipboxfactory.com'},
+            {text: 'Changelog', link: 'https://github.com/flipboxfactory/patron/blob/master/CHANGELOG.md'},
+            {text: 'Repo', link: 'https://github.com/flipboxfactory/patron'}
         ],
         sidebar: {
             '/': [
@@ -23,6 +30,16 @@ module.exports = {
                         ['/', 'Introduction'],
                         ['installation', 'Installation / Upgrading'],
                         'support'
+                    ]
+                },
+                {
+                    title: 'Services',
+                    collapsable: true,
+                    children: [
+                        ['/services/manage-provider', 'Manage Providers'],
+                        ['/services/manage-tokens', 'Manage Tokens'],
+                        ['/services/providers', 'Providers'],
+                        ['/services/tokens', 'Tokens']
                     ]
                 }
             ]
