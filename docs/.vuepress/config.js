@@ -33,10 +33,17 @@ module.exports = {
                     ]
                 },
                 {
-                    title: 'Services',
-                    collapsable: true,
+                    title: 'Configure',
+                    collapsable: false,
                     children: [
-                        ['/services/manage-provider', 'Manage Providers'],
+                        ['/configure/provider', 'Configure Provider']
+                    ]
+                },
+                {
+                    title: 'Services',
+                    collapsable: false,
+                    children: [
+                        ['/services/manage-providers', 'Manage Providers'],
                         ['/services/manage-tokens', 'Manage Tokens'],
                         ['/services/providers', 'Providers'],
                         ['/services/tokens', 'Tokens']
