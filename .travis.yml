@@ -42,4 +42,4 @@ deploy:
   local-dir: docs/.vuepress/dist
   on:
     branch: master
-  fqdn: parton.flipboxfactory.com
+  fqdn: patron.flipboxfactory.com

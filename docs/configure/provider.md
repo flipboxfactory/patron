@@ -13,3 +13,14 @@ A public identifier provided to you from the third party service.
 
 ### `Client Secret`
 A private string that is generated and intended only for your eyes.  Do not share this or place it in any configuration files.
+
+### `Provider`
+The provider that a connection is intended to be established.
+
+_Note: a provider may have additional setting which will appear once selected._
+
+### `Enabled`
+Identifies whether the provider is considered 'available for use' by default.
+
+### `Environments`
+The environments the provider is configured for.
