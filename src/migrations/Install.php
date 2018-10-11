@@ -27,8 +27,13 @@ class Install extends Migration
         $this->createIndexes();
         $this->addForeignKeys();
 
-        // Table migrations
+        // Environments
         if (false === (new m180716_121422_environments())->safeUp()) {
+            return false;
+        }
+
+        // Locks
+        if (false === (new m181010_081033_provider_locks())->safeUp()) {
             return false;
         }
 
@@ -40,6 +45,16 @@ class Install extends Migration
      */
     public function safeDown()
     {
+        // Locks
+        if (false === (new m181010_081033_provider_locks())->safeDown()) {
+            return false;
+        }
+
+        // Environments
+        if (false === (new m180716_121422_environments())->safeDown()) {
+            return false;
+        }
+
         $this->dropTableIfExists(TokensRecord::tableName());
         $this->dropTableIfExists(ProviderRecord::tableName());
 

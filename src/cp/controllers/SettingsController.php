@@ -39,7 +39,7 @@ class SettingsController extends AbstractController
                     'actions' => [
                         'save' => [
                             200 => Craft::t('patron', "Settings successfully updated."),
-                            401 => Craft::t('patron', "Failed to update settings.")
+                            400 => Craft::t('patron', "Failed to update settings.")
                         ]
                     ]
                 ]

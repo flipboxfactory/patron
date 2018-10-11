@@ -4,6 +4,7 @@ namespace flipbox\patron\tests;
 
 use Codeception\Test\Unit;
 use flipbox\patron\Patron as PatronPlugin;
+use flipbox\patron\services\ProviderLocks;
 use flipbox\patron\services\Providers;
 use flipbox\patron\services\Tokens;
 use flipbox\patron\services\ManageProviders;
@@ -39,6 +40,22 @@ class PatronTest extends Unit
         $this->assertInstanceOf(
             Providers::class,
             $this->module->providers
+        );
+    }
+
+    /**
+     * Test the component is set correctly
+     */
+    public function testProviderLocksComponent()
+    {
+        $this->assertInstanceOf(
+            ProviderLocks::class,
+            $this->module->getProviderLocks()
+        );
+
+        $this->assertInstanceOf(
+            ProviderLocks::class,
+            $this->module->providerLocks
         );
     }
 

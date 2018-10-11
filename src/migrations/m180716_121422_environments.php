@@ -98,7 +98,9 @@ class m180716_121422_environments extends Migration
      */
     public function safeDown()
     {
-        echo "m180716_121422_environments cannot be reverted.\n";
-        return false;
+        $this->dropTableIfExists(ProviderEnvironment::tableName());
+        $this->dropTableIfExists(TokenEnvironment::tableName());
+
+        return true;
     }
 }

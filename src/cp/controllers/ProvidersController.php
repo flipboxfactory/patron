@@ -38,23 +38,23 @@ class ProvidersController extends AbstractController
                     'actions' => [
                         'create' => [
                             201 => Craft::t('patron', "Provider successfully created."),
-                            401 => Craft::t('patron', "Failed to create provider.")
+                            400 => Craft::t('patron', "Failed to create provider.")
                         ],
                         'update' => [
                             200 => Craft::t('patron', "Provider successfully updated."),
-                            401 => Craft::t('patron', "Failed to update provider.")
+                            400 => Craft::t('patron', "Failed to update provider.")
                         ],
                         'delete' => [
                             204 => Craft::t('patron', "Provider successfully deleted."),
-                            401 => Craft::t('patron', "Failed to delete provider.")
+                            400 => Craft::t('patron', "Failed to delete provider.")
                         ],
                         'enable' => [
                             200 => Craft::t('patron', "Provider successfully enabled."),
-                            401 => Craft::t('patron', "Failed to enabled provider.")
+                            400 => Craft::t('patron', "Failed to enabled provider.")
                         ],
                         'disable' => [
                             200 => Craft::t('patron', "Provider successfully disable."),
-                            401 => Craft::t('patron', "Failed to disable provider.")
+                            400 => Craft::t('patron', "Failed to disable provider.")
                         ],
                     ]
                 ]

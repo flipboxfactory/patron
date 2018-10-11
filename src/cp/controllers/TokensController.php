@@ -34,15 +34,15 @@ class TokensController extends AbstractController
                     'actions' => [
                         'delete' => [
                             204 => Craft::t('patron', "Token successfully deleted."),
-                            401 => Craft::t('patron', "Failed to delete token.")
+                            400 => Craft::t('patron', "Failed to delete token.")
                         ],
                         'enable' => [
                             200 => Craft::t('patron', "Token successfully enabled."),
-                            401 => Craft::t('patron', "Failed to enabled token.")
+                            400 => Craft::t('patron', "Failed to enabled token.")
                         ],
                         'disable' => [
                             200 => Craft::t('patron', "Token successfully disable."),
-                            401 => Craft::t('patron', "Failed to disable token.")
+                            400 => Craft::t('patron', "Failed to disable token.")
                         ],
                     ]
                 ]

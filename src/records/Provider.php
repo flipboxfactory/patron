@@ -9,6 +9,9 @@
 namespace flipbox\patron\records;
 
 use Craft;
+use craft\base\PluginInterface;
+use craft\db\Query;
+use craft\helpers\StringHelper;
 use craft\helpers\Template;
 use flipbox\ember\helpers\ModelHelper;
 use flipbox\ember\helpers\ObjectHelper;
@@ -22,6 +25,7 @@ use flipbox\patron\Patron;
 use flipbox\patron\providers\SettingsInterface;
 use flipbox\patron\validators\ProviderValidator;
 use Twig_Markup;
+use yii\helpers\ArrayHelper;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -31,7 +35,8 @@ use Twig_Markup;
  * @property string $clientSecret
  * @property string $class
  * @property array $settings
- * @property Token[] tokens
+ * @property ProviderLock[] $locks
+ * @property Token[] $tokens
  * @property ProviderEnvironment[] $environments
  */
 class Provider extends ActiveRecordWithId
@@ -161,6 +166,29 @@ class Provider extends ActiveRecordWithId
     }
 
     /**
+     * Get all of the associated tokens.
+     *
+     * @param array $config
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLocks(array $config = [])
+    {
+        $query = $this->hasMany(
+            ProviderLock::class,
+            ['providerId' => 'id']
+        );
+
+        if (!empty($config)) {
+            QueryHelper::configure(
+                $query,
+                $config
+            );
+        }
+
+        return $query;
+    }
+
+    /**
      * Get all of the associated environments.
      *
      * @param array $config
@@ -221,9 +249,175 @@ class Provider extends ActiveRecordWithId
     }
 
     /*******************************************
+     * SAVE
+     *******************************************/
+
+    /**
+     * @param PluginInterface $plugin
+     * @param bool $runValidation
+     * @param null $attributeNames
+     * @return bool
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function saveAndLock(PluginInterface $plugin, $runValidation = true, $attributeNames = null): bool
+    {
+        if (!$this->save($runValidation, $attributeNames)) {
+            return false;
+        }
+
+        return $this->addLock($plugin);
+    }
+
+
+    /*******************************************
+     * LOCK
+     *******************************************/
+
+    /**
+     * @param PluginInterface $plugin
+     * @return bool
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function addLock(PluginInterface $plugin): bool
+    {
+        if (null === ($pluginId = $this->getPluginId($plugin))) {
+            return false;
+        }
+
+        return Patron::getInstance()->getProviderLocks()->associateByIds(
+            $provider->getId(),
+            $pluginId
+        );
+    }
+
+    /**
+     * @param PluginInterface $plugin
+     * @return bool
+     */
+    public function removeLock(PluginInterface $plugin): bool
+    {
+        if (null === ($pluginId = $this->getPluginId($plugin))) {
+            return false;
+        }
+
+        return Patron::getInstance()->getProviderLocks()->dissociateByIds(
+            $provider->getId(),
+            $pluginId
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLocked(): bool
+    {
+        return !empty($this->locks);
+    }
+
+    /**
+     * @param PluginInterface $plugin
+     * @return int|null
+     */
+    protected function getPluginId(PluginInterface $plugin)
+    {
+        $id = (new Query())
+            ->select([
+                'id',
+            ])
+            ->from(['{{%plugins}}'])
+            ->where([
+                'handle' => $plugin->getHandle()
+            ])
+            ->scalar();
+
+        return $id ? (int)$id : null;
+    }
+
+    /**
+     * @param PluginInterface $plugin
+     * @return int|null
+     */
+    protected function getPluginName(PluginInterface $plugin)
+    {
+        $id = (new Query())
+            ->select([
+                'id',
+            ])
+            ->from(['{{%plugins}}'])
+            ->where([
+                'handle' => $plugin->getHandle()
+            ])
+            ->scalar();
+
+        return $id ? (int)$id : null;
+    }
+
+    /*******************************************
      * EVENTS
      *******************************************/
 
+    /**
+     * @param PluginInterface|null $plugin
+     * @return bool|false|int
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function delete(PluginInterface $plugin = null)
+    {
+        return $this->canDelete($plugin) ? parent::delete() : false;
+    }
+
+    /**
+     * @param PluginInterface|null $plugin
+     * @return bool
+     * @throws \craft\errors\InvalidPluginException
+     */
+    protected function canDelete(PluginInterface $plugin = null)
+    {
+        // If a plugin is locking this, prevent deletion
+        $lockQuery = $this->getLocks();
+        if (null !== $plugin) {
+            $lockQuery->andWhere(
+                ['<>', 'pluginId', $this->getPluginId($plugin)]
+            );
+        }
+
+        $locks = $lockQuery->all();
+
+        if (count($locks) > 0) {
+            $handles = (new Query())
+                ->select([
+                    'handle',
+                ])
+                ->from(['{{%plugins}}'])
+                ->where([
+                    'id' => ArrayHelper::getColumn($locks, ['pluginId']),
+                ])
+                ->column();
+
+            $names = [];
+            foreach ($handles as $handle) {
+                $plugin = Craft::$app->getPlugins()->getPluginInfo($handle);
+                $names[] = $plugin['name'] ?? 'Unknown Plugin';
+            }
+
+            $this->addError(
+                'locks',
+                Craft::t(
+                    'patron',
+                    'The provider is locked by the following plugins: {plugins}',
+                    [
+                        'plugins' => StringHelper::toString($names, ', ')
+                    ]
+                )
+            );
+            return false;
+        }
+
+        return true;
+    }
 
     /**
      * @inheritdoc

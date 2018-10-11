@@ -24,6 +24,7 @@ use yii\base\Event;
  * @method SettingsModel getSettings()
  *
  * @property services\Providers $providers
+ * @property services\ProviderLocks $providerLocks
  * @property services\Tokens $tokens
  * @property services\ManageProviders $manageProviders
  * @property services\ManageTokens $manageTokens
@@ -41,6 +42,7 @@ class Patron extends Plugin
         // Components
         $this->setComponents([
             'providers' => services\Providers::class,
+            'providerLocks' => services\ProviderLocks::class,
             'tokens' => services\Tokens::class,
             'manageProviders' => services\ManageProviders::class,
             'manageTokens' => services\ManageTokens::class,
@@ -143,6 +145,17 @@ class Patron extends Plugin
         /** @noinspection PhpUnhandledExceptionInspection */
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->get('providers');
+    }
+
+    /**
+     * @noinspection PhpDocMissingThrowsInspection
+     * @return services\ProviderLocks
+     */
+    public function getProviderLocks(): services\ProviderLocks
+    {
+        /** @noinspection PhpUnhandledExceptionInspection */
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->get('providerLocks');
     }
 
     /**

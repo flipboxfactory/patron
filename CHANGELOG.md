@@ -1,6 +1,10 @@
 Changelog
 =========
 
+## Unreleased
+### Added
+- Provider locking.  A third party plugin can lock a provider from accidentally getting deleted.
+
 ## 1.0.0-rc.6 - 2018-08-30
 ### Fixed
 - Table alias was not set on Active Query.  Ref: [Issue 2](https://github.com/flipboxfactory/patron/issues/2)

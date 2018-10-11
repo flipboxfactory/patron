@@ -8,7 +8,6 @@
 
 namespace flipbox\patron\events;
 
-use flipbox\patron\providers\Base;
 use yii\base\Event;
 
 /**

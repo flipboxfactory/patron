@@ -14,7 +14,6 @@ use flipbox\ember\actions\model\ModelCreate;
 use flipbox\ember\exceptions\ModelNotFoundException;
 use flipbox\patron\models\Settings;
 use flipbox\patron\Patron;
-use yii\base\BaseObject;
 use yii\base\Model;
 
 /**
