@@ -66,6 +66,7 @@ class ProvidersController extends AbstractViewController
      * @param null $identifier
      * @param Provider|null $provider
      * @return \yii\web\Response
+     * @throws \craft\errors\InvalidPluginException
      * @throws \flipbox\ember\exceptions\NotFoundException
      * @throws \yii\base\InvalidConfigException
      */
@@ -103,6 +104,24 @@ class ProvidersController extends AbstractViewController
         $variables['providerOptions'] = $providerOptions;
         $variables['provider'] = $provider;
 
+        $pluginLocks = [];
+        $pluginHandles = $provider->getLocks()
+            ->alias('locks')
+            ->leftJoin('{{%plugins}}', 'plugins.id=locks.pluginId')
+            ->select(['handle'])->column();
+
+        foreach ($pluginHandles as $pluginHandle) {
+            $pluginLocks[] = array_merge(
+                Craft::$app->getPlugins()->getPluginInfo($pluginHandle),
+                [
+                    'icon' => Craft::$app->getPlugins()->getPluginIconSvg($pluginHandle)
+                ]
+            );
+        }
+
+        // Plugins that have locked this provider
+        $variables['pluginLocks'] = $pluginLocks;
+
         // Full page form in the CP
         $variables['fullPageForm'] = true;
 
@@ -116,6 +135,7 @@ class ProvidersController extends AbstractViewController
     /**
      * @param null $identifier
      * @return \yii\web\Response
+     * @throws \flipbox\ember\exceptions\NotFoundException
      * @throws \yii\base\InvalidConfigException
      */
     public function actionTokens($identifier = null)

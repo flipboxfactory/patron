@@ -58,6 +58,7 @@
                                 </li>
                             {% endif %}
                         </ul>
+                        {% if not provider.locks|length %}
                         <hr>
                         <ul>
                             <li>
@@ -71,83 +72,10 @@
                                 </a>
                             </li>
                         </ul>
+                        {% endif %}
                     </div>
                 {% endblock %}
             {% endembed %}
         {% endfor %}
     </div>
 {% endblock %}
-
-{#{% block content %}#}
-
-    {#<p id="noproviders"{% if providers|length %} class="hidden"{% endif %}>#}
-        {#{{ "No providers exist yet."|t('app') }}#}
-    {#</p>#}
-
-    {#<table id="providers" class="data fullwidth collapsible{% if providers|length == 0 %} hidden{% endif %}">#}
-        {#<thead>#}
-        {#<th scope="col">{{ "Name"|t('patron') }}</th>#}
-        {#<th scope="col">{{ "Handle"|t('patron') }}</th>#}
-        {#<th scope="col">{{ "Client Id"|t('patron') }}</th>#}
-        {#<th scope="col">{{ "Tokens"|t('patron') }}</th>#}
-        {#<td class="thin"></td>#}
-        {#</thead>#}
-        {#<tbody>#}
-        {#{% for provider in providers %}#}
-            {#<tr data-id="{{ provider.id }}" data-name="{{ provider.getDisplayName()|t('patron') }}">#}
-                {#<th scope="row" data-title="{{ 'Name'|t('patron') }}">#}
-                    {#<span class="status{% if provider.enabled %} active{% endif %}"></span>#}
-                    {#<a href="{{ url(baseCpPath ~ '/' ~ provider.id) }}">{{ provider.getDisplayName()|t('patron') }}</a>#}
-                {#</th>#}
-                {#<td data-title="{{ 'Handle'|t('patron') }}"><code>{{ provider.handle }}</code></td>#}
-                {#<td data-title="{{ 'Client Id'|t('patron') }}"><code>{{ provider.providerId }}</code></td>#}
-                {#<td data-title="{{ 'Secret'|t('patron') }}">#}
-                    {#{% set tokenCount = provider.tokens|length %}{{ tokenCount }}#}
-                {#</td>#}
-                {#<td class="thin">#}
-                    {#<form method="post" accept-charset="UTF-8">#}
-                        {#{{ csrfInput() }}#}
-                        {#<div class="btn menubtn" data-icon="settings" title="Actions" tabindex="0"#}
-                             {#role="combobox"></div>#}
-                        {#<div class="menu">#}
-                            {#<ul>#}
-                                {#<li>{% if provider.enabled %}#}
-                                        {#<a class="formsubmit"#}
-                                           {#data-param="id"#}
-                                           {#data-value="{{ provider.id }}"#}
-                                           {#data-action="{{ baseActionPath }}/disable"#}
-                                           {#data-redirect="{{ continueEditingUrl|hash }}">#}
-                                            {#{{ "Disable"|t('patron') }}#}
-                                        {#</a>#}
-                                    {#{% else %}#}
-                                        {#<a class="formsubmit"#}
-                                           {#data-param="id"#}
-                                           {#data-value="{{ provider.id }}"#}
-                                           {#data-action="{{ baseActionPath }}/enable"#}
-                                           {#data-redirect="{{ continueEditingUrl|hash }}">#}
-                                            {#{{ "Enable"|t('patron') }}#}
-                                        {#</a>#}
-                                    {#{% endif %}#}
-                                {#</li>#}
-                            {#</ul>#}
-                            {#<hr>#}
-                            {#<ul>#}
-                                {#<li>#}
-                                    {#<a class="formsubmit"#}
-                                       {#data-param="id"#}
-                                       {#data-value="{{ provider.id }}"#}
-                                       {#data-action="{{ baseActionPath }}/delete"#}
-                                       {#data-redirect="{{ continueEditingUrl|hash }}" class="delete"#}
-                                       {#title="{{ 'Delete'|t('patron') }}" role="button">#}
-                                        {#{{ "Delete"|t('patron') }}#}
-                                    {#</a>#}
-                                {#</li>#}
-                            {#</ul>#}
-                        {#</div>#}
-                    {#</form>#}
-                {#</td>#}
-            {#</tr>#}
-        {#{% endfor %}#}
-        {#</tbody>#}
-    {#</table>#}
-{#{% endblock %}#}

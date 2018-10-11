@@ -65,16 +65,17 @@ class ProviderLocks extends Component
     /**
      * @param ProviderLock $record
      * @return bool
-     * @throws \yii\db\Exception
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function dissociate(
         ProviderLock $record
-    ) {
+    ): bool {
         if (false === $this->existingAssociation($record)) {
             return true;
         }
 
-        return $record->delete();
+        return (bool)$record->delete();
     }
 
 
@@ -117,32 +118,36 @@ class ProviderLocks extends Component
     /**
      * @param int $providerId
      * @param int $pluginId
-     * @param int|null $sortOrder
      * @return bool
+     * @throws \Throwable
      */
     public function associateByIds(
         int $providerId,
         int $pluginId
     ): bool {
-        return $this->create([
-            'providerId' => $providerId,
-            'pluginId' => $pluginId
-        ])->associate();
+        return $this->associate(
+            $this->create([
+                'providerId' => $providerId,
+                'pluginId' => $pluginId
+            ])
+        );
     }
 
     /**
      * @param int $providerId
      * @param int $pluginId
-     * @param int|null $sortOrder
      * @return bool
+     * @throws \Throwable
      */
     public function dissociateByIds(
         int $providerId,
         int $pluginId
     ): bool {
-        return $this->create([
-            'providerId' => $providerId,
-            'pluginId' => $pluginId
-        ])->dissociate();
+        return $this->dissociate(
+            $this->create([
+                'providerId' => $providerId,
+                'pluginId' => $pluginId
+            ])
+        );
     }
 }

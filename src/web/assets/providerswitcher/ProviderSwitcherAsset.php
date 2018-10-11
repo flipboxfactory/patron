@@ -31,7 +31,11 @@ class ProviderSwitcherAsset extends AssetBundle
     public function init()
     {
         $this->js = [
-            'ProviderSwitcher' . $this->dotJs()
+            'js/ProviderSwitcher' . $this->dotJs()
+        ];
+
+        $this->css = [
+            'css/Provider.css'
         ];
 
         parent::init();

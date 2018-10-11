@@ -45,14 +45,14 @@ class ProviderLock extends ActiveRecord
                 ],
                 [
                     [
-                        'tokenId',
+                        'providerId',
                         'pluginId'
                     ],
                     'required'
                 ],
                 [
                     [
-                        'tokenId',
+                        'providerId',
                         'pluginId'
                     ],
                     'safe',

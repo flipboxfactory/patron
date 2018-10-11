@@ -287,7 +287,7 @@ class Provider extends ActiveRecordWithId
         }
 
         return Patron::getInstance()->getProviderLocks()->associateByIds(
-            $provider->getId(),
+            $this->getId() ?: 0,
             $pluginId
         );
     }
@@ -303,7 +303,7 @@ class Provider extends ActiveRecordWithId
         }
 
         return Patron::getInstance()->getProviderLocks()->dissociateByIds(
-            $provider->getId(),
+            $this->getId() ?: 0,
             $pluginId
         );
     }
