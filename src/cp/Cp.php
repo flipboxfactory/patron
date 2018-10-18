@@ -124,7 +124,7 @@ class Cp extends Module
 
     /**
      * @param string $class
-     * @return mixed
+     * @return string|null
      */
     public function getProviderIcon(string $class)
     {

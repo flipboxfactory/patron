@@ -126,6 +126,7 @@ class Providers extends Component
         return $query;
     }
 
+
     /**
      * @param array $config
      * @return AbstractProvider

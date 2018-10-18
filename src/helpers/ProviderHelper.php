@@ -8,7 +8,9 @@
 
 namespace flipbox\patron\helpers;
 
+use Craft;
 use craft\helpers\StringHelper;
+use flipbox\patron\Patron;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use ReflectionClass;
 
@@ -58,6 +60,53 @@ class ProviderHelper
 
         return $values;
     }
+
+    /**
+     * @param string $value
+     * @param bool $checkSettings
+     * @return string
+     */
+    public static function encryptClientSecret(string $value, bool $checkSettings = true): string
+    {
+        if ($checkSettings === true && Patron::getInstance()->getSettings()->encryptStorageData != true) {
+            return $value;
+        }
+
+        return base64_encode(Craft::$app->getSecurity()->encryptByKey($value));
+    }
+
+    /**
+     * @param string $value
+     * @param bool $checkSettings
+     * @return string
+     */
+    public static function decryptClientSecret(string $value, bool $checkSettings = true): string
+    {
+        if ($checkSettings === true && Patron::getInstance()->getSettings()->encryptStorageData != true) {
+            return $value;
+        }
+
+        try {
+            return Craft::$app->getSecurity()->decryptByKey(
+                base64_decode($value)
+            );
+        } catch (\Exception $e) {
+            Patron::error(
+                Craft::t(
+                    'patron',
+                    "Unable to decrypt client secret '{secret}'. Message: '{message}'",
+                    [
+                        'secret' => $value,
+                        'message' => $e->getMessage()
+                    ]
+                )
+            );
+        }
+
+        return $value;
+    }
+
+
 
     /**
      * @param AbstractProvider $provider

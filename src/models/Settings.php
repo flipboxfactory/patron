@@ -55,6 +55,13 @@ class Settings extends Model
     private $environment = null;
 
     /**
+     * Encrypt data in storage
+     *
+     * @var bool
+     */
+    public $encryptStorageData = true;
+
+    /**
      * @var array
      */
     private $defaultEnvironments = [];
@@ -261,6 +268,13 @@ class Settings extends Model
                 ],
                 [
                     [
+                        'encryptStorageData'
+                    ],
+                    'boolean'
+                ],
+                [
+                    [
+                        'encryptStorageData',
                         'callbackUrlPath'
                     ],
                     'safe',

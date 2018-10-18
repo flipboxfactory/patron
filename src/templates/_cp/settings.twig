@@ -9,12 +9,23 @@
         <h2>Settings</h2>
     </div>
 
+    {{ forms.lightSwitchField({
+        label: "Encrypt data"|t('patron'),
+        instructions: "Encrypt data stored in the database."|t('patron'),
+        id: 'encryptStorageData',
+        name: 'encryptStorageData',
+        on: settings.encryptStorageData,
+        errors: settings.getErrors('encryptStorageData'),
+        warning: "Changing this may result in misconfigured Providers."|t('patron'),
+    }) }}
+
     {% set cols = {
-    'value' : {
-        type: 'singleline',
-        heading: 'Value',
-        width: '50'
-    }} %}
+        'value' : {
+            type: 'singleline',
+            heading: 'Value',
+            width: '50'
+        }
+    } %}
 
     {% set rows = [] %}
     {% for environment in settings.environments %}

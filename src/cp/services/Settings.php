@@ -27,11 +27,22 @@ class Settings extends Component
      */
     public function save(SettingsModel $settingsModel)
     {
+        $currentSettings = Patron::getInstance()->getSettings();
+
+        $encryptionChanged = $currentSettings->encryptStorageData != $settingsModel->encryptStorageData;
+
         // Save plugin settings
         if (Craft::$app->getPlugins()->savePluginSettings(
             Patron::getInstance(),
             $settingsModel->toArray()
         )) {
+            // Change encryption
+            if ($encryptionChanged) {
+                Patron::getInstance()->manageProviders->changeEncryption(
+                    $settingsModel->encryptStorageData
+                );
+            }
+
             // Alter table
             return $this->alterEnvironmentsColumn();
         }

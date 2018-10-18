@@ -32,7 +32,8 @@ class Update extends ModelCreate
     protected function validBodyParams(): array
     {
         return [
-            'callbackUrlPath'
+            'callbackUrlPath',
+            'encryptStorageData'
         ];
     }
 
@@ -111,6 +112,6 @@ class Update extends ModelCreate
      */
     protected function newModel(array $config = []): Model
     {
-        return Patron::getInstance()->getSettings();
+        return clone Patron::getInstance()->getSettings();
     }
 }

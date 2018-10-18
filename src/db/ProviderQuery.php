@@ -10,8 +10,10 @@ namespace flipbox\patron\db;
 
 use craft\db\Query;
 use craft\db\QueryAbortedException;
+use craft\helpers\ArrayHelper;
 use flipbox\ember\db\traits\AuditAttributes;
 use flipbox\ember\db\traits\FixedOrderBy;
+use flipbox\patron\helpers\ProviderHelper;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
 
@@ -48,6 +50,54 @@ class ProviderQuery extends Query
             $this->environment = Patron::getInstance()->getSettings()->getEnvironment();
         }
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function populate($rows)
+    {
+        $results = parent::populate($rows);
+
+        if (Patron::getInstance()->getSettings()->encryptStorageData === true) {
+            foreach ($results as $key => $result) {
+                $results[$key] = $this->parseResult($result, false);
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Decrypt
+     * @inheritdoc
+     */
+    public function one($db = null)
+    {
+        return $this->parseResult(parent::one($db));
+    }
+
+    /**
+     * @param $result
+     * @return mixed
+     * @throws \yii\base\Exception
+     * @throws \yii\base\InvalidConfigException
+     */
+    protected function parseResult($result, bool $checkSettings = true)
+    {
+        if (!is_array($result)) {
+            return $result;
+        }
+
+        // Extract 'clientSecret'
+        $clientSecret = ArrayHelper::remove($result, 'clientSecret');
+
+        if (!empty($clientSecret)) {
+            $result['clientSecret'] = ProviderHelper::decryptClientSecret($clientSecret, $checkSettings);
+        }
+
+        return $result;
+    }
+
 
     /*******************************************
      * FIXED ORDER

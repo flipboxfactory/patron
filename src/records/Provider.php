@@ -62,7 +62,7 @@ class Provider extends ActiveRecordWithId
     /**
      * The length of the secret
      */
-    const CLIENT_SECRET_LENGTH = 100;
+    const CLIENT_SECRET_LENGTH = 255;
 
     /**
      * @return string|null
@@ -421,10 +421,38 @@ class Provider extends ActiveRecordWithId
 
     /**
      * @inheritdoc
+     */
+    public function afterFind()
+    {
+        if ($this->clientSecret) {
+            $this->clientSecret = ProviderHelper::decryptClientSecret($this->clientSecret);
+        }
+
+        parent::afterFind();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeSave($insert)
+    {
+        if ($this->clientSecret) {
+            $this->clientSecret = ProviderHelper::encryptClientSecret($this->clientSecret);
+        }
+
+        return parent::beforeSave($insert);
+    }
+
+    /**
+     * @inheritdoc
      * @throws \Throwable
      */
     public function afterSave($insert, $changedAttributes)
     {
+        if ($this->clientSecret) {
+            $this->clientSecret = ProviderHelper::decryptClientSecret($this->clientSecret);
+        }
+
         Patron::getInstance()->manageProviders()->saveEnvironments($this);
         parent::afterSave($insert, $changedAttributes);
     }

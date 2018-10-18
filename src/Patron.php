@@ -14,6 +14,7 @@ use craft\events\RegisterUrlRulesEvent;
 use craft\helpers\UrlHelper;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
+use flipbox\ember\modules\LoggerTrait;
 use flipbox\patron\models\Settings as SettingsModel;
 use yii\base\Event;
 
@@ -32,6 +33,16 @@ use yii\base\Event;
  */
 class Patron extends Plugin
 {
+    use LoggerTrait;
+
+    /**
+     * @return string
+     */
+    protected static function getLogFileName(): string
+    {
+        return 'patron';
+    }
+
     /**
      * @inheritdoc
      */
@@ -240,43 +251,5 @@ class Patron extends Plugin
                 'patron/providers/<identifier:\d+>/tokens' => 'patron/cp/view/providers/tokens',
             ]
         );
-    }
-
-
-    /*******************************************
-     * LOGGING
-     *******************************************/
-
-    /**
-     * Logs an informative message.
-     *
-     * @param $message
-     * @param string $category
-     */
-    public static function info($message, $category = 'patron')
-    {
-        Craft::info($message, $category);
-    }
-
-    /**
-     * Logs a warning message.
-     *
-     * @param $message
-     * @param string $category
-     */
-    public static function warning($message, $category = 'patron')
-    {
-        Craft::warning($message, $category);
-    }
-
-    /**
-     * Logs an error message.
-     *
-     * @param $message
-     * @param string $category
-     */
-    public static function error($message, $category = 'patron')
-    {
-        Craft::error($message, $category);
     }
 }

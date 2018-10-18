@@ -4,6 +4,7 @@ Changelog
 ## Unreleased
 ### Added
 - Provider locking.  A third party plugin can lock a provider from accidentally getting deleted.
+- Settings::$encryptStorageData which encrypts the Provider's Client Secret (enabled by default).
 
 ## 1.0.0-rc.6 - 2018-08-30
 ### Fixed

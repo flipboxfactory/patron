@@ -264,6 +264,35 @@ class ManageProviders extends Component
         return $environments;
     }
 
+    /*******************************************
+     * ENCRYPTION
+     *******************************************/
+
+    /**
+     * @param Provider $record
+     * @return bool
+     */
+    public function changeEncryption(bool $changeTo)
+    {
+        // Temp
+        Patron::getInstance()->getSettings()->encryptStorageData = !$changeTo;
+
+        // Get current providers
+        $records = Patron::getInstance()->manageProviders->findAll();
+
+        // Temp
+        Patron::getInstance()->getSettings()->encryptStorageData = $changeTo;
+
+        // Iterate and save
+        foreach ($records as $record) {
+            Patron::info(
+                'Altering Provider::$clientSecret encryption preferences'
+            );
+
+            $record->save();
+        }
+    }
+
 
     /*******************************************
      * STATES
