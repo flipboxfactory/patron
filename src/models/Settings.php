@@ -234,6 +234,16 @@ class Settings extends Model
     /**
      * @return ViewInterface
      */
+    public function getProviderEnvironmentView(): ViewInterface
+    {
+        return new Template([
+            'template' => 'patron/_cp/provider/_environment'
+        ]);
+    }
+
+    /**
+     * @return ViewInterface
+     */
     public function getProviderSettingsView(): ViewInterface
     {
         return new Template([

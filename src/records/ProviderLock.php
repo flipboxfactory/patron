@@ -9,9 +9,7 @@
 namespace flipbox\patron\records;
 
 use flipbox\ember\helpers\ModelHelper;
-use flipbox\ember\helpers\QueryHelper;
 use flipbox\ember\records\ActiveRecord;
-use yii\db\ActiveQueryInterface;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -22,6 +20,8 @@ use yii\db\ActiveQueryInterface;
  */
 class ProviderLock extends ActiveRecord
 {
+    use traits\ProviderAttribute;
+
     /**
      * The table alias
      */
@@ -37,7 +37,6 @@ class ProviderLock extends ActiveRecord
             [
                 [
                     [
-                        'providerId',
                         'pluginId'
                     ],
                     'number',
@@ -52,7 +51,6 @@ class ProviderLock extends ActiveRecord
                 ],
                 [
                     [
-                        'providerId',
                         'pluginId'
                     ],
                     'safe',
@@ -62,28 +60,5 @@ class ProviderLock extends ActiveRecord
                 ]
             ]
         );
-    }
-
-    /**
-     * Get the associated Authorization
-     *
-     * @param array $config
-     * @return ActiveQueryInterface
-     */
-    public function getProvider(array $config = [])
-    {
-        $query = $this->hasOne(
-            Provider::class,
-            ['providerId' => 'id']
-        );
-
-        if (!empty($config)) {
-            QueryHelper::configure(
-                $query,
-                $config
-            );
-        }
-
-        return $query;
     }
 }

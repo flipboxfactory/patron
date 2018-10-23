@@ -38,7 +38,7 @@ class Settings extends Component
         )) {
             // Change encryption
             if ($encryptionChanged) {
-                Patron::getInstance()->manageProviders->changeEncryption(
+                Patron::getInstance()->manageProviders()->changeEncryption(
                     $settingsModel->encryptStorageData
                 );
             }

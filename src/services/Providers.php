@@ -22,6 +22,7 @@ use flipbox\patron\records\Provider;
 use flipbox\patron\records\Provider as ProviderRecord;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use yii\base\Component;
+use yii\db\QueryInterface;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -44,6 +45,20 @@ class Providers extends Component
 {
     use AccessorByString {
         prepareConfig as parentPrepareConfig;
+        buildQueryFromCondition as parentBuildQueryFromCondition;
+    }
+
+    /**
+     * @param array $condition
+     * @return QueryInterface
+     */
+    protected function buildQueryFromCondition($condition = []): QueryInterface
+    {
+        if (is_numeric($condition)) {
+            $condition = ['id' => $condition];
+        }
+
+        return $this->parentBuildQueryFromCondition($condition);
     }
 
     /**

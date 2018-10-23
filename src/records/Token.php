@@ -33,7 +33,15 @@ use yii\db\ActiveQueryInterface;
  */
 class Token extends ActiveRecordWithId
 {
-    use StateAttribute;
+    use StateAttribute,
+        traits\ProviderAttribute;
+
+    /**
+     * @inheritdoc
+     */
+    protected $getterPriorityAttributes = [
+        'providerId'
+    ];
 
     /**
      * The table alias
@@ -91,6 +99,7 @@ class Token extends ActiveRecordWithId
         return array_merge(
             parent::rules(),
             $this->stateRules(),
+            $this->providerRules(),
             [
                 [
                     [
@@ -114,14 +123,6 @@ class Token extends ActiveRecordWithId
                 ],
                 [
                     [
-                        'providerId'
-                    ],
-                    'number',
-                    'integerOnly' => true
-                ],
-                [
-                    [
-                        'providerId',
                         'accessToken',
                         'values',
                         'dateExpires'

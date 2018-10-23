@@ -55,12 +55,9 @@ class ProviderLocks extends Component
     public function associate(
         ProviderLock $record
     ): bool {
-        if (true === $this->existingAssociation($record)) {
-            $reOrder = true;
-        }
-
         return $record->save();
     }
+
 
     /**
      * @param ProviderLock $record

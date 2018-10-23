@@ -12,6 +12,7 @@ use craft\db\QueryAbortedException;
 use craft\helpers\Db;
 use flipbox\patron\records\Provider;
 use flipbox\patron\records\ProviderEnvironment;
+use flipbox\patron\records\ProviderInstance;
 use yii\db\Expression;
 
 /**
@@ -165,6 +166,16 @@ trait ProviderAttributes
     }
 
     /**
+     * @param $settings
+     * @return $this
+     */
+    public function settings($settings)
+    {
+        $this->$settings = $settings;
+        return $this;
+    }
+
+    /**
      * @throws QueryAbortedException
      */
     protected function applyConditions()
@@ -178,20 +189,44 @@ trait ProviderAttributes
             $this->andWhere(Db::parseParam('enabled', $this->enabled));
         }
 
-        $attributes = ['id', 'name', 'handle', 'clientId', 'clientSecret'];
+        $attributes = ['id', 'name', 'handle'];
 
         foreach ($attributes as $attribute) {
             if (($value = $this->{$attribute}) !== null) {
-                $this->andWhere(Db::parseParam($attribute, $value));
+                $this->andWhere(Db::parseParam(Provider::tableAlias() . '.' . $attribute, $value));
             }
         }
 
+        $this->applySettingsParam();
         $this->applyEnvironmentParam();
     }
 
     /*******************************************
      * PARAMS
      *******************************************/
+
+    /**
+     * Apply environment params
+     */
+    protected function applySettingsParam()
+    {
+        $alias = ProviderInstance::tableAlias();
+
+        $this->leftJoin(
+            ProviderInstance::tableName() . ' ' . $alias,
+            '[[' . $alias . '.providerId]] = [[' . Provider::tableAlias() . '.id]]'
+        );
+
+        $attributes = ['clientId', 'clientSecret'];
+
+        foreach ($attributes as $attribute) {
+            if (null !== ($value = $this->{$attribute})) {
+                $this->andWhere(Db::parseParam($alias . '.' . $attribute, $value));
+            }
+        }
+
+        $this->distinct(true);
+    }
 
     /**
      * Apply environment params
@@ -206,12 +241,10 @@ trait ProviderAttributes
 
         $this->leftJoin(
             ProviderEnvironment::tableName() . ' ' . $alias,
-            '[[' . $alias . '.providerId]] = [[' . Provider::tableAlias() . '.id]]'
+            '[[' . $alias . '.settingsId]] = [[' . ProviderInstance::tableAlias() . '.id]]'
         );
         $this->andWhere(
             Db::parseParam($alias . '.environment', $this->environment)
         );
-
-        $this->distinct(true);
     }
 }

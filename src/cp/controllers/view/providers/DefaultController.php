@@ -1,34 +1,27 @@
 <?php
 
-namespace flipbox\patron\cp\controllers\view;
+namespace flipbox\patron\cp\controllers\view\providers;
 
 use Craft;
 use craft\helpers\UrlHelper;
 use flipbox\craft\assets\card\Card;
 use flipbox\craft\assets\circleicon\CircleIcon;
-use flipbox\ember\web\assets\rowinfomodal\RowInfoModal;
 use flipbox\patron\helpers\ProviderHelper as ProviderHelper;
 use flipbox\patron\records\Provider;
 use flipbox\patron\services\ManageProviders as ProviderService;
-use flipbox\patron\web\assets\providerswitcher\ProviderSwitcherAsset;
+use flipbox\patron\web\assets\providers\ProvidersAsset;
 
-class ProvidersController extends AbstractViewController
+class DefaultController extends AbstractViewController
 {
-
     /**
      * The index view template path
      */
-    const TEMPLATE_INDEX = AbstractViewController::TEMPLATE_BASE . DIRECTORY_SEPARATOR . 'provider';
+    const TEMPLATE_INDEX = AbstractViewController::TEMPLATE_BASE;
 
     /**
      * The upsert view template path
      */
-    const TEMPLATE_UPSERT = self::TEMPLATE_INDEX . DIRECTORY_SEPARATOR . 'upsert';
-
-    /**
-     * The token view template path
-     */
-    const TEMPLATE_TOKEN = self::TEMPLATE_INDEX . DIRECTORY_SEPARATOR . 'tokens';
+    const TEMPLATE_UPSERT = self::TEMPLATE_INDEX . '/upsert';
 
     /**
      * @return ProviderService
@@ -72,7 +65,7 @@ class ProvidersController extends AbstractViewController
      */
     public function actionUpsert($identifier = null, Provider $provider = null)
     {
-        $this->getView()->registerAssetBundle(ProviderSwitcherAsset::class);
+        $this->getView()->registerAssetBundle(ProvidersAsset::class);
 
         // Empty variables for template
         $variables = [];
@@ -121,6 +114,7 @@ class ProvidersController extends AbstractViewController
 
         // Plugins that have locked this provider
         $variables['pluginLocks'] = $pluginLocks;
+        $variables['availableEnvironments'] = $this->availableEnvironments($provider);
 
         // Full page form in the CP
         $variables['fullPageForm'] = true;
@@ -132,89 +126,10 @@ class ProvidersController extends AbstractViewController
         return $this->renderTemplate(static::TEMPLATE_UPSERT, $variables);
     }
 
-    /**
-     * @param null $identifier
-     * @return \yii\web\Response
-     * @throws \flipbox\ember\exceptions\NotFoundException
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function actionTokens($identifier = null)
-    {
-
-        Craft::$app->getView()->registerAssetBundle(CircleIcon::class);
-        Craft::$app->getView()->registerAssetBundle(RowInfoModal::class);
-
-        // Empty variables for template
-        $variables = [];
-
-        $provider = $this->providerService()->getByCondition([
-            'id' => $identifier,
-            'environment' => null
-        ]);
-
-        $this->tokenVariables($variables, $provider);
-
-        $variables['provider'] = $provider;
-
-        // Tabs
-        $variables['tabs'] = $this->getTabs($variables['provider']);
-        $variables['selectedTab'] = 'tokens';
-
-        return $this->renderTemplate(static::TEMPLATE_TOKEN, $variables);
-    }
-
 
     /*******************************************
-     * TABS
+     * VARIABLES
      *******************************************/
-
-    /**
-     * @param Provider $provider
-     * @return array
-     */
-    protected function getTabs(Provider $provider): array
-    {
-        if ($provider->getId() === null) {
-            return [];
-        }
-
-        $baseUrl = $this->getBaseCpPath() . '/' . $provider->getId();
-
-        return [
-            'general' => [
-                'label' => Craft::t('patron', 'General'),
-                'url' => UrlHelper::url($baseUrl . '/')
-            ],
-            'tokens' => [
-                'label' => Craft::t('patron', 'Tokens'),
-                'url' => UrlHelper::url($baseUrl . '/tokens')
-            ],
-//            'activity' => [
-//                'label' => Craft::t('patron', 'Activity'),
-//                'url' => UrlHelper::url($baseUrl.'/activity')
-//            ]
-        ];
-    }
-
-    /*******************************************
-     * BASE VARIABLES
-     *******************************************/
-
-    /**
-     * @inheritdoc
-     */
-    protected function getBaseCpPath(): string
-    {
-        return parent::getBaseCpPath() . '/providers';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function getBaseActionPath(): string
-    {
-        return parent::getBaseActionPath() . '/providers';
-    }
 
     /**
      * Set base variables used to generate template views
@@ -235,11 +150,6 @@ class ProvidersController extends AbstractViewController
         ];
     }
 
-
-    /*******************************************
-     * UPDATE VARIABLES
-     *******************************************/
-
     /**
      * @param array $variables
      * @param Provider $provider
@@ -255,38 +165,6 @@ class ProvidersController extends AbstractViewController
 
         // Append title
         $variables['title'] .= ' - ' . Craft::t('patron', 'Edit') . ' ' . $provider->getDisplayName();
-
-        // Breadcrumbs
-        $variables['crumbs'][] = [
-            'label' => Craft::t(
-                'patron',
-                "Edit"
-            ) . ": " . $provider->getDisplayName(),
-            'url' => UrlHelper::url(
-                $variables['baseCpPath'] . '/' . $provider->getId()
-            )
-        ];
-    }
-
-    /*******************************************
-     * TOKEN VARIABLES
-     *******************************************/
-
-    /**
-     * @param array $variables
-     * @param Provider $provider
-     */
-    protected function tokenVariables(array &$variables, Provider $provider)
-    {
-        // apply base view variables
-        $this->baseVariables($variables);
-
-        // Set the "Continue Editing" URL
-        $variables['continueEditingUrl'] = $this->getBaseContinueEditingUrl('/' . $provider->getId() . '/tokens');
-        $variables['baseActionPath'] = $this->module->uniqueId . ('/tokens');
-
-        // Append title
-        $variables['title'] .= ' - ' . $provider->getDisplayName() . ' ' . Craft::t('patron', 'Tokens');
 
         // Breadcrumbs
         $variables['crumbs'][] = [

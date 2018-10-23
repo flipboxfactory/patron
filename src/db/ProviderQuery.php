@@ -16,6 +16,7 @@ use flipbox\ember\db\traits\FixedOrderBy;
 use flipbox\patron\helpers\ProviderHelper;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
+use flipbox\patron\records\ProviderInstance;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -34,7 +35,12 @@ class ProviderQuery extends Query
     {
         $this->orderBy = [Provider::tableAlias() . '.dateCreated' => SORT_DESC];
         $this->from = [Provider::tableName() . ' ' . Provider::tableAlias()];
-        $this->select = [Provider::tableAlias() . '.*'];
+        $this->select = [
+            Provider::tableAlias() . '.*',
+            ProviderInstance::tableAlias() . '.clientId',
+            ProviderInstance::tableAlias() . '.clientSecret',
+            ProviderInstance::tableAlias() . '.settings'
+        ];
 
         parent::__construct($config);
     }

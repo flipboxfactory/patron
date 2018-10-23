@@ -27,7 +27,8 @@
 
     {% from _self import tr %}
     {% set tokens = provider.getTokens({
-        'environment': null
+        'environment': null,
+        'enabled': null
     }).all() %}
     <table id="tokens" class="data fullwidth collapsible{% if tokens|length == 0 %} hidden{% endif %}">
         <thead>

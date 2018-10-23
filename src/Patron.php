@@ -15,6 +15,7 @@ use craft\helpers\UrlHelper;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
 use flipbox\ember\modules\LoggerTrait;
+use flipbox\patron\migrations\m181019_220655_provider_settings;
 use flipbox\patron\models\Settings as SettingsModel;
 use yii\base\Event;
 
@@ -25,6 +26,7 @@ use yii\base\Event;
  * @method SettingsModel getSettings()
  *
  * @property services\Providers $providers
+ * @property services\ProviderSettings $providerSettings
  * @property services\ProviderLocks $providerLocks
  * @property services\Tokens $tokens
  * @property services\ManageProviders $manageProviders
@@ -53,6 +55,7 @@ class Patron extends Plugin
         // Components
         $this->setComponents([
             'providers' => services\Providers::class,
+            'providerSettings' => services\ProviderSettings::class,
             'providerLocks' => services\ProviderLocks::class,
             'tokens' => services\Tokens::class,
             'manageProviders' => services\ManageProviders::class,
@@ -160,6 +163,17 @@ class Patron extends Plugin
 
     /**
      * @noinspection PhpDocMissingThrowsInspection
+     * @return services\ProviderSettings
+     */
+    public function getProviderSettings(): services\ProviderSettings
+    {
+        /** @noinspection PhpUnhandledExceptionInspection */
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->get('providerSettings');
+    }
+
+    /**
+     * @noinspection PhpDocMissingThrowsInspection
      * @return services\ProviderLocks
      */
     public function getProviderLocks(): services\ProviderLocks
@@ -244,11 +258,26 @@ class Patron extends Plugin
                 // SETTINGS
                 'patron/settings' => 'patron/cp/view/settings/index',
 
-                'patron' => 'patron/cp/view/general/index',
-                'patron/providers' => 'patron/cp/view/providers/index',
-                'patron/providers/new' => 'patron/cp/view/providers/upsert',
-                'patron/providers/<identifier:\d+>' => 'patron/cp/view/providers/upsert',
-                'patron/providers/<identifier:\d+>/tokens' => 'patron/cp/view/providers/tokens',
+                'patron' =>
+                    'patron/cp/view/general/index',
+
+                'patron/providers' =>
+                    'patron/cp/view/providers/default/index',
+
+                'patron/providers/new' =>
+                    'patron/cp/view/providers/default/upsert',
+
+                'patron/providers/<identifier:\d+>' =>
+                    'patron/cp/view/providers/default/upsert',
+
+                'patron/providers/<provider:\d+>/instances/<identifier:\d+>' =>
+                    'patron/cp/view/providers/instances/upsert',
+
+                'patron/providers/<provider:\d+>/instances/new' =>
+                    'patron/cp/view/providers/instances/upsert',
+
+                'patron/providers/<provider:\d+>/tokens' =>
+                    'patron/cp/view/providers/tokens/index',
             ]
         );
     }

@@ -1,0 +1,85 @@
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% block content %}
+    <input type="hidden" name="action" value="{{ baseActionPath }}/{% if instance.id %}update{% else %}create{% endif %}">
+    <input type="hidden" name="provider" value="{{ provider.id }}">
+    {% if instance.id %}<input type="hidden" name="instance" value="{{ instance.id }}">{% endif %}
+
+    {{ redirectInput(baseCpPath) }}
+
+    {% embed "patron/ember/circle-icon" with {
+        icon: (provider['icon'] is defined and provider['icon'] ? provider['icon'] : null),
+        label: provider.displayName,
+        status: provider.enabled ? 'active' : 'pending',
+        class: ['large']
+    } %}
+        {% block circleIconTextContent %}
+            <h3 class="title">
+                <a href="{{ url(baseCpPath ~ '/' ~ provider.id) }}">{{ provider.displayName }}</a>
+            </h3>
+            <h5 class="sub-title">{{ provider.handle }}</h5>
+        {% endblock %}
+    {% endembed %}
+
+    <hr/>
+
+    {{ forms.textField({
+        label: "Client Id"|t('patron'),
+        instructions: "The client/consumer Id assigned to you from the provider."|t('patron'),
+        id: 'clientId',
+        name: 'clientId',
+        value: instance.clientId,
+        errors: instance.getErrors('clientId'),
+        required: true
+    }) }}
+
+    {{ forms.textField({
+        label: "Client Secret"|t('patron'),
+        instructions: "The client/consumer secret assigned to you from the provider."|t('patron'),
+        id: 'clientSecret',
+        name: 'clientSecret',
+        type: 'password',
+        value: instance.clientSecret,
+        errors: instance.getErrors('clientSecret')
+    }) }}
+
+    <div id="settings">
+        {% namespace 'settings' %}
+            {{ instance.getHtml()|raw }}
+        {% endnamespace %}
+    </div>
+
+    <hr />
+
+    <div id="environments" class="meta">
+        <h4 class="heading">{{ "Environments"|t('patron') }}</h4>
+        {% set environments = [] %}
+        {% for env in instance.environments %}
+            {% set environments = environments|merge([env.environment]) %}
+        {% endfor %}
+        {% namespace 'environments' %}
+            {% for environment in environments %}
+                {{ forms.lightswitchField({
+                    label: environment|t('patron'),
+                    id: environment,
+                    name: environment,
+                    value: environment,
+                    small: true,
+                    on: environment in environments
+                }) }}
+            {% endfor %}
+
+            {% for environment in availableEnvironments %}
+                {{ forms.lightswitchField({
+                    label: environment|t('patron'),
+                    id: environment,
+                    name: environment,
+                    value: environment,
+                    small: true,
+                    on: false
+                }) }}
+            {% endfor %}
+        {% endnamespace %}
+    </div>
+{% endblock %}

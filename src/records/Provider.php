@@ -25,18 +25,17 @@ use flipbox\patron\Patron;
 use flipbox\patron\providers\SettingsInterface;
 use flipbox\patron\validators\ProviderValidator;
 use Twig_Markup;
+use yii\base\InvalidArgumentException;
 use yii\helpers\ArrayHelper;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
  * @since 1.0.0
  *
- * @property string $clientId
- * @property string $clientSecret
  * @property string $class
- * @property array $settings
  * @property ProviderLock[] $locks
  * @property Token[] $tokens
+ * @property ProviderInstance[] $instances
  * @property ProviderEnvironment[] $environments
  */
 class Provider extends ActiveRecordWithId
@@ -50,19 +49,19 @@ class Provider extends ActiveRecordWithId
     const TABLE_ALIAS = 'patron_providers';
 
     /**
-     * @var SettingsInterface
+     * @deprecated
      */
-    private $settingsModel;
+    const CLIENT_ID_LENGTH = ProviderInstance::CLIENT_ID_LENGTH;
 
     /**
-     * The length of the identifier
+     * @deprecated
      */
-    const CLIENT_ID_LENGTH = 100;
+    const CLIENT_SECRET_LENGTH = ProviderInstance::CLIENT_SECRET_LENGTH;
 
     /**
-     * The length of the secret
+     * @var bool
      */
-    const CLIENT_SECRET_LENGTH = 255;
+    public $autoSaveInstances = false;
 
     /**
      * @return string|null
@@ -101,35 +100,18 @@ class Provider extends ActiveRecordWithId
             [
                 [
                     [
-                        'clientId'
-                    ],
-                    'string',
-                    'max' => static::CLIENT_ID_LENGTH
-                ],
-                [
-                    [
-                        'clientSecret'
-                    ],
-                    'string',
-                    'max' => static::CLIENT_SECRET_LENGTH
-                ],
-                [
-                    [
                         'class'
                     ],
                     ProviderValidator::class
                 ],
                 [
                     [
-                        'clientId',
                         'class'
                     ],
                     'required'
                 ],
                 [
                     [
-                        'clientId',
-                        'clientSecret',
                         'class',
                         'settings'
                     ],
@@ -189,17 +171,18 @@ class Provider extends ActiveRecordWithId
     }
 
     /**
-     * Get all of the associated environments.
+     * Get all of the associated instances.
      *
      * @param array $config
      * @return \yii\db\ActiveQuery
      */
-    public function getEnvironments(array $config = [])
+    public function getInstances(array $config = [])
     {
         $query = $this->hasMany(
-            ProviderEnvironment::class,
+            ProviderInstance::class,
             ['providerId' => 'id']
-        )->indexBy('environment');
+        )
+            ->indexBy('id');
 
         if (!empty($config)) {
             QueryHelper::configure(
@@ -212,40 +195,62 @@ class Provider extends ActiveRecordWithId
     }
 
     /**
-     * @param array $environments
+     * @param array $instances
      * @return $this
      */
-    public function setEnvironments(array $environments = [])
+    public function setInstances(array $instances = [])
     {
         $records = [];
-        foreach (array_filter($environments) as $key => $environment) {
-            $records[] = $this->resolveEnvironment($key, $environment);
+        foreach (array_filter($instances) as $environment) {
+            $records[] = $this->resolveInstance($environment);
         }
 
-        $this->populateRelation('environments', $records);
+        $this->populateRelation('instances', $records);
         return $this;
     }
 
     /**
-     * @param string $key
-     * @param $environment
-     * @return ProviderEnvironment
+     * @param $instance
+     * @return ProviderInstance
      */
-    protected function resolveEnvironment(string $key, $environment): ProviderEnvironment
+    protected function resolveInstance($instance): ProviderInstance
     {
-        if (!$record = $this->environments[$key] ?? null) {
-            $record = new ProviderEnvironment();
+        if ($instance instanceof ProviderInstance) {
+            return $instance;
         }
 
-        if (!is_array($environment)) {
-            $environment = ['environment' => $environment];
-        }
+        $record = new ProviderInstance();
 
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return ObjectHelper::populate(
             $record,
-            $environment
+            $instance
         );
+    }
+
+    /**
+     * Get all of the associated environments.
+     *
+     * @param array $config
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEnvironments(array $config = [])
+    {
+        $query = $this->hasMany(
+            ProviderEnvironment::class,
+            ['settingsId' => 'id']
+        )
+            ->via('instances')
+            ->indexBy('environment');
+
+        if (!empty($config)) {
+            QueryHelper::configure(
+                $query,
+                $config
+            );
+        }
+
+        return $query;
     }
 
     /*******************************************
@@ -295,6 +300,7 @@ class Provider extends ActiveRecordWithId
     /**
      * @param PluginInterface $plugin
      * @return bool
+     * @throws \Throwable
      */
     public function removeLock(PluginInterface $plugin): bool
     {
@@ -419,42 +425,107 @@ class Provider extends ActiveRecordWithId
         return true;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function afterFind()
-    {
-        if ($this->clientSecret) {
-            $this->clientSecret = ProviderHelper::decryptClientSecret($this->clientSecret);
-        }
-
-        parent::afterFind();
-    }
+    /*******************************************
+     * UPDATE / INSERT
+     *******************************************/
 
     /**
+     * We're extracting the environments that may have been explicitly set on the record.  When the 'id'
+     * attribute is updated, it removes any associated relationships.
+     *
      * @inheritdoc
+     * @throws \Throwable
      */
-    public function beforeSave($insert)
+    protected function insertInternal($attributes = null)
     {
-        if ($this->clientSecret) {
-            $this->clientSecret = ProviderHelper::encryptClientSecret($this->clientSecret);
+        $instances = $this->instances;
+
+        if (!parent::insertInternal($attributes)) {
+            return false;
         }
 
-        return parent::beforeSave($insert);
+        $this->setInstances($instances);
+
+        return $this->upsertInternal();
     }
 
     /**
      * @inheritdoc
      * @throws \Throwable
      */
-    public function afterSave($insert, $changedAttributes)
+    protected function updateInternal($attributes = null)
     {
-        if ($this->clientSecret) {
-            $this->clientSecret = ProviderHelper::decryptClientSecret($this->clientSecret);
+        if (!parent::updateInternal($attributes)) {
+            return false;
         }
 
-        Patron::getInstance()->manageProviders()->saveEnvironments($this);
-        parent::afterSave($insert, $changedAttributes);
+        return $this->upsertInternal();
+    }
+
+    /**
+     * @param null $attributes
+     * @return bool
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    protected function upsertInternal($attributes = null): bool
+    {
+        if (empty($attributes)) {
+            return $this->saveInstances();
+        }
+
+        if (array_key_exists('instances', $attributes)) {
+            return $this->saveInstances(true);
+        }
+
+        return true;
+    }
+
+    /**
+     * @param bool $force
+     * @return bool
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    protected function saveInstances(bool $force = false): bool
+    {
+        if ($force === false && $this->autoSaveInstances !== true) {
+            return true;
+        }
+
+        $successful = true;
+
+        /** @var ProviderInstance[] $allRecords */
+        $allRecords = $this->getInstances()
+            ->all();
+
+        ArrayHelper::index($allRecords, 'providerId');
+
+        foreach ($this->instances as $model) {
+            ArrayHelper::remove($allRecords, $this->getId());
+            $model->providerId = $this->getId();
+
+            if (!$model->save()) {
+                $successful = false;
+                // Log the errors
+                $error = Craft::t(
+                    'patron',
+                    "Couldn't save instance due to validation errors:"
+                );
+                foreach ($model->getFirstErrors() as $attributeError) {
+                    $error .= "\n- " . Craft::t('patron', $attributeError);
+                }
+
+                $this->addError('instances', $error);
+            }
+        }
+
+        // Delete old records
+        foreach ($allRecords as $record) {
+            $record->delete();
+        }
+
+        return $successful;
     }
 
     /**
@@ -465,29 +536,5 @@ class Provider extends ActiveRecordWithId
         return ProviderHelper::displayName(
             $this->class
         );
-    }
-
-    /**
-     * @return Twig_Markup
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function getSettingsHtml(): Twig_Markup
-    {
-        return Template::raw(
-            $this->getSettingsModel()->inputHtml()
-        );
-    }
-
-    /**
-     * @return SettingsInterface
-     * @throws \yii\base\InvalidConfigException
-     */
-    protected function getSettingsModel(): SettingsInterface
-    {
-        if (!$this->settingsModel instanceof SettingsInterface) {
-            $this->settingsModel = Patron::getInstance()->manageProviders()->resolveSettings($this, $this->settings);
-        }
-
-        return $this->settingsModel;
     }
 }

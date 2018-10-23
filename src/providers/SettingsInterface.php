@@ -28,4 +28,11 @@ interface SettingsInterface
      * @return array
      */
     public function toConfig(): array;
+
+    /**
+     * @param null $attributeNames
+     * @param bool $clearErrors
+     * @return mixed
+     */
+    public function validate($attributeNames = null, $clearErrors = true);
 }

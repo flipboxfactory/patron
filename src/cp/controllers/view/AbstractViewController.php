@@ -16,7 +16,7 @@ abstract class AbstractViewController extends Controller
     /**
      * The index view template path
      */
-    const TEMPLATE_BASE = 'patron' . DIRECTORY_SEPARATOR . '_cp';
+    const TEMPLATE_BASE = 'patron/_cp';
 
     /*******************************************
      * VARIABLES
@@ -46,6 +46,10 @@ abstract class AbstractViewController extends Controller
     {
         return $this->getBaseCpPath() . $endpoint;
     }
+
+    /*******************************************
+     * VARIABLES
+     *******************************************/
 
     /**
      * @inheritdoc
@@ -86,10 +90,6 @@ abstract class AbstractViewController extends Controller
             'url' => UrlHelper::url($variables['baseCpPath'])
         ];
     }
-
-    /*******************************************
-     * UPSERT VARIABLES
-     *******************************************/
 
     /**
      * @param array $variables

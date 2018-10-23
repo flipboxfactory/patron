@@ -6,12 +6,12 @@
  * @link       https://www.flipboxfactory.com/software/patron/
  */
 
-namespace flipbox\patron\web\assets\providerswitcher;
+namespace flipbox\patron\web\assets\providers;
 
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
-class ProviderSwitcherAsset extends AssetBundle
+class ProvidersAsset extends AssetBundle
 {
     /**
      * @inheritdoc
@@ -30,12 +30,8 @@ class ProviderSwitcherAsset extends AssetBundle
      */
     public function init()
     {
-        $this->js = [
-            'js/ProviderSwitcher' . $this->dotJs()
-        ];
-
         $this->css = [
-            'css/Provider.css'
+            'css/Providers.css'
         ];
 
         parent::init();

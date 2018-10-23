@@ -9,7 +9,6 @@ use flipbox\patron\actions\provider\Delete;
 use flipbox\patron\actions\provider\Disable;
 use flipbox\patron\actions\provider\Enable;
 use flipbox\patron\actions\provider\Update;
-use flipbox\patron\Patron;
 
 class ProvidersController extends AbstractController
 {
@@ -88,35 +87,6 @@ class ProvidersController extends AbstractController
                 'class' => Create::class,
                 'checkAccess' => [$this, 'checkAdminAccess']
             ]
-        ];
-    }
-
-    /**
-     * @param null $provider
-     * @return array
-     * @throws \yii\web\BadRequestHttpException
-     */
-    public function actionSettings($provider = null)
-    {
-        if ($provider === null) {
-            $provider = Craft::$app->getRequest()->getBodyParam('provider');
-        }
-
-        if ($provider) {
-            $model = Patron::getInstance()->manageProviders()->get($provider);
-        } else {
-            $model = Patron::getInstance()->manageProviders()->create();
-        }
-
-        $model->class = Craft::$app->getRequest()->getRequiredBodyParam('class');
-
-        $view = $this->getView();
-        return [
-            'html' => Patron::getInstance()->getSettings()->getProviderSettingsView()->render([
-                'provider' => $model
-            ]),
-            'headHtml' => $view->getHeadHtml(),
-            'footHtml' => $view->getBodyHtml()
         ];
     }
 
