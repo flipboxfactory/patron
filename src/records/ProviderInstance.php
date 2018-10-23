@@ -56,6 +56,13 @@ class ProviderInstance extends ActiveRecordWithId
     public $autoSaveEnvironments = true;
 
     /**
+     * Environments that are temporarily set during the save process
+     *
+     * @var null|array
+     */
+    private $insertEnvironments;
+
+    /**
      * @var SettingsInterface
      */
     private $providerSettings;
@@ -184,6 +191,11 @@ class ProviderInstance extends ActiveRecordWithId
         );
     }
 
+
+    /*******************************************
+     * EVENTS
+     *******************************************/
+
     /**
      * @inheritdoc
      */
@@ -205,7 +217,20 @@ class ProviderInstance extends ActiveRecordWithId
             $this->clientSecret = ProviderHelper::encryptClientSecret($this->clientSecret);
         }
 
-        return parent::beforeSave($insert);
+        if (!parent::beforeSave($insert)) {
+            return false;
+        }
+
+        if ($insert !== true ||
+            $this->isRelationPopulated('environments') !== true ||
+            $this->autoSaveEnvironments !== true
+        ) {
+            return true;
+        }
+
+        $this->insertEnvironments = $this->environments;
+
+        return true;
     }
 
     /**
@@ -235,13 +260,16 @@ class ProviderInstance extends ActiveRecordWithId
      */
     protected function insertInternal($attributes = null)
     {
-        $environments = $this->environments;
-
         if (!parent::insertInternal($attributes)) {
             return false;
         }
 
-        $this->setEnvironments($environments);
+        if (null === $this->insertEnvironments) {
+            return true;
+        }
+
+        $this->setEnvironments($this->insertEnvironments);
+        $this->insertEnvironments = null;
 
         return $this->upsertInternal($attributes);
     }

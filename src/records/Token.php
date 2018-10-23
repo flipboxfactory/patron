@@ -38,11 +38,9 @@ class Token extends ActiveRecordWithId
         traits\ProviderAttribute;
 
     /**
-     * @inheritdoc
+     * The table alias
      */
-    protected $getterPriorityAttributes = [
-        'providerId'
-    ];
+    const TABLE_ALIAS = 'patron_tokens';
 
     /**
      * @var bool
@@ -50,9 +48,18 @@ class Token extends ActiveRecordWithId
     public $autoSaveEnvironments = true;
 
     /**
-     * The table alias
+     * Environments that are temporarily set during the save process
+     *
+     * @var null|array
      */
-    const TABLE_ALIAS = 'patron_tokens';
+    private $insertEnvironments;
+
+    /**
+     * @inheritdoc
+     */
+    protected $getterPriorityAttributes = [
+        'providerId'
+    ];
 
     /**
      * @inheritdoc
@@ -82,27 +89,32 @@ class Token extends ActiveRecordWithId
         return DateTimeHelper::isInThePast($dateExpires);
     }
 
+
     /*******************************************
-     * SAVE
+     * EVENTS
      *******************************************/
 
     /**
-     * @param bool $runValidation
-     * @param null $attributeNames
-     * @return bool
+     * @inheritdoc
      */
-    public function saveAndInheritEnvironments($runValidation = true, $attributeNames = null): bool
+    public function beforeSave($insert): bool
     {
-        if (!$this->save($runValidation, $attributeNames)) {
+        if (!parent::beforeSave($insert)) {
             return false;
         }
 
-        $environments = $this->getProvider()->getEnvironments()->select('environment')->column();
+        if ($insert !== true ||
+            $this->isRelationPopulated('environments') !== true ||
+            $this->autoSaveEnvironments !== true
+        ) {
+            return true;
+        }
 
-        $this->setEnvironments($environments);
+        $this->insertEnvironments = $this->environments;
 
-        return $this->saveEnvironments(true);
+        return true;
     }
+
 
     /*******************************************
      * UPDATE / INSERT
@@ -117,13 +129,16 @@ class Token extends ActiveRecordWithId
      */
     protected function insertInternal($attributes = null)
     {
-        $environments = $this->environments;
-
         if (!parent::insertInternal($attributes)) {
             return false;
         }
 
-        $this->setEnvironments($environments);
+        if (null === $this->insertEnvironments) {
+            return true;
+        }
+
+        $this->setEnvironments($this->insertEnvironments);
+        $this->insertEnvironments = null;
 
         return $this->upsertInternal($attributes);
     }
@@ -301,6 +316,10 @@ class Token extends ActiveRecordWithId
      */
     protected function resolveEnvironment(string $key, $environment): TokenEnvironment
     {
+        if ($environment instanceof TokenEnvironment) {
+            return $environment;
+        }
+
         if (!$record = $this->environments[$key] ?? null) {
             $record = new TokenEnvironment();
         }

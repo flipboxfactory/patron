@@ -64,6 +64,13 @@ class Provider extends ActiveRecordWithId
     public $autoSaveInstances = false;
 
     /**
+     * Environments that are temporarily set during the save process
+     *
+     * @var null|array
+     */
+    private $insertInstances;
+
+    /**
      * @return string|null
      */
     public function getIcon()
@@ -360,8 +367,9 @@ class Provider extends ActiveRecordWithId
         return $id ? (int)$id : null;
     }
 
+
     /*******************************************
-     * EVENTS
+     * DELETE
      *******************************************/
 
     /**
@@ -426,6 +434,31 @@ class Provider extends ActiveRecordWithId
     }
 
     /*******************************************
+     * EVENTS
+     *******************************************/
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeSave($insert): bool
+    {
+        if (!parent::beforeSave($insert)) {
+            return false;
+        }
+
+        if ($insert !== true ||
+            $this->isRelationPopulated('instances') !== true ||
+            $this->autoSaveInstances !== true
+        ) {
+            return true;
+        }
+
+        $this->insertInstances = $this->instances;
+
+        return true;
+    }
+
+    /*******************************************
      * UPDATE / INSERT
      *******************************************/
 
@@ -438,15 +471,18 @@ class Provider extends ActiveRecordWithId
      */
     protected function insertInternal($attributes = null)
     {
-        $instances = $this->instances;
-
         if (!parent::insertInternal($attributes)) {
             return false;
         }
 
-        $this->setInstances($instances);
+        if (null === $this->insertInstances) {
+            return true;
+        }
 
-        return $this->upsertInternal();
+        $this->setInstances($this->insertInstances);
+        $this->insertInstances = null;
+
+        return $this->upsertInternal($attributes);
     }
 
     /**
@@ -459,7 +495,7 @@ class Provider extends ActiveRecordWithId
             return false;
         }
 
-        return $this->upsertInternal();
+        return $this->upsertInternal($attributes);
     }
 
     /**

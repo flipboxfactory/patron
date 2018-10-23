@@ -108,10 +108,16 @@ class Patron extends Plugin
                 records\ProviderInstance::class,
                 records\ProviderInstance::EVENT_BEFORE_INSERT,
                 function ($event) use ($defaultEnvironments) {
-                    /** @var records\ProviderInstance $token */
-                    $token = $event->sender;
+                    /** @var records\ProviderInstance $provider */
+                    $provider = $event->sender;
 
-                    $token->setEnvironments($defaultEnvironments);
+                    // Ignore if already set
+                    if ($provider->isRelationPopulated('environments') === true) {
+                        return;
+                    }
+
+                    $provider->setEnvironments($defaultEnvironments);
+                    $provider->autoSaveEnvironments = true;
                 }
             );
         }
@@ -125,9 +131,15 @@ class Patron extends Plugin
                     /** @var records\Token $token */
                     $token = $event->sender;
 
+                    // Ignore if already set
+                    if ($token->isRelationPopulated('environments') === true) {
+                        return;
+                    }
+
                     $token->setEnvironments(
                         $token->getProvider()->getEnvironments()->select('environment')->column()
                     );
+                    $token->autoSaveEnvironments = true;
                 }
             );
         }
