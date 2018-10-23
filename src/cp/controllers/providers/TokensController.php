@@ -1,12 +1,13 @@
 <?php
 
-namespace flipbox\patron\cp\controllers;
+namespace flipbox\patron\cp\controllers\providers;
 
 use Craft;
 use craft\helpers\ArrayHelper;
 use flipbox\patron\actions\token\Delete;
 use flipbox\patron\actions\token\Disable;
 use flipbox\patron\actions\token\Enable;
+use flipbox\patron\cp\controllers\AbstractController;
 use flipbox\patron\Patron;
 
 class TokensController extends AbstractController

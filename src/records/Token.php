@@ -9,6 +9,7 @@
 namespace flipbox\patron\records;
 
 use Craft;
+use craft\helpers\ArrayHelper;
 use craft\helpers\DateTimeHelper;
 use craft\validators\DateTimeValidator;
 use DateTime;
@@ -44,6 +45,11 @@ class Token extends ActiveRecordWithId
     ];
 
     /**
+     * @var bool
+     */
+    public $autoSaveEnvironments = true;
+
+    /**
      * The table alias
      */
     const TABLE_ALIAS = 'patron_tokens';
@@ -77,17 +83,131 @@ class Token extends ActiveRecordWithId
     }
 
     /*******************************************
-     * EVENTS
+     * SAVE
      *******************************************/
+
+    /**
+     * @param bool $runValidation
+     * @param null $attributeNames
+     * @return bool
+     */
+    public function saveAndInheritEnvironments($runValidation = true, $attributeNames = null): bool
+    {
+        if (!$this->save($runValidation, $attributeNames)) {
+            return false;
+        }
+
+        $environments = $this->getProvider()->getEnvironments()->select('environment')->column();
+
+        $this->setEnvironments($environments);
+
+        return $this->saveEnvironments(true);
+    }
+
+    /*******************************************
+     * UPDATE / INSERT
+     *******************************************/
+
+    /**
+     * We're extracting the environments that may have been explicitly set on the record.  When the 'id'
+     * attribute is updated, it removes any associated relationships.
+     *
+     * @inheritdoc
+     * @throws \Throwable
+     */
+    protected function insertInternal($attributes = null)
+    {
+        $environments = $this->environments;
+
+        if (!parent::insertInternal($attributes)) {
+            return false;
+        }
+
+        $this->setEnvironments($environments);
+
+        return $this->upsertInternal($attributes);
+    }
 
     /**
      * @inheritdoc
      * @throws \Throwable
      */
-    public function afterSave($insert, $changedAttributes)
+    protected function updateInternal($attributes = null)
     {
-        Patron::getInstance()->manageTokens()->saveEnvironments($this);
-        parent::afterSave($insert, $changedAttributes);
+        if (!parent::updateInternal($attributes)) {
+            return false;
+        }
+
+        return $this->upsertInternal($attributes);
+    }
+
+    /**
+     * @param null $attributes
+     * @return bool
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    protected function upsertInternal($attributes = null): bool
+    {
+        if (empty($attributes)) {
+            return $this->saveEnvironments();
+        }
+
+        if (array_key_exists('environments', $attributes)) {
+            return $this->saveEnvironments(true);
+        }
+
+        return true;
+    }
+
+    /*******************************************
+     * ENVIRONMENTS
+     *******************************************/
+
+    /**
+     * @param bool $force
+     * @return bool
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    protected function saveEnvironments(bool $force = false): bool
+    {
+        if ($force === false && $this->autoSaveEnvironments !== true) {
+            return true;
+        }
+
+        $successful = true;
+
+        /** @var TokenEnvironment[] $allRecords */
+        $allRecords = $this->getEnvironments()
+            ->indexBy('environment')
+            ->all();
+
+        foreach ($this->environments as $model) {
+            ArrayHelper::remove($allRecords, $model->environment);
+            $model->tokenId = $this->getId();
+
+            if (!$model->save()) {
+                $successful = false;
+
+                $error = Craft::t(
+                    'patron',
+                    "Couldn't save environment due to validation errors:"
+                );
+                foreach ($model->getFirstErrors() as $attributeError) {
+                    $error .= "\n- " . Craft::t('patron', $attributeError);
+                }
+
+                $this->addError('sites', $error);
+            }
+        }
+
+        // Delete old records
+        foreach ($allRecords as $record) {
+            $record->delete();
+        }
+
+        return $successful;
     }
 
 
@@ -137,29 +257,6 @@ class Token extends ActiveRecordWithId
     }
 
     /**
-     * Get the associated Authorization
-     *
-     * @param array $config
-     * @return ActiveQueryInterface
-     */
-    public function getProvider(array $config = [])
-    {
-        $query = $this->hasOne(
-            Provider::class,
-            ['providerId' => 'id']
-        );
-
-        if (!empty($config)) {
-            QueryHelper::configure(
-                $query,
-                $config
-            );
-        }
-
-        return $query;
-    }
-
-    /**
      * Get all of the associated environments.
      *
      * @param array $config
@@ -190,7 +287,7 @@ class Token extends ActiveRecordWithId
     {
         $records = [];
         foreach (array_filter($environments) as $key => $environment) {
-            $records[] = $this->resolveEnvironment($key, $environment);
+            $records[$key] = $this->resolveEnvironment($key, $environment);
         }
 
         $this->populateRelation('environments', $records);

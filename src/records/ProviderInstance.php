@@ -129,7 +129,7 @@ class ProviderInstance extends ActiveRecordWithId
     {
         $query = $this->hasMany(
             ProviderEnvironment::class,
-            ['settingsId' => 'id']
+            ['instanceId' => 'id']
         )
             ->indexBy('environment');
 
@@ -151,7 +151,7 @@ class ProviderInstance extends ActiveRecordWithId
     {
         $records = [];
         foreach (array_filter($environments) as $key => $environment) {
-            $records[] = $this->resolveEnvironment($key, $environment);
+            $records[$key] = $this->resolveEnvironment($key, $environment);
         }
 
         $this->populateRelation('environments', $records);
@@ -305,7 +305,7 @@ class ProviderInstance extends ActiveRecordWithId
 
         foreach ($this->environments as $model) {
             ArrayHelper::remove($allRecords, $model->environment);
-            $model->settingsId = $this->getId();
+            $model->instanceId = $this->getId();
 
             if (!$model->save()) {
                 $successful = false;

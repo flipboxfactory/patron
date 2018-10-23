@@ -66,6 +66,11 @@ class Settings extends Model
      */
     private $defaultEnvironments = [];
 
+    /**
+     * @var bool
+     */
+    public $applyProviderEnvironmentsToToken = true;
+
     /*******************************************
      * ENVIRONMENTS
      *******************************************/

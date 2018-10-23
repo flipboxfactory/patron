@@ -20,6 +20,7 @@ use flipbox\patron\Patron;
 use flipbox\patron\providers\SettingsInterface;
 use flipbox\patron\records\Provider;
 use flipbox\patron\records\Provider as ProviderRecord;
+use flipbox\patron\records\ProviderInstance;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use yii\base\Component;
 use yii\db\QueryInterface;
@@ -100,15 +101,76 @@ class Providers extends Component
             ['clientId', 'clientSecret']
         );
 
+        if (Patron::getInstance()->getSettings()->encryptStorageData === true) {
+            return $this->getIdFromEncryptedClientSecret(
+                get_class($provider),
+                $clientId,
+                $clientSecret
+            );
+        }
+
+        return $this->getIdFromUnencryptedClientSecret(
+            get_class($provider),
+            $clientId,
+            $clientSecret
+        );
+    }
+
+    /**
+     * @param string $class
+     * @param string $clientId
+     * @param string $clientSecret
+     * @return int|null
+     */
+    protected function getIdFromEncryptedClientSecret(string $class, string $clientId, string $clientSecret)
+    {
         $condition = [
-            'class' => get_class($provider),
+            'class' => $class,
+            'clientId' => $clientId,
+        ];
+
+        $rows = (new Query())
+            ->select(['providerId', 'clientSecret'])
+            ->from([ProviderInstance::tableName() . ' ' . ProviderInstance::tableAlias()])
+            ->leftJoin(
+                [ProviderRecord::tableName() . ' ' . ProviderRecord::tableAlias()],
+                ProviderRecord::tableAlias() . '.id=providerId'
+            )
+            ->where($condition)
+            ->all();
+
+        foreach ($rows as $row) {
+            $secret = $row['clientSecret'] ?? '';
+
+            if ($clientSecret === ProviderHelper::decryptClientSecret($secret)) {
+                return (int) $row['providerId'];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $class
+     * @param string $clientId
+     * @param string $clientSecret
+     * @return int|null
+     */
+    protected function getIdFromUnencryptedClientSecret(string $class, string $clientId, string $clientSecret)
+    {
+        $condition = [
+            'class' => $class,
             'clientId' => $clientId,
             'clientSecret' => $clientSecret
         ];
 
         if (!$providerId = (new Query())
-            ->select(['id'])
-            ->from([ProviderRecord::tableName()])
+            ->select(['providerId'])
+            ->from([ProviderInstance::tableName() . ' ' . ProviderInstance::tableAlias()])
+            ->leftJoin(
+                [ProviderRecord::tableName() . ' ' . ProviderRecord::tableAlias()],
+                ProviderRecord::tableAlias() . '.id=providerId'
+            )
             ->where($condition)
             ->scalar()
         ) {

@@ -73,37 +73,38 @@
     {% if provider.id %}
         <hr>
 
-        {% set allProviderSettings = provider.instances %}
-        <table id="instances" class="data fullwidth collapsible{% if allProviderSettings|length == 0 %} hidden{% endif %}">
+        {% set instances = provider.instances %}
+        <table id="instances" class="data fullwidth collapsible{% if instances|length == 0 %} hidden{% endif %}">
             <thead>
             <th scope="col">{{ "Client Id"|t('patron') }}</th>
             <th scope="col">{{ "Environments"|t('patron') }}</th>
             <td class="thin"></td>
             </thead>
             <tbody>
-            {% for providerSettings in allProviderSettings %}
-                <tr data-id="{{ providerSettings.id }}" data-name="{{ providerSettings.clientId }}">
+            {% for instance in instances %}
+                {% set environments = [] %}
+                {% for env in instance.environments %}
+                    {% set environments = environments|merge([env.environment]) %}
+                {% endfor %}
+                <tr data-id="{{ instance.id }}" data-name="{{ instance.clientId }}">
                     <th scope="row" data-title="{{ 'Provider Instances'|t('patron') }}">
-                        <code>{{ providerSettings.clientId }}</code>
+                        <span class="status{% if craft.patron.settings.environment in environments %} enabled{% endif %}"></span>
+                        <code>{{ instance.clientId }}</code>
                     </th>
                     <td data-title="{{ 'Environment(s)'|t('patron') }}">
-                        {% set environments = [] %}
-                        {% for env in providerSettings.environments %}
-                            {% set environments = environments|merge([env.environment]) %}
-                        {% endfor %}
                         <span style="font-size: 10px;">{{ environments|join(', ') }}</span>
                     </td>
                     <td class="thin">
                         <form method="post" accept-charset="UTF-8">
                             {{ csrfInput() }}
-                            <input type="hidden" name="instance" value="{{ providerSettings.id }}"/>
+                            <input type="hidden" name="instance" value="{{ instance.id }}"/>
                             <input type="hidden" name="provider" value="{{ provider.id }}"/>
                             {{ redirectInput(continueEditingUrl) }}
                             <div class="btn menubtn" data-icon="settings" title="Actions" tabindex="0" role="combobox"></div>
                             <div class="menu">
                                 <ul>
                                     <li>
-                                        <a href="{{ url(baseCpPath ~ '/' ~ provider.id ~ '/instances/' ~ providerSettings.id) }}">
+                                        <a href="{{ url(baseCpPath ~ '/' ~ provider.id ~ '/instances/' ~ instance.id) }}">
                                             {{ "Edit"|t('patron') }}
                                         </a>
                                     </li>

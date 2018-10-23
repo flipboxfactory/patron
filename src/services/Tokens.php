@@ -122,7 +122,7 @@ class Tokens extends Component
             $event
         );
 
-        if (!$record->save()) {
+        if (!$record->saveAndInheritEnvironments()) {
             return false;
         }
 

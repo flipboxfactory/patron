@@ -44,7 +44,7 @@ class Install extends Migration
         }
 
         // Provider Settings
-        if (false === (new m181019_220655_provider_settings())->safeUp()) {
+        if (false === (new m181019_220655_provider_instances())->safeUp()) {
             return false;
         }
 
@@ -72,7 +72,7 @@ class Install extends Migration
         }
 
         // Provider Settings
-        if (false === (new m181019_220655_provider_settings())->safeDown()) {
+        if (false === (new m181019_220655_provider_instances())->safeDown()) {
             return false;
         }
 

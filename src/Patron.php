@@ -15,7 +15,7 @@ use craft\helpers\UrlHelper;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
 use flipbox\ember\modules\LoggerTrait;
-use flipbox\patron\migrations\m181019_220655_provider_settings;
+use flipbox\patron\migrations\m181019_220655_provider_instances;
 use flipbox\patron\models\Settings as SettingsModel;
 use yii\base\Event;
 
@@ -100,6 +100,37 @@ class Patron extends Plugin
                 }
             }
         );
+
+        // Add default environments upon creation
+        $defaultEnvironments = $this->getSettings()->getDefaultEnvironments();
+        if (!empty($defaultEnvironments)) {
+            Event::on(
+                records\ProviderInstance::class,
+                records\ProviderInstance::EVENT_BEFORE_INSERT,
+                function ($event) use ($defaultEnvironments) {
+                    /** @var records\ProviderInstance $token */
+                    $token = $event->sender;
+
+                    $token->setEnvironments($defaultEnvironments);
+                }
+            );
+        }
+
+        // Replicate environments to token
+        if ($this->getSettings()->applyProviderEnvironmentsToToken === true) {
+            Event::on(
+                records\Token::class,
+                records\Token::EVENT_BEFORE_INSERT,
+                function ($event) {
+                    /** @var records\Token $token */
+                    $token = $event->sender;
+
+                    $token->setEnvironments(
+                        $token->getProvider()->getEnvironments()->select('environment')->column()
+                    );
+                }
+            );
+        }
     }
 
     /**

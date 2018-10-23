@@ -74,7 +74,7 @@ class TokensController extends AbstractViewController
      */
     protected function getBaseActionPath(): string
     {
-        return parent::getBaseActionPath() . '/instances';
+        return parent::getBaseActionPath() . '/tokens';
     }
 
     /**

@@ -238,7 +238,7 @@ class Provider extends ActiveRecordWithId
     {
         $query = $this->hasMany(
             ProviderEnvironment::class,
-            ['settingsId' => 'id']
+            ['instanceId' => 'id']
         )
             ->via('instances')
             ->indexBy('environment');

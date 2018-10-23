@@ -17,7 +17,7 @@ use yii\db\ActiveQueryInterface;
  * @author Flipbox Factory <hello@flipboxfactory.com>
  * @since 1.0.0
  *
- * @property int $settingsId
+ * @property int $instanceId
  * @property string $environment
  */
 class ProviderEnvironment extends ActiveRecord
@@ -40,20 +40,20 @@ class ProviderEnvironment extends ActiveRecord
             [
                 [
                     [
-                        'settingsId'
+                        'instanceId'
                     ],
                     'number',
                     'integerOnly' => true
                 ],
                 [
                     [
-                        'settingsId'
+                        'instanceId'
                     ],
                     'required'
                 ],
                 [
                     [
-                        'settingsId'
+                        'instanceId'
                     ],
                     'safe',
                     'on' => [
@@ -70,11 +70,11 @@ class ProviderEnvironment extends ActiveRecord
      * @param array $config
      * @return ActiveQueryInterface
      */
-    public function getSettings(array $config = [])
+    public function getInstances(array $config = [])
     {
         $query = $this->hasOne(
             Provider::class,
-            ['settingsId' => 'id']
+            ['instanceId' => 'id']
         );
 
         if (!empty($config)) {

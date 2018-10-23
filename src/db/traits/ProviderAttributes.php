@@ -241,7 +241,7 @@ trait ProviderAttributes
 
         $this->leftJoin(
             ProviderEnvironment::tableName() . ' ' . $alias,
-            '[[' . $alias . '.settingsId]] = [[' . ProviderInstance::tableAlias() . '.id]]'
+            '[[' . $alias . '.instanceId]] = [[' . ProviderInstance::tableAlias() . '.id]]'
         );
         $this->andWhere(
             Db::parseParam($alias . '.environment', $this->environment)
