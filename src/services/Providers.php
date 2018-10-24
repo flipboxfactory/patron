@@ -101,7 +101,7 @@ class Providers extends Component
             ['clientId', 'clientSecret']
         );
 
-        if (Patron::getInstance()->getSettings()->encryptStorageData === true) {
+        if (Patron::getInstance()->getSettings()->getEncryptStorageData() === true) {
             return $this->getIdFromEncryptedClientSecret(
                 get_class($provider),
                 $clientId,
@@ -143,7 +143,7 @@ class Providers extends Component
             $secret = $row['clientSecret'] ?? '';
 
             if ($clientSecret === ProviderHelper::decryptClientSecret($secret)) {
-                return (int) $row['providerId'];
+                return (int)$row['providerId'];
             }
         }
 

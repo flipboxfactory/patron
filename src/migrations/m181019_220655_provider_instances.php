@@ -10,7 +10,6 @@ namespace flipbox\patron\migrations;
 
 use craft\db\Migration;
 use craft\db\Query;
-use craft\helpers\MigrationHelper;
 use flipbox\patron\events\handlers\BeforeInsertProviderInstance;
 use flipbox\patron\records\Provider;
 use flipbox\patron\records\ProviderEnvironment;

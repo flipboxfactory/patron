@@ -9,16 +9,14 @@
 namespace flipbox\patron\records;
 
 use Craft;
-use craft\helpers\ArrayHelper;
 use flipbox\ember\helpers\ModelHelper;
-use flipbox\ember\helpers\ObjectHelper;
-use flipbox\ember\helpers\QueryHelper;
 use flipbox\ember\records\ActiveRecordWithId;
+use flipbox\patron\db\ProviderInstanceActiveQuery;
 use flipbox\patron\helpers\ProviderHelper;
 use flipbox\patron\Patron;
 use flipbox\patron\providers\SettingsInterface;
 use flipbox\patron\validators\ProviderSettings as ProviderSettingsValidator;
-use yii\base\InvalidArgumentException;
+use yii\db\ActiveQueryInterface;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -33,7 +31,8 @@ use yii\base\InvalidArgumentException;
  */
 class ProviderInstance extends ActiveRecordWithId
 {
-    use traits\ProviderAttribute;
+    use traits\ProviderAttribute,
+        traits\RelatedEnvironmentsAttribute;
 
     /**
      * The table alias
@@ -51,18 +50,6 @@ class ProviderInstance extends ActiveRecordWithId
     const CLIENT_SECRET_LENGTH = 255;
 
     /**
-     * @var bool
-     */
-    public $autoSaveEnvironments = true;
-
-    /**
-     * Environments that are temporarily set during the save process
-     *
-     * @var null|array
-     */
-    private $insertEnvironments;
-
-    /**
      * @var SettingsInterface
      */
     private $providerSettings;
@@ -73,6 +60,17 @@ class ProviderInstance extends ActiveRecordWithId
     protected $getterPriorityAttributes = [
         'providerId'
     ];
+
+    /**
+     * @inheritdoc
+     * @return ProviderInstanceActiveQuery
+     * @throws \yii\base\InvalidConfigException
+     */
+    public static function find()
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return Craft::createObject(ProviderInstanceActiveQuery::class, [get_called_class()]);
+    }
 
     /**
      * @inheritdoc
@@ -126,79 +124,6 @@ class ProviderInstance extends ActiveRecordWithId
     }
 
 
-    /**
-     * Get all of the associated environments.
-     *
-     * @param array $config
-     * @return \yii\db\ActiveQueryInterface
-     */
-    public function getEnvironments(array $config = [])
-    {
-        $query = $this->hasMany(
-            ProviderEnvironment::class,
-            ['instanceId' => 'id']
-        )
-            ->indexBy('environment');
-
-        if (!empty($config)) {
-            QueryHelper::configure(
-                $query,
-                $config
-            );
-        }
-
-        return $query;
-    }
-
-    /**
-     * @param array $environments
-     * @return $this
-     */
-    public function setEnvironments(array $environments = [])
-    {
-        $environments = array_filter($environments);
-
-        // Do nothing
-        if (empty($environments) && !$this->isRelationPopulated('environments')) {
-            return $this;
-        }
-
-        $records = [];
-        foreach (array_filter($environments) as $key => $environment) {
-            $records[$key] = $this->resolveEnvironment($key, $environment);
-        }
-
-        $this->populateRelation('environments', $records);
-        return $this;
-    }
-
-    /**
-     * @param string $key
-     * @param $environment
-     * @return ProviderEnvironment
-     */
-    protected function resolveEnvironment(string $key, $environment): ProviderEnvironment
-    {
-        if ($environment instanceof ProviderEnvironment) {
-            return $environment;
-        }
-
-        if (!$record = $this->environments[$key] ?? null) {
-            $record = new ProviderEnvironment();
-        }
-
-        if (!is_array($environment)) {
-            $environment = ['environment' => $environment];
-        }
-
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return ObjectHelper::populate(
-            $record,
-            $environment
-        );
-    }
-
-
     /*******************************************
      * EVENTS
      *******************************************/
@@ -228,16 +153,7 @@ class ProviderInstance extends ActiveRecordWithId
             return false;
         }
 
-        if ($insert !== true ||
-            $this->isRelationPopulated('environments') !== true ||
-            $this->autoSaveEnvironments !== true
-        ) {
-            return true;
-        }
-
-        $this->insertEnvironments = $this->environments;
-
-        return true;
+        return $this->beforeSaveEnvironments($insert);
     }
 
     /**
@@ -259,9 +175,6 @@ class ProviderInstance extends ActiveRecordWithId
      *******************************************/
 
     /**
-     * We're extracting the environments that may have been explicitly set on the record.  When the 'id'
-     * attribute is updated, it removes any associated relationships.
-     *
      * @inheritdoc
      * @throws \Throwable
      */
@@ -271,14 +184,7 @@ class ProviderInstance extends ActiveRecordWithId
             return false;
         }
 
-        if (null === $this->insertEnvironments) {
-            return true;
-        }
-
-        $this->setEnvironments($this->insertEnvironments);
-        $this->insertEnvironments = null;
-
-        return $this->upsertInternal($attributes);
+        return $this->insertInternalEnvironments($attributes);
     }
 
     /**
@@ -319,53 +225,32 @@ class ProviderInstance extends ActiveRecordWithId
      *******************************************/
 
     /**
-     * @param bool $force
-     * @return bool
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
+     * @inheritdoc
      */
-    protected function saveEnvironments(bool $force = false): bool
+    protected static function environmentRecordClass(): string
     {
-        if ($force === false && $this->autoSaveEnvironments !== true) {
-            return true;
-        }
-
-        $successful = true;
-
-        /** @var ProviderEnvironment[] $allRecords */
-        $allRecords = $this->getEnvironments()
-            ->indexBy('environment')
-            ->all();
-
-
-        foreach ($this->environments as $model) {
-            ArrayHelper::remove($allRecords, $model->environment);
-            $model->instanceId = $this->getId();
-
-            if (!$model->save()) {
-                $successful = false;
-
-                $error = Craft::t(
-                    'patron',
-                    "Couldn't save environment due to validation errors:"
-                );
-
-                foreach ($model->getFirstErrors() as $attributeError) {
-                    $error .= "\n- " . Craft::t('patron', $attributeError);
-                }
-
-                $this->addError('environments', $error);
-            }
-        }
-
-        // Delete old records
-        foreach ($allRecords as $record) {
-            $record->delete();
-        }
-
-        return $successful;
+        return ProviderEnvironment::class;
     }
 
+    /**
+     * @inheritdoc
+     */
+    protected function prepareEnvironmentRecordConfig(array $config = []): array
+    {
+        $config['instance'] = $this;
+        return $config;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function environmentRelationshipQuery(): ActiveQueryInterface
+    {
+        return $this->hasMany(
+            static::environmentRecordClass(),
+            ['instanceId' => 'id']
+        );
+    }
 
     /**
      * @return string

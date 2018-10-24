@@ -12,7 +12,6 @@ use Craft;
 use craft\base\PluginInterface;
 use craft\db\Query;
 use craft\helpers\StringHelper;
-use craft\helpers\Template;
 use flipbox\ember\helpers\ModelHelper;
 use flipbox\ember\helpers\ObjectHelper;
 use flipbox\ember\helpers\QueryHelper;
@@ -22,10 +21,7 @@ use flipbox\ember\traits\HandleRules;
 use flipbox\patron\db\ProviderActiveQuery;
 use flipbox\patron\helpers\ProviderHelper;
 use flipbox\patron\Patron;
-use flipbox\patron\providers\SettingsInterface;
 use flipbox\patron\validators\ProviderValidator;
-use Twig_Markup;
-use yii\base\InvalidArgumentException;
 use yii\helpers\ArrayHelper;
 
 /**

@@ -8,21 +8,16 @@
 
 namespace flipbox\patron\records;
 
-use flipbox\ember\helpers\ModelHelper;
-use flipbox\ember\helpers\QueryHelper;
 use flipbox\ember\records\ActiveRecord;
-use yii\db\ActiveQueryInterface;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
  * @since 1.0.0
- *
- * @property int $tokenId
- * @property string $environment
  */
 class TokenEnvironment extends ActiveRecord
 {
-    use traits\EnvironmentAttribute;
+    use traits\EnvironmentAttribute,
+        traits\TokenAttribute;
 
     /**
      * The table alias
@@ -32,58 +27,27 @@ class TokenEnvironment extends ActiveRecord
     /**
      * @inheritdoc
      */
+    protected $getterPriorityAttributes = [
+        'tokenId'
+    ];
+
+    /**
+     * @inheritdoc
+     */
     public function rules()
     {
         return array_merge(
             parent::rules(),
             $this->environmentRules(),
+            $this->tokenRules(),
             [
                 [
                     [
                         'tokenId'
                     ],
-                    'number',
-                    'integerOnly' => true
-                ],
-                [
-                    [
-                        'tokenId'
-                    ],
                     'required'
-                ],
-                [
-                    [
-                        'tokenId'
-                    ],
-                    'safe',
-                    'on' => [
-                        ModelHelper::SCENARIO_DEFAULT
-                    ]
                 ]
             ]
         );
-    }
-
-    /**
-     * Get the associated token
-     *
-     * @param array $config
-     * @return ActiveQueryInterface
-     */
-    public function getProvider(array $config = [])
-    {
-        $query = $this->hasOne(
-            Token::class,
-            ['tokenId' => 'id']
-        );
-
-        if (!empty($config)) {
-            QueryHelper::configure(
-                $query,
-                $config
-            );
-        }
-
-        return $query;
     }
 }

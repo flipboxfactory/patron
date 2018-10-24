@@ -3,7 +3,6 @@
 namespace flipbox\patron\cp\controllers\view\providers;
 
 use Craft;
-use craft\helpers\ArrayHelper;
 use craft\helpers\UrlHelper;
 use flipbox\craft\assets\circleicon\CircleIcon;
 use flipbox\ember\web\assets\rowinfomodal\RowInfoModal;
@@ -39,7 +38,6 @@ class InstancesController extends AbstractViewController
 
         $provider = Patron::getInstance()->manageProviders->getByCondition([
             'id' => $provider,
-            'environment' => null,
             'enabled' => null
         ]);
 

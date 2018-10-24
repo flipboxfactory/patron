@@ -1,7 +1,7 @@
 {
 "version": 3,
 "mappings": "AAMM,+BAAI;EACF,KAAK,EAAE,IAAI;EACX,MAAM,EAAE,IAAI;EACZ,cAAc,EAAE,GAAG;;AA4BrB,oCAAW;EACT,MAAM,EAAE,UAAU;;AAepB,oCAAW;EACT,MAAM,EAAE,QAAQ",
-"sources": ["../../src/css/Provider.scss"],
+"sources": ["../../src/css/Providers.scss"],
 "names": [],
-"file": "Provider.css"
+"file": "Providers.css"
 }

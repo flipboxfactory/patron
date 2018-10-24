@@ -3,6 +3,7 @@ Changelog
 
 ## Unreleased
 ### Added
+- Provider instances.  A provider can have more than one configuration (think dev/uat/prod).
 - Provider locking.  A third party plugin can lock a provider from accidentally getting deleted.
 - Settings::$encryptStorageData which encrypts the Provider's Client Secret (enabled by default).
 

@@ -29,7 +29,7 @@ class Settings extends Component
     {
         $currentSettings = Patron::getInstance()->getSettings();
 
-        $encryptionChanged = $currentSettings->encryptStorageData != $settingsModel->encryptStorageData;
+        $encryptionChanged = $currentSettings->getEncryptStorageData() != $settingsModel->getEncryptStorageData();
 
         // Save plugin settings
         if (Craft::$app->getPlugins()->savePluginSettings(
@@ -39,7 +39,7 @@ class Settings extends Component
             // Change encryption
             if ($encryptionChanged) {
                 Patron::getInstance()->manageProviders()->changeEncryption(
-                    $settingsModel->encryptStorageData
+                    $settingsModel->getEncryptStorageData()
                 );
             }
 

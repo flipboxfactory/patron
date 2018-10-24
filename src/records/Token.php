@@ -9,17 +9,14 @@
 namespace flipbox\patron\records;
 
 use Craft;
-use craft\helpers\ArrayHelper;
 use craft\helpers\DateTimeHelper;
 use craft\validators\DateTimeValidator;
 use DateTime;
 use flipbox\ember\helpers\ModelHelper;
-use flipbox\ember\helpers\ObjectHelper;
 use flipbox\ember\helpers\QueryHelper;
 use flipbox\ember\records\ActiveRecordWithId;
 use flipbox\ember\records\traits\StateAttribute;
 use flipbox\patron\db\TokenActiveQuery;
-use flipbox\patron\Patron;
 use yii\db\ActiveQueryInterface;
 
 /**
@@ -30,12 +27,14 @@ use yii\db\ActiveQueryInterface;
  * @property string $refreshToken
  * @property DateTime|null $dateExpires
  * @property array $values
+ * @property ProviderInstance[] $instances
  * @property TokenEnvironment[] $environments
  */
 class Token extends ActiveRecordWithId
 {
     use StateAttribute,
-        traits\ProviderAttribute;
+        traits\ProviderAttribute,
+        traits\RelatedEnvironmentsAttribute;
 
     /**
      * The table alias
@@ -43,23 +42,15 @@ class Token extends ActiveRecordWithId
     const TABLE_ALIAS = 'patron_tokens';
 
     /**
-     * @var bool
-     */
-    public $autoSaveEnvironments = true;
-
-    /**
-     * Environments that are temporarily set during the save process
-     *
-     * @var null|array
-     */
-    private $insertEnvironments;
-
-    /**
      * @inheritdoc
      */
     protected $getterPriorityAttributes = [
         'providerId'
     ];
+
+    /*******************************************
+     * QUERY
+     *******************************************/
 
     /**
      * @inheritdoc
@@ -103,16 +94,7 @@ class Token extends ActiveRecordWithId
             return false;
         }
 
-        if ($insert !== true ||
-            $this->isRelationPopulated('environments') !== true ||
-            $this->autoSaveEnvironments !== true
-        ) {
-            return true;
-        }
-
-        $this->insertEnvironments = $this->environments;
-
-        return true;
+        return $this->beforeSaveEnvironments($insert);
     }
 
 
@@ -121,9 +103,6 @@ class Token extends ActiveRecordWithId
      *******************************************/
 
     /**
-     * We're extracting the environments that may have been explicitly set on the record.  When the 'id'
-     * attribute is updated, it removes any associated relationships.
-     *
      * @inheritdoc
      * @throws \Throwable
      */
@@ -133,14 +112,7 @@ class Token extends ActiveRecordWithId
             return false;
         }
 
-        if (null === $this->insertEnvironments) {
-            return true;
-        }
-
-        $this->setEnvironments($this->insertEnvironments);
-        $this->insertEnvironments = null;
-
-        return $this->upsertInternal($attributes);
+        return $this->insertInternalEnvironments($attributes);
     }
 
     /**
@@ -180,51 +152,32 @@ class Token extends ActiveRecordWithId
      *******************************************/
 
     /**
-     * @param bool $force
-     * @return bool
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
+     * @inheritdoc
      */
-    protected function saveEnvironments(bool $force = false): bool
+    protected static function environmentRecordClass(): string
     {
-        if ($force === false && $this->autoSaveEnvironments !== true) {
-            return true;
-        }
-
-        $successful = true;
-
-        /** @var TokenEnvironment[] $allRecords */
-        $allRecords = $this->getEnvironments()
-            ->indexBy('environment')
-            ->all();
-
-        foreach ($this->environments as $model) {
-            ArrayHelper::remove($allRecords, $model->environment);
-            $model->tokenId = $this->getId();
-
-            if (!$model->save()) {
-                $successful = false;
-
-                $error = Craft::t(
-                    'patron',
-                    "Couldn't save environment due to validation errors:"
-                );
-                foreach ($model->getFirstErrors() as $attributeError) {
-                    $error .= "\n- " . Craft::t('patron', $attributeError);
-                }
-
-                $this->addError('sites', $error);
-            }
-        }
-
-        // Delete old records
-        foreach ($allRecords as $record) {
-            $record->delete();
-        }
-
-        return $successful;
+        return TokenEnvironment::class;
     }
 
+    /**
+     * @inheritdoc
+     */
+    protected function prepareEnvironmentRecordConfig(array $config = []): array
+    {
+        $config['token'] = $this;
+        return $config;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function environmentRelationshipQuery(): ActiveQueryInterface
+    {
+        return $this->hasMany(
+            static::environmentRecordClass(),
+            ['tokenId' => 'id']
+        );
+    }
 
     /**
      * @inheritdoc
@@ -272,17 +225,17 @@ class Token extends ActiveRecordWithId
     }
 
     /**
-     * Get all of the associated environments.
+     * Get all of the associated instances.
      *
      * @param array $config
      * @return \yii\db\ActiveQuery
      */
-    public function getEnvironments(array $config = [])
+    public function getInstances(array $config = [])
     {
         $query = $this->hasMany(
-            TokenEnvironment::class,
-            ['tokenId' => 'id']
-        )->indexBy('environment');
+            ProviderInstance::class,
+            ['providerId' => 'providerId']
+        );
 
         if (!empty($config)) {
             QueryHelper::configure(
@@ -292,53 +245,5 @@ class Token extends ActiveRecordWithId
         }
 
         return $query;
-    }
-
-    /**
-     * @param array $environments
-     * @return $this
-     */
-    public function setEnvironments(array $environments = [])
-    {
-        $environments = array_filter($environments);
-
-        // Do nothing
-        if (empty($environments) && !$this->isRelationPopulated('environments')) {
-            return $this;
-        }
-
-        $records = [];
-        foreach (array_filter($environments) as $key => $environment) {
-            $records[$key] = $this->resolveEnvironment($key, $environment);
-        }
-
-        $this->populateRelation('environments', $records);
-        return $this;
-    }
-
-    /**
-     * @param string $key
-     * @param $environment
-     * @return TokenEnvironment
-     */
-    protected function resolveEnvironment(string $key, $environment): TokenEnvironment
-    {
-        if ($environment instanceof TokenEnvironment) {
-            return $environment;
-        }
-
-        if (!$record = $this->environments[$key] ?? null) {
-            $record = new TokenEnvironment();
-        }
-
-        if (!is_array($environment)) {
-            $environment = ['environment' => $environment];
-        }
-
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return ObjectHelper::populate(
-            $record,
-            $environment
-        );
     }
 }

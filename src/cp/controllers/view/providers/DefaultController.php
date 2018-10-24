@@ -3,7 +3,6 @@
 namespace flipbox\patron\cp\controllers\view\providers;
 
 use Craft;
-use craft\helpers\UrlHelper;
 use flipbox\craft\assets\card\Card;
 use flipbox\craft\assets\circleicon\CircleIcon;
 use flipbox\patron\helpers\ProviderHelper as ProviderHelper;

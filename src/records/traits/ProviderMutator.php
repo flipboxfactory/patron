@@ -12,10 +12,12 @@ use Craft;
 use flipbox\ember\helpers\ObjectHelper;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
+use yii\db\ActiveQueryInterface;
 
 /**
  * @property int|null $providerId
  * @property Provider|null $provider
+ * @property ActiveQueryInterface $providerRecord
  *
  * @author Flipbox Factory <hello@flipboxfactory.com>
  * @since 1.0.0
@@ -46,11 +48,13 @@ trait ProviderMutator
      */
     public function getProviderId()
     {
-        if (null === $this->providerId && null !== $this->provider) {
-            $this->providerId = $this->provider->id;
+        $id = $this->getAttribute('providerId');
+        if (null === $id && null !== $this->provider) {
+            $id = $this->provider->id;
+            $this->setAttribute('providerId', $id);
         }
 
-        return $this->providerId;
+        return $id;
     }
 
     /**
@@ -100,11 +104,32 @@ trait ProviderMutator
      */
     protected function resolveProvider()
     {
-        if ($model = $this->resolveProviderFromId()) {
+        if (null !== ($model = $this->resolveProviderFromRelation())) {
+            return $model;
+        }
+
+        if (null !== ($model = $this->resolveProviderFromId())) {
             return $model;
         }
 
         return null;
+    }
+
+    /**
+     * @return Provider|null
+     */
+    private function resolveProviderFromRelation()
+    {
+        if (false === $this->isRelationPopulated('providerRecord')) {
+            return null;
+        }
+
+        /** @var Provider $record */
+        if (null === ($record = $this->getRelation('providerRecord'))) {
+            return null;
+        }
+
+        return $record;
     }
 
     /**
@@ -116,7 +141,7 @@ trait ProviderMutator
             return null;
         }
 
-        return Patron::getInstance()->manageProviders()->get($this->providerId);
+        return Patron::getInstance()->manageProviders()->find($this->providerId);
     }
 
     /**
@@ -145,5 +170,18 @@ trait ProviderMutator
 
         /** @var Provider $object */
         return $object;
+    }
+
+    /**
+     * Returns the associated provider record.
+     *
+     * @return ActiveQueryInterface
+     */
+    protected function getProviderRecord(): ActiveQueryInterface
+    {
+        return $this->hasOne(
+            Provider::class,
+            ['id' => 'providerId']
+        );
     }
 }

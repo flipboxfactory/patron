@@ -15,7 +15,6 @@ use craft\helpers\UrlHelper;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
 use flipbox\ember\modules\LoggerTrait;
-use flipbox\patron\migrations\m181019_220655_provider_instances;
 use flipbox\patron\models\Settings as SettingsModel;
 use yii\base\Event;
 

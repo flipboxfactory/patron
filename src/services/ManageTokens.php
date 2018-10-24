@@ -8,13 +8,11 @@
 
 namespace flipbox\patron\services;
 
-use Craft;
 use flipbox\ember\helpers\ArrayHelper;
 use flipbox\ember\services\traits\records\Accessor;
 use flipbox\patron\db\TokenQuery;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Token;
-use flipbox\patron\records\TokenEnvironment;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use yii\base\Component;

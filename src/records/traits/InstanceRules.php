@@ -9,38 +9,34 @@
 namespace flipbox\patron\records\traits;
 
 use flipbox\ember\helpers\ModelHelper;
-use flipbox\patron\Patron;
+use flipbox\patron\records\ProviderInstance;
 
 /**
- * @property string|null $environment
+ * @property int|null $instanceId
+ * @property ProviderInstance|null $instance
  *
  * @author Flipbox Factory <hello@flipboxfactory.com>
  * @since 1.0.0
  */
-trait EnvironmentRules
+trait InstanceRules
 {
     /**
-     * @inheritdoc
+     * @return array
      */
-    protected function environmentRules(): array
+    protected function instanceRules(): array
     {
         return [
             [
                 [
-                    'environment'
+                    'instanceId'
                 ],
-                'required'
+                'number',
+                'integerOnly' => true
             ],
             [
                 [
-                    'environment'
-                ],
-                'default',
-                'value' => Patron::getInstance()->getSettings()->getEnvironment()
-            ],
-            [
-                [
-                    'environment'
+                    'instanceId',
+                    'instance'
                 ],
                 'safe',
                 'on' => [

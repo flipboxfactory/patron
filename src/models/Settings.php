@@ -59,7 +59,7 @@ class Settings extends Model
      *
      * @var bool
      */
-    public $encryptStorageData = true;
+    private $encryptStorageData = true;
 
     /**
      * @var array
@@ -70,6 +70,29 @@ class Settings extends Model
      * @var bool
      */
     public $applyProviderEnvironmentsToToken = true;
+
+
+    /*******************************************
+     * ENCRYPTION
+     *******************************************/
+
+    /**
+     * @return bool
+     */
+    public function getEncryptStorageData(): bool
+    {
+        return (bool)$this->encryptStorageData;
+    }
+
+    /**
+     * @param bool $value
+     * @return $this
+     */
+    public function setEncryptStorageData(bool $value)
+    {
+        $this->encryptStorageData = $value;
+        return $this;
+    }
 
     /*******************************************
      * ENVIRONMENTS
@@ -311,6 +334,7 @@ class Settings extends Model
             [
                 'callbackUrlPath',
                 'defaultEnvironments',
+                'encryptStorageData',
                 'environments',
                 'environment'
             ]

@@ -35,6 +35,7 @@
         <th scope="col">{{ "Access Token"|t('patron') }}</th>
         <th scope="col">{{ "Expires"|t('patron') }}</th>
         <th scope="col">{{ "Environment(s)"|t('patron') }}</th>
+        <th scope="col">{{ "Created"|t('patron') }}</th>
         <td class="thin"></td>
         </thead>
         <tbody>
@@ -76,8 +77,6 @@
         <td data-title="{{ 'Expires'|t('patron') }}">
             {% if token.dateExpires %}
                 {{ token.dateExpires|date("c") }}
-            {% else %}
-                &nbsp;
             {% endif %}
         </td>
         <td data-title="{{ 'Environment(s)'|t('patron') }}">
@@ -86,6 +85,9 @@
                 {% set environments = environments|merge([env.environment]) %}
             {% endfor %}
             <span style="font-size: 10px;">{{ environments|join(', ') }}</span>
+        </td>
+        <td data-title="{{ 'Created'|t('patron') }}">
+            {{ token.dateCreated|date("c") }}
         </td>
         <td class="thin">
             <form method="post" accept-charset="UTF-8">

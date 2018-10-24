@@ -14,7 +14,7 @@ use flipbox\ember\records\traits\ActiveRecord;
  * @author Flipbox Factory <hello@flipboxfactory.com>
  * @since 1.0.0
  */
-trait ProviderAttribute
+trait TokenAttribute
 {
-    use ActiveRecord, ProviderRules, ProviderMutator;
+    use ActiveRecord, TokenRules, TokenMutator;
 }

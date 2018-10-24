@@ -4,14 +4,10 @@ namespace flipbox\patron\cp\controllers\view\providers;
 
 use Craft;
 use craft\helpers\UrlHelper;
-use flipbox\craft\assets\card\Card;
 use flipbox\craft\assets\circleicon\CircleIcon;
 use flipbox\ember\web\assets\rowinfomodal\RowInfoModal;
-use flipbox\patron\helpers\ProviderHelper as ProviderHelper;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
-use flipbox\patron\records\ProviderInstance;
-use flipbox\patron\services\ManageProviders as ProviderService;
 use flipbox\patron\web\assets\providerswitcher\ProvidersAsset;
 
 class TokensController extends AbstractViewController
@@ -27,12 +23,12 @@ class TokensController extends AbstractViewController
     const TEMPLATE_INSERT = self::TEMPLATE_INDEX . '/index';
 
     /**
-     * @param null $identifier
+     * @param int|null $provider
      * @return \yii\web\Response
      * @throws \flipbox\ember\exceptions\NotFoundException
      * @throws \yii\base\InvalidConfigException
      */
-    public function actionIndex($identifier = null)
+    public function actionIndex($provider = null)
     {
         Craft::$app->getView()->registerAssetBundle(CircleIcon::class);
         Craft::$app->getView()->registerAssetBundle(RowInfoModal::class);
@@ -41,8 +37,7 @@ class TokensController extends AbstractViewController
         $variables = [];
 
         $provider = Patron::getInstance()->manageProviders()->getByCondition([
-            'id' => $identifier,
-            'environment' => null,
+            'id' => $provider,
             'enabled' => null
         ]);
 

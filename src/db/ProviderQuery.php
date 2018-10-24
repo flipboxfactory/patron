@@ -64,7 +64,7 @@ class ProviderQuery extends Query
     {
         $results = parent::populate($rows);
 
-        if (Patron::getInstance()->getSettings()->encryptStorageData === true) {
+        if (Patron::getInstance()->getSettings()->getEncryptStorageData() === true) {
             foreach ($results as $key => $result) {
                 $results[$key] = $this->parseResult($result, false);
             }

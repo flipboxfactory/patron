@@ -31,9 +31,19 @@ class BeforeInsertToken
             return;
         }
 
-        $token->setEnvironments(
-            $token->getProvider()->getEnvironments()->select('environment')->column()
-        );
+        $environments = [];
+
+        foreach ($token->instances as $instance) {
+            $environments = array_merge(
+                $environments,
+                $instance->getEnvironments()
+                    ->select('environment')
+                    ->indexBy(null)
+                    ->column()
+            );
+        }
+
+        $token->setEnvironments((array_unique($environments)));
         $token->autoSaveEnvironments = true;
     }
 }

@@ -9,38 +9,34 @@
 namespace flipbox\patron\records\traits;
 
 use flipbox\ember\helpers\ModelHelper;
-use flipbox\patron\Patron;
+use flipbox\patron\records\Token;
 
 /**
- * @property string|null $environment
+ * @property int|null $tokenId
+ * @property Token|null $token
  *
  * @author Flipbox Factory <hello@flipboxfactory.com>
  * @since 1.0.0
  */
-trait EnvironmentRules
+trait TokenRules
 {
     /**
-     * @inheritdoc
+     * @return array
      */
-    protected function environmentRules(): array
+    protected function tokenRules(): array
     {
         return [
             [
                 [
-                    'environment'
+                    'tokenId'
                 ],
-                'required'
+                'number',
+                'integerOnly' => true
             ],
             [
                 [
-                    'environment'
-                ],
-                'default',
-                'value' => Patron::getInstance()->getSettings()->getEnvironment()
-            ],
-            [
-                [
-                    'environment'
+                    'tokenId',
+                    'token'
                 ],
                 'safe',
                 'on' => [

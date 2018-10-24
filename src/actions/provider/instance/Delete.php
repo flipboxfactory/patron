@@ -9,7 +9,6 @@
 namespace flipbox\patron\actions\provider\instance;
 
 use flipbox\ember\actions\record\RecordDelete;
-use flipbox\patron\records\Provider;
 use flipbox\patron\records\ProviderInstance;
 use yii\db\ActiveRecord;
 

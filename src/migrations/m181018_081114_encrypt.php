@@ -11,6 +11,7 @@ namespace flipbox\patron\migrations;
 use craft\db\Migration;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
+use flipbox\patron\records\ProviderInstance;
 
 class m181018_081114_encrypt extends Migration
 {
@@ -22,11 +23,11 @@ class m181018_081114_encrypt extends Migration
         $this->alterColumn(
             Provider::tableName(),
             'clientSecret',
-            $this->char(Provider::CLIENT_SECRET_LENGTH)
+            $this->char(ProviderInstance::CLIENT_SECRET_LENGTH)
         );
 
         // Encrypt those that are not
-        if (Patron::getInstance()->getSettings()->encryptStorageData === true) {
+        if (Patron::getInstance()->getSettings()->getEncryptStorageData() === true) {
             Patron::getInstance()->manageProviders()->changeEncryption(true);
         }
     }

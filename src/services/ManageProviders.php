@@ -105,13 +105,13 @@ class ManageProviders extends Component
     public function changeEncryption(bool $changeTo)
     {
         // Temp
-        Patron::getInstance()->getSettings()->encryptStorageData = !$changeTo;
+        Patron::getInstance()->getSettings()->setEncryptStorageData(!$changeTo);
 
         // Get current providers
         $records = $this->findAll();
 
         // Temp
-        Patron::getInstance()->getSettings()->encryptStorageData = $changeTo;
+        Patron::getInstance()->getSettings()->setEncryptStorageData($changeTo);
 
         // Iterate and save
         foreach ($records as $record) {

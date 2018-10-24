@@ -8,12 +8,12 @@
 
 namespace flipbox\patron\records\traits;
 
-use craft\elements\User as UserElement;
 use flipbox\ember\helpers\ModelHelper;
+use flipbox\patron\records\Provider;
 
 /**
- * @property int|null $userId
- * @property UserElement|null $user
+ * @property int|null $providerId
+ * @property Provider|null $provider
  *
  * @author Flipbox Factory <hello@flipboxfactory.com>
  * @since 1.0.0

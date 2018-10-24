@@ -9,7 +9,6 @@
 namespace flipbox\patron\actions\provider\instance;
 
 use flipbox\ember\actions\record\RecordCreate;
-use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
 use flipbox\patron\records\ProviderInstance;
 use yii\db\ActiveRecord;

@@ -8,10 +8,7 @@
 
 namespace flipbox\patron\records;
 
-use flipbox\ember\helpers\ModelHelper;
-use flipbox\ember\helpers\QueryHelper;
 use flipbox\ember\records\ActiveRecord;
-use yii\db\ActiveQueryInterface;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -22,7 +19,8 @@ use yii\db\ActiveQueryInterface;
  */
 class ProviderEnvironment extends ActiveRecord
 {
-    use traits\EnvironmentAttribute;
+    use traits\EnvironmentAttribute,
+        traits\InstanceAttribute;
 
     /**
      * The table alias
@@ -32,58 +30,27 @@ class ProviderEnvironment extends ActiveRecord
     /**
      * @inheritdoc
      */
+    protected $getterPriorityAttributes = [
+        'instanceId'
+    ];
+
+    /**
+     * @inheritdoc
+     */
     public function rules()
     {
         return array_merge(
             parent::rules(),
             $this->environmentRules(),
+            $this->instanceRules(),
             [
                 [
                     [
                         'instanceId'
                     ],
-                    'number',
-                    'integerOnly' => true
-                ],
-                [
-                    [
-                        'instanceId'
-                    ],
                     'required'
-                ],
-                [
-                    [
-                        'instanceId'
-                    ],
-                    'safe',
-                    'on' => [
-                        ModelHelper::SCENARIO_DEFAULT
-                    ]
                 ]
             ]
         );
-    }
-
-    /**
-     * Get the associated provider
-     *
-     * @param array $config
-     * @return ActiveQueryInterface
-     */
-    public function getInstances(array $config = [])
-    {
-        $query = $this->hasOne(
-            Provider::class,
-            ['instanceId' => 'id']
-        );
-
-        if (!empty($config)) {
-            QueryHelper::configure(
-                $query,
-                $config
-            );
-        }
-
-        return $query;
     }
 }

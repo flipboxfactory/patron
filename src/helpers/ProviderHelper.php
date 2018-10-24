@@ -68,7 +68,7 @@ class ProviderHelper
      */
     public static function encryptClientSecret(string $value, bool $checkSettings = true): string
     {
-        if ($checkSettings === true && Patron::getInstance()->getSettings()->encryptStorageData != true) {
+        if ($checkSettings === true && Patron::getInstance()->getSettings()->getEncryptStorageData() != true) {
             return $value;
         }
 
@@ -82,7 +82,7 @@ class ProviderHelper
      */
     public static function decryptClientSecret(string $value, bool $checkSettings = true): string
     {
-        if ($checkSettings === true && Patron::getInstance()->getSettings()->encryptStorageData != true) {
+        if ($checkSettings === true && Patron::getInstance()->getSettings()->getEncryptStorageData() != true) {
             return $value;
         }
 
@@ -105,7 +105,6 @@ class ProviderHelper
 
         return $value;
     }
-
 
 
     /**
