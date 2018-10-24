@@ -59,9 +59,26 @@ class InstancesController extends AbstractViewController
         // Template variables
         $this->instanceVariables($variables, $provider);
 
+        $availableEnvironments = array_merge(
+            $this->availableEnvironments($provider),
+            $instance->getEnvironments()
+                ->indexBy(null)
+                ->select(['environment'])
+                ->column()
+        );
+
+        $instanceOptions = [];
+        foreach (Patron::getInstance()->getSettings()->getEnvironments() as $env) {
+            $instanceOptions[] = [
+                'label' => Craft::t('patron', $env),
+                'value' => $env,
+                'disabled' => !in_array($env, $availableEnvironments, true)
+            ];
+        }
+
         $variables['provider'] = $provider;
         $variables['instance'] = $instance;
-        $variables['availableEnvironments'] = $this->availableEnvironments($provider);
+        $variables['environmentOptions'] = $instanceOptions;
 
         // Full page form in the CP
         $variables['fullPageForm'] = true;

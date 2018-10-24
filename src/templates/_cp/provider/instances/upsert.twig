@@ -59,25 +59,15 @@
             {% set environments = environments|merge([env.environment]) %}
         {% endfor %}
         {% namespace 'environments' %}
-            {% for environment in environments %}
+            {% for environment in environmentOptions %}
                 {{ forms.lightswitchField({
-                    label: environment|t('patron'),
-                    id: environment,
-                    name: environment,
-                    value: environment,
+                    label: environment.label,
+                    id: environment.value,
+                    name: environment.value,
+                    value: environment.value,
                     small: true,
-                    on: environment in environments
-                }) }}
-            {% endfor %}
-
-            {% for environment in availableEnvironments %}
-                {{ forms.lightswitchField({
-                    label: environment|t('patron'),
-                    id: environment,
-                    name: environment,
-                    value: environment,
-                    small: true,
-                    on: false
+                    on: environment.value in environments,
+                    disabled: environment.disabled
                 }) }}
             {% endfor %}
         {% endnamespace %}
