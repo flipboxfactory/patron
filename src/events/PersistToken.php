@@ -17,7 +17,7 @@ use yii\base\Event;
  * @author Flipbox Factory <hello@flipboxfactory.com>
  * @since 1.0.0
  */
-class PersistTokenEvent extends Event
+class PersistToken extends Event
 {
     /**
      * @var AccessToken

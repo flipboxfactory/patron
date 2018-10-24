@@ -14,7 +14,7 @@ use craft\helpers\DateTimeHelper;
 use craft\helpers\Json;
 use flipbox\ember\services\traits\objects\Accessor;
 use flipbox\patron\db\TokenQuery;
-use flipbox\patron\events\PersistTokenEvent;
+use flipbox\patron\events\PersistToken;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Token;
 use League\OAuth2\Client\Provider\AbstractProvider;
@@ -110,7 +110,7 @@ class Tokens extends Component
 
         $record = Patron::getInstance()->manageTokens()->create($config);
 
-        $event = new PersistTokenEvent([
+        $event = new PersistToken([
             'token' => $accessToken,
             'provider' => $provider,
             'record' => $record

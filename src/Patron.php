@@ -107,18 +107,7 @@ class Patron extends Plugin
             Event::on(
                 records\ProviderInstance::class,
                 records\ProviderInstance::EVENT_BEFORE_INSERT,
-                function ($event) use ($defaultEnvironments) {
-                    /** @var records\ProviderInstance $provider */
-                    $provider = $event->sender;
-
-                    // Ignore if already set
-                    if ($provider->isRelationPopulated('environments') === true) {
-                        return;
-                    }
-
-                    $provider->setEnvironments($defaultEnvironments);
-                    $provider->autoSaveEnvironments = true;
-                }
+                new events\handlers\BeforeInsertProviderInstance
             );
         }
 
@@ -127,20 +116,7 @@ class Patron extends Plugin
             Event::on(
                 records\Token::class,
                 records\Token::EVENT_BEFORE_INSERT,
-                function ($event) {
-                    /** @var records\Token $token */
-                    $token = $event->sender;
-
-                    // Ignore if already set
-                    if ($token->isRelationPopulated('environments') === true) {
-                        return;
-                    }
-
-                    $token->setEnvironments(
-                        $token->getProvider()->getEnvironments()->select('environment')->column()
-                    );
-                    $token->autoSaveEnvironments = true;
-                }
+                new events\handlers\BeforeInsertToken
             );
         }
     }

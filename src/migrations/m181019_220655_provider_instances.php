@@ -11,9 +11,11 @@ namespace flipbox\patron\migrations;
 use craft\db\Migration;
 use craft\db\Query;
 use craft\helpers\MigrationHelper;
+use flipbox\patron\events\handlers\BeforeInsertProviderInstance;
 use flipbox\patron\records\Provider;
 use flipbox\patron\records\ProviderEnvironment;
 use flipbox\patron\records\ProviderInstance;
+use yii\base\Event;
 
 class m181019_220655_provider_instances extends Migration
 {
@@ -22,6 +24,12 @@ class m181019_220655_provider_instances extends Migration
      */
     public function safeUp()
     {
+        // No insert events please...
+        Event::off(
+            ProviderInstance::class,
+            ProviderInstance::EVENT_BEFORE_INSERT
+        );
+
         $this->createTable(
             ProviderInstance::tableName(),
             [

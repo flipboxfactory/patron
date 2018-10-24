@@ -56,13 +56,8 @@ class Install extends Migration
      */
     public function safeDown()
     {
-        // Locks
-        if (false === (new m181010_081033_provider_locks())->safeDown()) {
-            return false;
-        }
-
-        // Environments
-        if (false === (new m180716_121422_environments())->safeDown()) {
+        // Provider Settings
+        if (false === (new m181019_220655_provider_instances())->safeDown()) {
             return false;
         }
 
@@ -71,8 +66,13 @@ class Install extends Migration
             return false;
         }
 
-        // Provider Settings
-        if (false === (new m181019_220655_provider_instances())->safeDown()) {
+        // Locks
+        if (false === (new m181010_081033_provider_locks())->safeDown()) {
+            return false;
+        }
+
+        // Environments
+        if (false === (new m180716_121422_environments())->safeDown()) {
             return false;
         }
 
