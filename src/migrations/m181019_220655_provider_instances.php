@@ -27,7 +27,11 @@ class m181019_220655_provider_instances extends Migration
         // No insert events please...
         Event::off(
             ProviderInstance::class,
-            ProviderInstance::EVENT_BEFORE_INSERT
+            ProviderInstance::EVENT_BEFORE_INSERT,
+            [
+                BeforeInsertProviderInstance::class,
+                'handle'
+            ]
         );
 
         $this->createTable(

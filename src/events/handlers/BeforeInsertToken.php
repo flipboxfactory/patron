@@ -21,7 +21,7 @@ class BeforeInsertToken
      * Assign default environments to a provider
      * @param ModelEvent $event
      */
-    public function __invoke(ModelEvent $event)
+    public static function handle(ModelEvent $event)
     {
         /** @var Token $token */
         $token = $event->sender;

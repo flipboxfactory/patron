@@ -66,7 +66,7 @@ abstract class AbstractViewController extends \flipbox\patron\cp\controllers\vie
     }
 
     /*******************************************
-     * VARIABLES
+     * PATHS
      *******************************************/
 
     /**
@@ -88,6 +88,25 @@ abstract class AbstractViewController extends \flipbox\patron\cp\controllers\vie
     /*******************************************
      * VARIABLES
      *******************************************/
+
+    /**
+     * Set base variables used to generate template views
+     *
+     * @param array $variables
+     */
+    protected function baseVariables(array &$variables = [])
+    {
+        parent::baseVariables($variables);
+
+        // Page title
+        $variables['title'] .= ': ' . Craft::t('patron', "Providers");
+
+        // Breadcrumbs
+        $variables['crumbs'][] = [
+            'label' => Craft::t('patron', "Providers"),
+            'url' => UrlHelper::url(Patron::getInstance()->getUniqueId() . '/providers')
+        ];
+    }
 
     /**
      * @param array $variables
@@ -127,16 +146,13 @@ abstract class AbstractViewController extends \flipbox\patron\cp\controllers\vie
         $variables['continueEditingUrl'] = $this->getBaseContinueEditingUrl('/' . $provider->getId());
 
         // Append title
-        $variables['title'] .= ' - ' . Craft::t('patron', 'Edit') . ' ' . $provider->getDisplayName();
+        $variables['title'] .= ' - ' . $provider->getDisplayName();
 
         // Breadcrumbs
         $variables['crumbs'][] = [
-            'label' => Craft::t(
-                'patron',
-                "Edit"
-            ) . ": " . $provider->getDisplayName(),
+            'label' => $provider->getDisplayName(),
             'url' => UrlHelper::url(
-                $variables['baseCpPath'] . '/' . $provider->getId()
+                Patron::getInstance()->getUniqueId() . '/providers/' . $provider->getId()
             )
         ];
     }

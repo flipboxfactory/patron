@@ -156,6 +156,13 @@ class ProviderInstance extends ActiveRecordWithId
      */
     public function setEnvironments(array $environments = [])
     {
+        $environments = array_filter($environments);
+
+        // Do nothing
+        if (empty($environments) && !$this->isRelationPopulated('environments')) {
+            return $this;
+        }
+
         $records = [];
         foreach (array_filter($environments) as $key => $environment) {
             $records[$key] = $this->resolveEnvironment($key, $environment);

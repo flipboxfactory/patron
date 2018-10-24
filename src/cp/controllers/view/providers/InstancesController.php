@@ -3,16 +3,13 @@
 namespace flipbox\patron\cp\controllers\view\providers;
 
 use Craft;
+use craft\helpers\ArrayHelper;
 use craft\helpers\UrlHelper;
-use flipbox\craft\assets\card\Card;
 use flipbox\craft\assets\circleicon\CircleIcon;
 use flipbox\ember\web\assets\rowinfomodal\RowInfoModal;
-use flipbox\patron\helpers\ProviderHelper as ProviderHelper;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
 use flipbox\patron\records\ProviderInstance;
-use flipbox\patron\services\ManageProviders as ProviderService;
-use flipbox\patron\web\assets\providerswitcher\ProvidersAsset;
 
 class InstancesController extends AbstractViewController
 {
@@ -28,7 +25,11 @@ class InstancesController extends AbstractViewController
     const TEMPLATE_UPSERT = self::TEMPLATE_INDEX . '/upsert';
 
     /**
+     * @param null $provider
+     * @param null $identifier
+     * @param ProviderInstance|null $instance
      * @return \yii\web\Response
+     * @throws \flipbox\ember\exceptions\NotFoundException
      * @throws \yii\base\InvalidConfigException
      */
     public function actionUpsert($provider = null, $identifier = null, ProviderInstance $instance = null)
@@ -55,14 +56,8 @@ class InstancesController extends AbstractViewController
 
         $instance->setProvider($provider);
 
-        /** @var ProviderInstance $instance */
-
         // Template variables
-        if (!$instance->getId()) {
-            $this->insertInstanceVariables($variables, $provider);
-        } else {
-            $this->updateInstanceVariables($variables, $provider, $instance);
-        }
+        $this->instanceVariables($variables, $provider);
 
         $variables['provider'] = $provider;
         $variables['instance'] = $instance;
@@ -77,6 +72,7 @@ class InstancesController extends AbstractViewController
 
         return $this->renderTemplate(static::TEMPLATE_UPSERT, $variables);
     }
+
 
     /*******************************************
      * BASE VARIABLES
@@ -98,44 +94,28 @@ class InstancesController extends AbstractViewController
         return parent::getBaseActionPath() . '/instances';
     }
 
-    /**
-     * Set base variables used to generate template views
-     *
-     * @param array $variables
-     */
-    protected function baseVariables(array &$variables = [])
-    {
-        parent::baseVariables($variables);
-
-        // Page title
-        $variables['title'] .= ': ' . Craft::t('patron', "Providers");
-
-        // Breadcrumbs
-        $variables['crumbs'][] = [
-            'label' => Craft::t('patron', "Providers"),
-            'url' => UrlHelper::url($variables['baseCpPath'])
-        ];
-    }
-
 
     /*******************************************
      * VARIABLES
      *******************************************/
-    /**
-     * @param array $variables
-     * @param Provider $provider
-     */
-    protected function insertInstanceVariables(array &$variables, Provider $provider)
-    {
-        $this->insertVariables($variables);
-    }
 
     /**
      * @param array $variables
      * @param Provider $provider
      */
-    protected function updateInstanceVariables(array &$variables, Provider $provider, ProviderInstance $instance)
+    protected function instanceVariables(array &$variables, Provider $provider)
     {
         $this->updateVariables($variables, $provider);
+
+        $variables['title'] .= ' ' . Craft::t('patron', "Instance");
+
+        // Breadcrumbs
+        $variables['crumbs'][] = [
+            'label' => Craft::t('patron', "Instance"),
+            'url' => UrlHelper::url(
+                $variables['baseCpPath'] . '/instances/' .
+                Craft::$app->getRequest()->getSegment(5)
+            )
+        ];
     }
 }

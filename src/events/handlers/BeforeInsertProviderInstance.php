@@ -19,10 +19,9 @@ use yii\base\ModelEvent;
 class BeforeInsertProviderInstance
 {
     /**
-     * Assign default environments to a provider
      * @param ModelEvent $event
      */
-    public function __invoke(ModelEvent $event)
+    public static function handle(ModelEvent $event)
     {
         $defaultEnvironments = Patron::getInstance()->getSettings()->getDefaultEnvironments();
 

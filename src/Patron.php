@@ -107,7 +107,10 @@ class Patron extends Plugin
             Event::on(
                 records\ProviderInstance::class,
                 records\ProviderInstance::EVENT_BEFORE_INSERT,
-                new events\handlers\BeforeInsertProviderInstance
+                [
+                    events\handlers\BeforeInsertProviderInstance::class,
+                    'handle'
+                ]
             );
         }
 
@@ -116,7 +119,10 @@ class Patron extends Plugin
             Event::on(
                 records\Token::class,
                 records\Token::EVENT_BEFORE_INSERT,
-                new events\handlers\BeforeInsertToken
+                [
+                    events\handlers\BeforeInsertToken::class,
+                    'handle'
+                ]
             );
         }
     }

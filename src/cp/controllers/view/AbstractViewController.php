@@ -87,7 +87,7 @@ abstract class AbstractViewController extends Controller
         // Breadcrumbs
         $variables['crumbs'][] = [
             'label' => $variables['title'],
-            'url' => UrlHelper::url($variables['baseCpPath'])
+            'url' => UrlHelper::url(Patron::getInstance()->getUniqueId())
         ];
     }
 

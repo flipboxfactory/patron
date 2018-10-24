@@ -46,6 +46,7 @@ class TokensController extends AbstractViewController
             'enabled' => null
         ]);
 
+        // Template variables
         $this->tokenVariables($variables, $provider);
 
         $variables['provider'] = $provider;
@@ -58,7 +59,7 @@ class TokensController extends AbstractViewController
     }
 
     /*******************************************
-     * BASE VARIABLES
+     * PATHS
      *******************************************/
 
     /**
@@ -77,25 +78,6 @@ class TokensController extends AbstractViewController
         return parent::getBaseActionPath() . '/tokens';
     }
 
-    /**
-     * Set base variables used to generate template views
-     *
-     * @param array $variables
-     */
-    protected function baseVariables(array &$variables = [])
-    {
-        parent::baseVariables($variables);
-
-        // Page title
-        $variables['title'] .= ': ' . Craft::t('patron', "Providers");
-
-        // Breadcrumbs
-        $variables['crumbs'][] = [
-            'label' => Craft::t('patron', "Providers"),
-            'url' => UrlHelper::url($variables['baseCpPath'])
-        ];
-    }
-
 
     /*******************************************
      * VARIABLES
@@ -107,25 +89,16 @@ class TokensController extends AbstractViewController
      */
     protected function tokenVariables(array &$variables, Provider $provider)
     {
-        // apply base view variables
-        $this->baseVariables($variables);
+        $this->updateVariables($variables, $provider);
 
-//        // Set the "Continue Editing" URL
-//        $variables['continueEditingUrl'] = $this->getBaseContinueEditingUrl('/' . $provider->getId() . '/tokens');
-//        $variables['baseActionPath'] = $this->module->uniqueId . ('/tokens');
-//
-//        // Append title
-//        $variables['title'] .= ' - ' . $provider->getDisplayName() . ' ' . Craft::t('patron', 'Tokens');
-//
-//        // Breadcrumbs
-//        $variables['crumbs'][] = [
-//            'label' => Craft::t(
-//                    'patron',
-//                    "Edit"
-//                ) . ": " . $provider->getDisplayName(),
-//            'url' => UrlHelper::url(
-//                $variables['baseCpPath'] . '/' . $provider->getId()
-//            )
-//        ];
+        $variables['title'] .= ' ' . Craft::t('patron', "Tokens");
+
+        // Breadcrumbs
+        $variables['crumbs'][] = [
+            'label' => Craft::t('patron', "Tokens"),
+            'url' => UrlHelper::url(
+                $variables['baseCpPath'] . '/tokens'
+            )
+        ];
     }
 }
