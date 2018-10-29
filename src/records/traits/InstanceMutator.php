@@ -72,6 +72,7 @@ trait InstanceMutator
         if (null === ($instance = $this->internalResolveInstance($instance))) {
             $this->instance = $this->instanceId = null;
         } else {
+            /** @var ProviderInstance $instance */
             $this->instanceId = $instance->id;
             $this->instance = $instance;
         }
@@ -157,6 +158,7 @@ trait InstanceMutator
         }
 
         if (is_numeric($instance) || is_string($instance)) {
+            /** @noinspection PhpIncompatibleReturnTypeInspection */
             return ProviderInstance::findOne($instance);
         }
 
