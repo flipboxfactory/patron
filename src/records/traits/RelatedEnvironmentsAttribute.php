@@ -28,8 +28,10 @@ trait RelatedEnvironmentsAttribute
     /**
      * Populates the named relation with the related records.
      * Note that this method does not check if the relation exists or not.
-     * @param string $name the relation name, e.g. `orders` for a relation defined via `getOrders()` method (case-sensitive).
-     * @param ActiveRecordInterface|array|null $records the related records to be populated into the relation.
+     * @param string $name the relation name, e.g. `orders` for a relation
+     * defined via `getOrders()` method (case-sensitive).
+     * @param ActiveRecordInterface|array|null $records the related records to be
+     * populated into the relation.
      * @see getRelation()
      */
     abstract public function populateRelation($name, $records);
