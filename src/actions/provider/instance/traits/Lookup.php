@@ -8,7 +8,6 @@
 
 namespace flipbox\patron\actions\provider\instance\traits;
 
-use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
 use flipbox\patron\records\ProviderInstance;
 

@@ -10,6 +10,7 @@ namespace flipbox\patron\records\traits;
 
 use Craft;
 use flipbox\ember\helpers\ObjectHelper;
+use flipbox\ember\records\traits\ActiveRecord;
 use flipbox\patron\records\ProviderInstance;
 use yii\db\ActiveQueryInterface;
 
@@ -23,6 +24,8 @@ use yii\db\ActiveQueryInterface;
  */
 trait InstanceMutator
 {
+    use ActiveRecord;
+
     /**
      * @var ProviderInstance|null
      */

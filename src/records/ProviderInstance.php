@@ -193,30 +193,11 @@ class ProviderInstance extends ActiveRecordWithId
      */
     protected function updateInternal($attributes = null)
     {
-        if (!parent::updateInternal($attributes)) {
+        if (false === ($response = parent::updateInternal($attributes))) {
             return false;
         }
 
-        return $this->upsertInternal($attributes);
-    }
-
-    /**
-     * @param null $attributes
-     * @return bool
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
-     */
-    protected function upsertInternal($attributes = null): bool
-    {
-        if (empty($attributes)) {
-            return $this->saveEnvironments();
-        }
-
-        if (array_key_exists('environments', $attributes)) {
-            return $this->saveEnvironments(true);
-        }
-
-        return true;
+        return $this->upsertEnvironmentsInternal($attributes) ? $response : false;
     }
 
 

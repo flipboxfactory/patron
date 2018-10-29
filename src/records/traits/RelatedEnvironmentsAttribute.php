@@ -15,6 +15,7 @@ use flipbox\ember\helpers\QueryHelper;
 use flipbox\ember\records\traits\ActiveRecord as ActiveRecordTrait;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
+use yii\db\ActiveRecordInterface;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -23,6 +24,22 @@ use yii\db\ActiveRecord;
 trait RelatedEnvironmentsAttribute
 {
     use ActiveRecordTrait;
+
+    /**
+     * Populates the named relation with the related records.
+     * Note that this method does not check if the relation exists or not.
+     * @param string $name the relation name, e.g. `orders` for a relation defined via `getOrders()` method (case-sensitive).
+     * @param ActiveRecordInterface|array|null $records the related records to be populated into the relation.
+     * @see getRelation()
+     */
+    abstract public function populateRelation($name, $records);
+
+    /**
+     * Adds a new error to the specified attribute.
+     * @param string $attribute attribute name
+     * @param string $error new error message
+     */
+    abstract public function addError($attribute, $error = '');
 
     /**
      * @var bool
@@ -85,7 +102,7 @@ trait RelatedEnvironmentsAttribute
             return $this;
         }
 
-        $currentEnvironments = ArrayHelper::index($this->environments, 'environment');
+        $currentEnvironments = ArrayHelper::index($this->getAttribute('environments'), 'environment');
 
         $records = [];
         foreach ($environments as $key => $environment) {
@@ -154,7 +171,7 @@ trait RelatedEnvironmentsAttribute
             ->all();
 
         /** @var ActiveRecord $model */
-        foreach ($this->environments as $model) {
+        foreach ($this->getAttribute('environments') as $model) {
             ArrayHelper::remove($allRecords, $model->getAttribute('environment'));
 
             if (!$model->save()) {
@@ -196,7 +213,7 @@ trait RelatedEnvironmentsAttribute
             return true;
         }
 
-        $this->insertEnvironments = $this->environments;
+        $this->insertEnvironments = $this->getAttribute('environments');
 
         return true;
     }
@@ -217,6 +234,25 @@ trait RelatedEnvironmentsAttribute
         $this->setEnvironments($this->insertEnvironments);
         $this->insertEnvironments = null;
 
-        return $this->upsertInternal($attributes);
+        return $this->upsertEnvironmentsInternal($attributes);
+    }
+
+    /**
+     * @param null $attributes
+     * @return bool
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    protected function upsertEnvironmentsInternal($attributes = null): bool
+    {
+        if (empty($attributes)) {
+            return $this->saveEnvironments();
+        }
+
+        if (array_key_exists('environments', $attributes)) {
+            return $this->saveEnvironments(true);
+        }
+
+        return true;
     }
 }

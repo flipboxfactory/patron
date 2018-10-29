@@ -403,7 +403,7 @@ class Provider extends ActiveRecordWithId
                 ])
                 ->from(['{{%plugins}}'])
                 ->where([
-                    'id' => ArrayHelper::getColumn($locks, ['pluginId']),
+                    'id' => ArrayHelper::getColumn($locks, 'pluginId'),
                 ])
                 ->column();
 
@@ -487,11 +487,11 @@ class Provider extends ActiveRecordWithId
      */
     protected function updateInternal($attributes = null)
     {
-        if (!parent::updateInternal($attributes)) {
+        if (false === ($response = parent::updateInternal($attributes))) {
             return false;
         }
 
-        return $this->upsertInternal($attributes);
+        return $this->upsertInternal($attributes) ? $response : false;
     }
 
     /**

@@ -4,7 +4,6 @@ namespace flipbox\patron\cp\controllers\view\providers;
 
 use Craft;
 use craft\helpers\UrlHelper;
-use craft\web\Controller;
 use flipbox\patron\cp\Cp;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;

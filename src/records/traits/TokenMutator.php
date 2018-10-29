@@ -10,6 +10,7 @@ namespace flipbox\patron\records\traits;
 
 use Craft;
 use flipbox\ember\helpers\ObjectHelper;
+use flipbox\ember\records\traits\ActiveRecord;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Token;
 use yii\db\ActiveQueryInterface;
@@ -24,6 +25,8 @@ use yii\db\ActiveQueryInterface;
  */
 trait TokenMutator
 {
+    use ActiveRecord;
+
     /**
      * @var Token|null
      */

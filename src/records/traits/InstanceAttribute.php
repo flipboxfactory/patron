@@ -8,13 +8,11 @@
 
 namespace flipbox\patron\records\traits;
 
-use flipbox\ember\records\traits\ActiveRecord;
-
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
  * @since 1.0.0
  */
 trait InstanceAttribute
 {
-    use ActiveRecord, InstanceRules, InstanceMutator;
+    use InstanceRules, InstanceMutator;
 }

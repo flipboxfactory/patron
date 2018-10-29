@@ -8,13 +8,11 @@
 
 namespace flipbox\patron\records\traits;
 
-use flipbox\ember\records\traits\ActiveRecord;
-
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
  * @since 1.0.0
  */
 trait ProviderAttribute
 {
-    use ActiveRecord, ProviderRules, ProviderMutator;
+    use ProviderRules, ProviderMutator;
 }
