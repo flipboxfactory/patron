@@ -171,7 +171,7 @@ trait RelatedEnvironmentsAttribute
         }
 
         // Perhaps we explicitly want to ignore (set an empty array to remove)
-        if(null === ($environments = $this->environments)) {
+        if (null === ($environments = $this->environments)) {
             return true;
         }
 
