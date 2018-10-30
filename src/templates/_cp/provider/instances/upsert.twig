@@ -36,8 +36,7 @@
     <input type="hidden" name="action" value="{{ baseActionPath }}/{% if instance.id %}update{% else %}create{% endif %}">
     <input type="hidden" name="provider" value="{{ provider.id }}">
     {% if instance.id %}<input type="hidden" name="instance" value="{{ instance.id }}">{% endif %}
-
-    {{ redirectInput(baseCpPath) }}
+    {{ redirectInput(baseCpProviderPath) }}
 
     {% embed "patron/ember/circle-icon" with {
         icon: (provider['icon'] is defined and provider['icon'] ? provider['icon'] : null),

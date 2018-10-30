@@ -69,6 +69,14 @@ abstract class AbstractViewController extends \flipbox\patron\cp\controllers\vie
      *******************************************/
 
     /**
+     * @inheritdoc
+     */
+    protected function getBaseCpProviderPath(): string
+    {
+        return $this->getBaseCpPath() . '/' . Craft::$app->getRequest()->getSegment(3);
+    }
+
+    /**
      * @return string
      */
     protected function getBaseActionPath(): string
@@ -143,6 +151,7 @@ abstract class AbstractViewController extends \flipbox\patron\cp\controllers\vie
 
         // Set the "Continue Editing" URL
         $variables['continueEditingUrl'] = $this->getBaseContinueEditingUrl('/' . $provider->getId());
+        $variables['baseCpProviderPath'] = $this->getBaseCpProviderPath();
 
         // Append title
         $variables['title'] .= ' - ' . $provider->getDisplayName();

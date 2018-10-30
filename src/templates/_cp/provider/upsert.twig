@@ -39,11 +39,9 @@
 {% endblock %}
 
 {% block content %}
-    <input type="hidden" name="action"
-           value="{{ baseActionPath }}/{% if provider.id %}update{% else %}create{% endif %}">
-    {{ redirectInput(baseCpPath) }}
-
+    <input type="hidden" name="action" value="{{ baseActionPath }}/{% if provider.id %}update{% else %}create{% endif %}">
     {% if provider.id %}<input type="hidden" name="provider" value="{{ provider.id }}">{% endif %}
+    {{ redirectInput(baseCpPath) }}
 
     {{ forms.textField({
         label: "Handle"|t('patron'),

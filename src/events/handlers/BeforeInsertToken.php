@@ -31,7 +31,7 @@ class BeforeInsertToken
         if ($token->isRelationPopulated('environments') === true) {
             return;
         }
-        
+
         $token->setEnvironments((array_unique(self::getEnvironments($token))));
         $token->autoSaveEnvironments = true;
     }

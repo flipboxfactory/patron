@@ -55,7 +55,7 @@ class InstancesController extends AbstractViewController
         $instance->setProvider($provider);
 
         // Template variables
-        $this->instanceVariables($variables, $provider);
+        $this->instanceVariables($variables, $provider, $instance);
 
         $availableEnvironments = array_merge(
             $this->availableEnvironments($provider),
@@ -92,14 +92,13 @@ class InstancesController extends AbstractViewController
     /*******************************************
      * BASE VARIABLES
      *******************************************/
-
+    
     /**
      * @inheritdoc
      */
     protected function getBaseCpPath(): string
     {
-        return parent::getBaseCpPath() . '/' . Craft::$app->getRequest()->getSegment(3) .
-            '/' . Craft::$app->getRequest()->getSegment(4);
+        return $this->getBaseCpProviderPath() . '/' . Craft::$app->getRequest()->getSegment(4);
     }
 
     /**
@@ -119,12 +118,13 @@ class InstancesController extends AbstractViewController
      * @param array $variables
      * @param Provider $provider
      */
-    protected function instanceVariables(array &$variables, Provider $provider)
+    protected function instanceVariables(array &$variables, Provider $provider, ProviderInstance $instance)
     {
         $this->updateVariables($variables, $provider);
 
         // Set the "Continue Editing" URL
-        $variables['continueEditingUrl'] = $this->getBaseContinueEditingUrl('/instances');
+        $continueEditingPath = $instance->getId() ?: '{id}';
+        $variables['continueEditingUrl'] = $this->getBaseContinueEditingUrl('/' . $continueEditingPath);
 
         $variables['title'] .= ' ' . Craft::t('patron', "Instance");
 
