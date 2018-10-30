@@ -114,7 +114,7 @@ class Patron extends Plugin
         }
 
         // Replicate environments to token
-        if ($this->getSettings()->autoPopulateTokenEnvironments === true) {
+        if ($this->getSettings()->getAutoPopulateTokenEnvironments() === true) {
             Event::on(
                 records\Token::class,
                 records\Token::EVENT_BEFORE_INSERT,

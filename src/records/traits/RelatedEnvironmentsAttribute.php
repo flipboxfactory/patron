@@ -103,7 +103,8 @@ trait RelatedEnvironmentsAttribute
         $environments = array_filter($environments);
 
         // Do nothing
-        if (empty($environments) && !$this->isRelationPopulated('environments')) {
+        if (empty($environments)) {
+            $this->populateRelation('environments', []);
             return $this;
         }
 
@@ -169,6 +170,11 @@ trait RelatedEnvironmentsAttribute
             return true;
         }
 
+        // Perhaps we explicitly want to ignore (set an empty array to remove)
+        if(null === ($environments = $this->environments)) {
+            return true;
+        }
+
         $successful = true;
 
         /** @var ActiveRecord[] $allRecords */
@@ -177,8 +183,7 @@ trait RelatedEnvironmentsAttribute
             ->all();
 
         /** @var ActiveRecord $model */
-        $models = (array) $this->environments;
-        foreach ($models as $model) {
+        foreach ((array) $environments as $model) {
             ArrayHelper::remove($allRecords, $model->getAttribute('environment'));
 
             if (!$model->save()) {

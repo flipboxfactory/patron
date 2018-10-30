@@ -32,10 +32,7 @@ class BeforeInsertToken
         if ($token->isRelationPopulated('environments') === true) {
             return;
         }
-
-        /** @var Settings $settings */
-        $settings = Flux::getInstance()->getSettings();
-
+        
         $token->setEnvironments((array_unique(self::getEnvironments($token))));
         $token->autoSaveEnvironments = true;
     }
@@ -49,7 +46,7 @@ class BeforeInsertToken
         /** @var Settings $settings */
         $settings = Flux::getInstance()->getSettings();
 
-        if ($settings->applyProviderEnvironmentsToToken === true) {
+        if ($settings->getApplyProviderEnvironmentsToToken() === true) {
             return self::getEnvironmentsFromTokenProvider($token);
         }
 

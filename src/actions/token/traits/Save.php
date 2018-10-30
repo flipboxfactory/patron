@@ -23,9 +23,6 @@ trait Save
      */
     protected function performAction(ActiveRecord $record): bool
     {
-        $record->autoSaveEnvironments = true;
-
-
         return $record->save();
     }
 }

@@ -79,7 +79,7 @@ class TokensController extends AbstractViewController
         ]);
 
         if (null === $token) {
-            $token = Token::findOne($identifier);
+            $token = Patron::getInstance()->manageTokens()->get($identifier);
         }
 
         // Template variables
