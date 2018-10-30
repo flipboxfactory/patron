@@ -9,17 +9,17 @@
     "email": "hello@flipboxfactory.com"
   }],
   "require": {
-    "craftcms/cms": "~3.0.0-RC",
-    "flipboxfactory/craft-ember": "~1.0.0-rc.17",
-    "flipboxfactory/craft-assets-card": "~1.0",
-    "flipboxfactory/craft-assets-circle-icon": "~1.0",
-    "flipboxdigital/oauth2-guardian": "~1.1",
-    "league/oauth2-client": "~2.0",
-    "league/oauth2-facebook": "~2.0",
-    "league/oauth2-github": "~2.0",
-    "league/oauth2-google": "~2.0",
-    "league/oauth2-instagram": "~2.0",
-    "league/oauth2-linkedin": "~2.0"
+    "craftcms/cms": "^3.0",
+    "flipboxfactory/craft-ember": "^1.0",
+    "flipboxfactory/craft-assets-card": "^1.0",
+    "flipboxfactory/craft-assets-circle-icon": "^1.0",
+    "flipboxdigital/oauth2-guardian": "^1.1",
+    "league/oauth2-client": "^2.0",
+    "league/oauth2-facebook": "^2.0",
+    "league/oauth2-github": "^2.0",
+    "league/oauth2-google": "^2.0",
+    "league/oauth2-instagram": "^2.0",
+    "league/oauth2-linkedin": "^2.0"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.2",
@@ -42,6 +42,8 @@
     "developer": "Flipbox Digital",
     "developerUrl": "https://www.flipboxdigital.com",
     "class": "flipbox\\patron\\Patron",
+    "changelogUrl": "https://raw.githubusercontent.com/flipboxfactory/patron/master/CHANGELOG.md",
+    "downloadUrl": "https://github.com/flipboxfactory/patron/archive/master.zip",
     "hasCpSettings": true,
     "hasCpSection": true,
     "schemaVersion": "1.2.0",

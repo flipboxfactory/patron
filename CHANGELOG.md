@@ -1,7 +1,7 @@
 Changelog
 =========
 
-## Unreleased
+## 1.0.0 - 2018-10-30
 ### Added
 - Provider instances.  A provider can have more than one configuration (think dev/uat/prod).
 - Provider locking.  A third party plugin can lock a provider from accidentally getting deleted.
