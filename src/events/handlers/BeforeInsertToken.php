@@ -8,6 +8,8 @@
 
 namespace flipbox\patron\events\handlers;
 
+use flipbox\patron\models\Settings;
+use flipbox\flux\Flux;
 use flipbox\patron\records\Token;
 use yii\base\ModelEvent;
 
@@ -31,6 +33,35 @@ class BeforeInsertToken
             return;
         }
 
+        /** @var Settings $settings */
+        $settings = Flux::getInstance()->getSettings();
+
+        $token->setEnvironments((array_unique(self::getEnvironments($token))));
+        $token->autoSaveEnvironments = true;
+    }
+
+    /**
+     * @param Token $token
+     * @return array
+     */
+    protected static function getEnvironments(Token $token): array
+    {
+        /** @var Settings $settings */
+        $settings = Flux::getInstance()->getSettings();
+
+        if($settings->applyProviderEnvironmentsToToken === true) {
+            return self::getEnvironmentsFromTokenProvider($token);
+        }
+
+        return [$settings->getEnvironment()];
+    }
+
+    /**
+     * @param Token $token
+     * @return array
+     */
+    protected static function getEnvironmentsFromTokenProvider(Token $token): array
+    {
         $environments = [];
 
         foreach ($token->instances as $instance) {
@@ -43,7 +74,6 @@ class BeforeInsertToken
             );
         }
 
-        $token->setEnvironments((array_unique($environments)));
-        $token->autoSaveEnvironments = true;
+        return $environments;
     }
 }

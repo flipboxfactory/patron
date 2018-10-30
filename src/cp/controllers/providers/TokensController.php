@@ -7,6 +7,7 @@ use craft\helpers\ArrayHelper;
 use flipbox\patron\actions\token\Delete;
 use flipbox\patron\actions\token\Disable;
 use flipbox\patron\actions\token\Enable;
+use flipbox\patron\actions\token\Update;
 use flipbox\patron\cp\controllers\AbstractController;
 use flipbox\patron\Patron;
 
@@ -24,8 +25,9 @@ class TokensController extends AbstractController
                     'default' => 'provider'
                 ],
                 'redirect' => [
-                    'only' => ['delete', 'enable', 'disable'],
+                    'only' => ['update', 'delete', 'enable', 'disable'],
                     'actions' => [
+                        'update' => [200],
                         'delete' => [204],
                         'enable' => [200],
                         'disable' => [200]
@@ -33,6 +35,10 @@ class TokensController extends AbstractController
                 ],
                 'flash' => [
                     'actions' => [
+                        'update' => [
+                            200 => Craft::t('patron', "Token successfully updated."),
+                            400 => Craft::t('patron', "Failed to updated token.")
+                        ],
                         'delete' => [
                             204 => Craft::t('patron', "Token successfully deleted."),
                             400 => Craft::t('patron', "Failed to delete token.")
@@ -57,6 +63,7 @@ class TokensController extends AbstractController
     public function verbs(): array
     {
         return [
+            'update' => ['post'],
             'enable' => ['post'],
             'disable' => ['post'],
             'delete' => ['post', 'delete']
@@ -82,6 +89,31 @@ class TokensController extends AbstractController
             'headHtml' => $view->getHeadHtml(),
             'footHtml' => $view->getBodyHtml()
         ];
+    }
+
+    /**
+     * @param null $token
+     * @return mixed
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\web\BadRequestHttpException
+     */
+    public function actionUpdate($token = null)
+    {
+        if (null === $token) {
+            $token = Craft::$app->getRequest()->getRequiredBodyParam('token');
+        }
+
+        $action = Craft::createObject([
+            'class' => Update::class,
+            'checkAccess' => [$this, 'checkAdminAccess']
+        ], [
+            'update',
+            $this
+        ]);
+
+        return $action->runWithParams([
+            'token' => $token
+        ]);
     }
 
     /**

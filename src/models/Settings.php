@@ -62,14 +62,26 @@ class Settings extends Model
     private $encryptStorageData = true;
 
     /**
+     * Default environments to apply to new Providers when they're created
+     *
      * @var array
      */
     private $defaultEnvironments = [];
 
     /**
+     * Auto populate token enviornments upon creation.
+     *
      * @var bool
      */
-    public $applyProviderEnvironmentsToToken = true;
+    private $autoPopulateTokenEnvironments = true;
+
+    /**
+     * If [[Settings::$autoPopulateTokenEnvironments]] is true, and this is enabled, the environments
+     * will mirror the provider environments.
+     *
+     * @var bool
+     */
+    private $applyProviderEnvironmentsToToken = true;
 
 
     /*******************************************
@@ -91,6 +103,46 @@ class Settings extends Model
     public function setEncryptStorageData(bool $value)
     {
         $this->encryptStorageData = $value;
+        return $this;
+    }
+
+    /*******************************************
+     * TOKEN ENVIORNMENTS
+     *******************************************/
+
+    /**
+     * @return bool
+     */
+    public function getAutoPopulateTokenEnvironments(): bool
+    {
+        return (bool)$this->autoPopulateTokenEnvironments;
+    }
+
+    /**
+     * @param bool $value
+     * @return $this
+     */
+    public function setAutoPopulateTokenEnvironments(bool $value)
+    {
+        $this->autoPopulateTokenEnvironments = $value;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getApplyProviderEnvironmentsToToken(): bool
+    {
+        return (bool)$this->applyProviderEnvironmentsToToken;
+    }
+
+    /**
+     * @param bool $value
+     * @return $this
+     */
+    public function setApplyProviderEnvironmentsToToken(bool $value)
+    {
+        $this->applyProviderEnvironmentsToToken = $value;
         return $this;
     }
 
@@ -312,8 +364,12 @@ class Settings extends Model
                 ],
                 [
                     [
+                        'callbackUrlPath',
+                        'defaultEnvironments',
                         'encryptStorageData',
-                        'callbackUrlPath'
+                        'environments',
+                        'applyProviderEnvironmentsToToken',
+                        'autoPopulateTokenEnvironments',
                     ],
                     'safe',
                     'on' => [
@@ -335,13 +391,15 @@ class Settings extends Model
                 'callbackUrlPath',
                 'defaultEnvironments',
                 'encryptStorageData',
-                'environments'
+                'environments',
+                'applyProviderEnvironmentsToToken',
+                'autoPopulateTokenEnvironments',
             ]
         );
     }
 
     /**
-     * @inheritdoc
+     * @inheritdocå
      */
     public function attributeLabels()
     {
@@ -349,6 +407,11 @@ class Settings extends Model
             parent::attributeLabels(),
             [
                 'callbackUrlPath' => Craft::t('patron', 'Callback Url Path'),
+                'defaultEnvironments' => Craft::t('patron', 'Default Enviornments'),
+                'encryptStorageData' => Craft::t('patron', 'Encrypt Storage Data'),
+                'environments' => Craft::t('patron', 'Environments'),
+                'autoPopulateTokenEnvironments' => Craft::t('patron', 'Auto Populate Token Environments'),
+                'applyProviderEnvironmentsToToken' => Craft::t('patron', 'Apply Provider Environments to Token')
             ]
         );
     }

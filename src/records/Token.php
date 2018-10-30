@@ -64,6 +64,51 @@ class Token extends ActiveRecordWithId
     }
 
     /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return array_merge(
+            parent::rules(),
+            $this->stateRules(),
+            $this->providerRules(),
+            [
+                [
+                    [
+                        'accessToken',
+                        'refreshToken'
+                    ],
+                    'unique'
+                ],
+                [
+                    [
+                        'dateExpires'
+                    ],
+                    DateTimeValidator::class
+                ],
+                [
+                    [
+                        'providerId',
+                        'accessToken'
+                    ],
+                    'required'
+                ],
+                [
+                    [
+                        'accessToken',
+                        'values',
+                        'dateExpires'
+                    ],
+                    'safe',
+                    'on' => [
+                        ModelHelper::SCENARIO_DEFAULT
+                    ]
+                ]
+            ]
+        );
+    }
+
+    /**
      * @return bool
      */
     public function isActive(): bool
@@ -125,7 +170,7 @@ class Token extends ActiveRecordWithId
             return false;
         }
 
-        return $this->insertInternalEnvironments($attributes) ? $response : false;
+        return $this->upsertEnvironmentsInternal($attributes) ? $response : false;
     }
 
     /*******************************************
@@ -160,53 +205,9 @@ class Token extends ActiveRecordWithId
         );
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function rules()
-    {
-        return array_merge(
-            parent::rules(),
-            $this->stateRules(),
-            $this->providerRules(),
-            [
-                [
-                    [
-                        'accessToken',
-                        'refreshToken'
-                    ],
-                    'unique'
-                ],
-                [
-                    [
-                        'dateExpires'
-                    ],
-                    DateTimeValidator::class
-                ],
-                [
-                    [
-                        'providerId',
-                        'accessToken'
-                    ],
-                    'required'
-                ],
-                [
-                    [
-                        'accessToken',
-                        'values',
-                        'dateExpires'
-                    ],
-                    'safe',
-                    'on' => [
-                        ModelHelper::SCENARIO_DEFAULT
-                    ]
-                ]
-            ]
-        );
-    }
 
     /**
-     * Get all of the associated instances.
+     * Get all of the associated provider instances.
      *
      * @param array $config
      * @return \yii\db\ActiveQuery

@@ -98,7 +98,8 @@ class InstancesController extends AbstractViewController
      */
     protected function getBaseCpPath(): string
     {
-        return parent::getBaseCpPath() . '/' . Craft::$app->getRequest()->getSegment(3);
+        return parent::getBaseCpPath() . '/' . Craft::$app->getRequest()->getSegment(3) .
+            '/' . Craft::$app->getRequest()->getSegment(4);
     }
 
     /**

@@ -114,9 +114,9 @@ trait RelatedEnvironmentsAttribute
         foreach ($environments as $key => $environment) {
             $environment = $this->resolveEnvironmentNEW($environment);
 
-            // Already set ?
+            // Already set, use it
             if (array_key_exists($environment->getAttribute('environment'), $currentEnvironments)) {
-                continue;
+                $environment = $currentEnvironments[$environment->getAttribute('environment')];
             }
 
             $records[] = $environment;

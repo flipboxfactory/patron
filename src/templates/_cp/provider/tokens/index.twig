@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block content %}
+    {{ continueEditingUrl }}
     {% embed "patron/ember/circle-icon" with {
         icon: (provider['icon'] is defined and provider['icon'] ? provider['icon'] : null),
         label: provider.displayName,
@@ -96,31 +97,39 @@
                 {{ redirectInput(continueEditingUrl) }}
                 <div class="btn menubtn" data-icon="settings" title="Actions" tabindex="0" role="combobox"></div>
                 <div class="menu">
-                    {% if not hasExpired %}
-                        <ul>
-                            <li>{% if isActive %}
-                                    <a class="formsubmit"
-                                       data-action="{{ baseActionPath }}/disable">
-                                        {{ "Revoke"|t('patron') }}
-                                    </a>
-                                {% else %}
-                                    <a class="formsubmit"
-                                       data-action="{{ baseActionPath }}/enable">
-                                        {{ "Reinstate"|t('patron') }}
-                                    </a>
-                                {% endif %}</li>
-                        </ul>
-                        <hr>{% endif %}
                     <ul>
+                        <li>
+                            <a href="{{ url(continueEditingUrl~'/'~token.id) }}">
+                                {{ "Edit"|t('patron') }}
+                            </a>
+                        </li>
+                    </ul>
+                    <hr>
+                    <ul>
+                    {% if not hasExpired %}
+                        <li>
+                            {% if isActive %}
+                                <a class="formsubmit"
+                                   data-action="{{ baseActionPath }}/disable">
+                                    {{ "Revoke"|t('patron') }}
+                                </a>
+                            {% else %}
+                                <a class="formsubmit"
+                                   data-action="{{ baseActionPath }}/enable">
+                                    {{ "Reinstate"|t('patron') }}
+                                </a>
+                            {% endif %}
+                        </li>
+                    {% endif %}
                         <li>
                             <a class="formsubmit"
                                data-action="{{ baseActionPath }}/delete"
                                class="delete"
                                title="{{ 'Delete'|t('patron') }}" role="button">
                                 {{ "Delete"|t('patron') }}
-                            </a></li>
+                            </a>
+                        </li>
                     </ul>
-
                 </div>
             </form>
         </td>

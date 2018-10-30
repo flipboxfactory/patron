@@ -8,6 +8,7 @@ use flipbox\craft\assets\circleicon\CircleIcon;
 use flipbox\ember\web\assets\rowinfomodal\RowInfoModal;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
+use flipbox\patron\records\Token;
 use flipbox\patron\web\assets\providerswitcher\ProvidersAsset;
 
 class TokensController extends AbstractViewController
@@ -18,9 +19,14 @@ class TokensController extends AbstractViewController
     const TEMPLATE_INDEX = AbstractViewController::TEMPLATE_BASE . '/tokens';
 
     /**
-     * The upsert view template path
+     * The index view template path
      */
     const TEMPLATE_INSERT = self::TEMPLATE_INDEX . '/index';
+
+    /**
+     * The upsert view template path
+     */
+    const TEMPLATE_UPSERT = self::TEMPLATE_INDEX . '/upsert';
 
     /**
      * @param int|null $provider
@@ -53,6 +59,76 @@ class TokensController extends AbstractViewController
         return $this->renderTemplate(static::TEMPLATE_INDEX, $variables);
     }
 
+    /**
+     * @param int|null $provider
+     * @return \yii\web\Response
+     * @throws \flipbox\ember\exceptions\NotFoundException
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function actionUpsert($provider = null, $identifier, Token $token = null)
+    {
+        Craft::$app->getView()->registerAssetBundle(CircleIcon::class);
+        Craft::$app->getView()->registerAssetBundle(RowInfoModal::class);
+
+        // Empty variables for template
+        $variables = [];
+
+        $provider = Patron::getInstance()->manageProviders()->getByCondition([
+            'id' => $provider,
+            'enabled' => null
+        ]);
+
+        if (null === $token) {
+            $token = Token::findOne($identifier);
+        }
+
+        // Template variables
+        $this->tokenUpdateVariables($variables, $provider, $token);
+
+        $availableEnvironments = array_merge(
+            $this->availableTokenEnvironments($token),
+            $token->getEnvironments()
+                ->indexBy(null)
+                ->select(['environment'])
+                ->column()
+        );
+
+        $environmentOptions = [];
+        foreach (Patron::getInstance()->getSettings()->getEnvironments() as $env) {
+            $environmentOptions[] = [
+                'label' => Craft::t('patron', $env),
+                'value' => $env,
+                'disabled' => !in_array($env, $availableEnvironments, true)
+            ];
+        }
+
+        $variables['provider'] = $provider;
+        $variables['token'] = $token;
+        $variables['environmentOptions'] = $environmentOptions;
+
+        // Full page form in the CP
+        $variables['fullPageForm'] = true;
+
+        // Tabs
+        $variables['tabs'] = $this->getTabs($provider);
+        $variables['selectedTab'] = 'tokens';
+
+        return $this->renderTemplate(static::TEMPLATE_UPSERT, $variables);
+    }
+
+    /**
+     * @param Token $token
+     * @return array
+     */
+    protected function availableTokenEnvironments(Token $token): array
+    {
+        $usedEnvironments = array_keys($token->environments);
+        $allEnvironments = Patron::getInstance()->getSettings()->getEnvironments();
+
+        return array_diff($allEnvironments, $usedEnvironments);
+
+    }
+
     /*******************************************
      * PATHS
      *******************************************/
@@ -62,7 +138,8 @@ class TokensController extends AbstractViewController
      */
     protected function getBaseCpPath(): string
     {
-        return parent::getBaseCpPath() . '/' . Craft::$app->getRequest()->getSegment(3);
+        return parent::getBaseCpPath() . '/' . Craft::$app->getRequest()->getSegment(3) .
+            '/' . Craft::$app->getRequest()->getSegment(4);
     }
 
     /**
@@ -87,15 +164,35 @@ class TokensController extends AbstractViewController
         $this->updateVariables($variables, $provider);
 
         // Set the "Continue Editing" URL
-        $variables['continueEditingUrl'] = $this->getBaseContinueEditingUrl('/tokens');
+        $variables['continueEditingUrl'] = $this->getBaseContinueEditingUrl();
 
+        // Title
         $variables['title'] .= ' ' . Craft::t('patron', "Tokens");
 
         // Breadcrumbs
         $variables['crumbs'][] = [
             'label' => Craft::t('patron', "Tokens"),
             'url' => UrlHelper::url(
-                $variables['baseCpPath'] . '/tokens'
+                $variables['baseCpPath']
+            )
+        ];
+    }
+
+    /**
+     * @param array $variables
+     * @param Provider $provider
+     */
+    protected function tokenUpdateVariables(array &$variables, Provider $provider, Token $token)
+    {
+        $this->tokenVariables($variables, $provider);
+
+        $variables['title'] .= ' ' . Craft::t('patron', "Edit");
+
+        // Breadcrumbs
+        $variables['crumbs'][] = [
+            'label' => Craft::t('patron', "Edit"),
+            'url' => UrlHelper::url(
+                $variables['baseCpPath'] . '/' . $token->getId()
             )
         ];
     }

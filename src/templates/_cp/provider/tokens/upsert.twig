@@ -15,13 +15,13 @@
                     </a>
                 </li>
             </ul>
-            {% if instance.id %}
+            {% if token.id %}
                 <hr/>
                 <ul role="listbox">
                     <li>
                         <a class="formsubmit error"
                            data-action="{{ baseActionPath }}/delete"
-                           data-confirm="{{ 'Are you sure you want to delete this provider instance?'|t('patron') }}"
+                           data-confirm="{{ 'Are you sure you want to delete this token?'|t('patron') }}"
                            data-redirect="{{ baseCpPath|hash }}"
                            role="option"
                            tabindex="-1">{{ "Delete"|t('app') }}</a>
@@ -33,10 +33,9 @@
 {% endblock %}
 
 {% block content %}
-    <input type="hidden" name="action" value="{{ baseActionPath }}/{% if instance.id %}update{% else %}create{% endif %}">
+    <input type="hidden" name="action" value="{{ baseActionPath }}/update">
     <input type="hidden" name="provider" value="{{ provider.id }}">
-    {% if instance.id %}<input type="hidden" name="instance" value="{{ instance.id }}">{% endif %}
-
+    <input type="hidden" name="token" value="{{ token.id }}">
     {{ redirectInput(baseCpPath) }}
 
     {% embed "patron/ember/circle-icon" with {
@@ -55,55 +54,59 @@
 
     <hr/>
 
-    {{ forms.textField({
-        label: "Client Id"|t('patron'),
-        instructions: "The client/consumer Id assigned to you from the provider."|t('patron'),
-        id: 'clientId',
-        name: 'clientId',
-        value: instance.clientId,
-        errors: instance.getErrors('clientId'),
-        required: true
+    {{ forms.textareaField({
+        label: "Access Token"|t('patron'),
+        id: 'accessToken',
+        name: 'accessToken',
+        value: token.accessToken,
+        errors: token.getErrors('accessToken'),
+        disabled: true
     }) }}
 
-    {{ forms.textField({
-        label: "Client Secret"|t('patron'),
-        instructions: "The client/consumer secret assigned to you from the provider."|t('patron'),
-        id: 'clientSecret',
-        name: 'clientSecret',
-        type: 'password',
-        value: instance.clientSecret,
-        errors: instance.getErrors('clientSecret')
+    {{ forms.textareaField({
+        label: "Refresh Token"|t('patron'),
+        id: 'refreshToken',
+        name: 'refreshToken',
+        value: token.refreshToken,
+        errors: token.getErrors('refreshToken'),
+        disabled: true
     }) }}
-
-    <div id="settings">
-        {% namespace 'settings' %}
-            {{ instance.getHtml()|raw }}
-        {% endnamespace %}
-    </div>
 
 {% endblock %}
 
 {% block details %}
-    {% if instance.id %}
+    <div id="settings" class="meta">
+        {{ forms.lightswitchField({
+            label: "Enabled"|t('app'),
+            id: 'enabled',
+            name: 'enabled',
+            on: token.id ? token.enabled : true,
+            errors: token.getErrors('enabled')
+        }) }}
+    </div>
+
+    {% if token.id %}
+        <hr>
         <div class="meta read-only">
             <div class="data">
                 <h5 class="heading">{{ "Created at"|t('app') }}</h5>
-                <div class="value">{{ instance.dateCreated|datetime('short') }}</div>
+                <div class="value">{{ token.dateCreated|datetime('short') }}</div>
             </div>
             <div class="data">
                 <h5 class="heading">{{ "Updated at"|t('app') }}</h5>
-                <div class="value">{{ instance.dateUpdated|datetime('short') }}</div>
+                <div class="value">{{ token.dateUpdated|datetime('short') }}</div>
+            </div>
+            <div class="data">
+                <h5 class="heading">{{ "Expires at"|t('app') }}</h5>
+                <div class="value">{{ token.dateExpires|datetime('short') }}</div>
             </div>
         </div>
-
-        <hr>
-
     {% endif %}
 
     <div id="environments" class="meta">
         <h4 class="heading">{{ "Environments"|t('patron') }}</h4>
         {% set environments = [] %}
-        {% for env in instance.environments %}
+        {% for env in token.environments %}
             {% set environments = environments|merge([env.environment]) %}
         {% endfor %}
         {% namespace 'environments' %}
@@ -121,6 +124,6 @@
         {% endnamespace %}
     </div>
 
-    {% hook 'patron.instances.edit.sidebar' %}
+    {% hook 'patron.tokens.edit.sidebar' %}
 
 {% endblock %}
