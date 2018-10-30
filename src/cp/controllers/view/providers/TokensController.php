@@ -28,12 +28,12 @@ class TokensController extends AbstractViewController
     const TEMPLATE_UPSERT = self::TEMPLATE_INDEX . '/upsert';
 
     /**
-     * @param int|null $provider
+     * @param int|string $provider
      * @return \yii\web\Response
      * @throws \flipbox\ember\exceptions\NotFoundException
      * @throws \yii\base\InvalidConfigException
      */
-    public function actionIndex($provider = null)
+    public function actionIndex($provider)
     {
         Craft::$app->getView()->registerAssetBundle(CircleIcon::class);
 
@@ -58,12 +58,14 @@ class TokensController extends AbstractViewController
     }
 
     /**
-     * @param int|null $provider
+     * @param int|string $provider
+     * @param int|string $identifier
+     * @param Token|null $token
      * @return \yii\web\Response
      * @throws \flipbox\ember\exceptions\NotFoundException
      * @throws \yii\base\InvalidConfigException
      */
-    public function actionUpsert($provider = null, $identifier, Token $token = null)
+    public function actionUpsert($provider, $identifier, Token $token = null)
     {
         Craft::$app->getView()->registerAssetBundle(CircleIcon::class);
 
