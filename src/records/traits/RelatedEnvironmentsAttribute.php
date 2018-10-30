@@ -13,6 +13,7 @@ use craft\helpers\ArrayHelper;
 use flipbox\ember\helpers\ObjectHelper;
 use flipbox\ember\helpers\QueryHelper;
 use flipbox\ember\records\traits\ActiveRecord as ActiveRecordTrait;
+use flipbox\patron\records\ProviderEnvironment;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
 use yii\db\ActiveRecordInterface;
@@ -20,6 +21,8 @@ use yii\db\ActiveRecordInterface;
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
  * @since 1.0.0
+ *
+ * @property ProviderEnvironment[] $environments
  */
 trait RelatedEnvironmentsAttribute
 {
@@ -104,7 +107,8 @@ trait RelatedEnvironmentsAttribute
             return $this;
         }
 
-        $currentEnvironments = ArrayHelper::index($this->getAttribute('environments'), 'environment');
+        $currentEnvironments = (array) $this->environments;
+        $currentEnvironments = ArrayHelper::index($currentEnvironments, 'environment');
 
         $records = [];
         foreach ($environments as $key => $environment) {
@@ -173,7 +177,8 @@ trait RelatedEnvironmentsAttribute
             ->all();
 
         /** @var ActiveRecord $model */
-        foreach ($this->getAttribute('environments') as $model) {
+        $models = (array) $this->environments;
+        foreach ($models as $model) {
             ArrayHelper::remove($allRecords, $model->getAttribute('environment'));
 
             if (!$model->save()) {
@@ -215,7 +220,7 @@ trait RelatedEnvironmentsAttribute
             return true;
         }
 
-        $this->insertEnvironments = $this->getAttribute('environments');
+        $this->insertEnvironments = $this->environments;
 
         return true;
     }

@@ -335,8 +335,7 @@ class Settings extends Model
                 'callbackUrlPath',
                 'defaultEnvironments',
                 'encryptStorageData',
-                'environments',
-                'environment'
+                'environments'
             ]
         );
     }

@@ -99,7 +99,7 @@ class DefaultController extends AbstractViewController
         $pluginLocks = [];
         $pluginHandles = $provider->getLocks()
             ->alias('locks')
-            ->leftJoin('{{%plugins}}', 'plugins.id=locks.pluginId')
+            ->leftJoin('{{%plugins}} plugins', 'plugins.id=locks.pluginId')
             ->select(['handle'])->column();
 
         foreach ($pluginHandles as $pluginHandle) {

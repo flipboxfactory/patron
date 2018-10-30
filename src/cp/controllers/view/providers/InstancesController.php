@@ -122,6 +122,9 @@ class InstancesController extends AbstractViewController
     {
         $this->updateVariables($variables, $provider);
 
+        // Set the "Continue Editing" URL
+        $variables['continueEditingUrl'] = $this->getBaseContinueEditingUrl('/instances');
+
         $variables['title'] .= ' ' . Craft::t('patron', "Instance");
 
         // Breadcrumbs

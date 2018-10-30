@@ -76,7 +76,7 @@ abstract class AbstractViewController extends Controller
         $variables['baseCpPath'] = $this->getBaseCpPath();
 
         // Set the "Continue Editing" URL
-        $variables['continueEditingUrl'] = $this->getBaseCpPath();
+        $variables['continueEditingUrl'] = $this->getBaseContinueEditingUrl();
 
         // Select our sub-nav
         if (!$activeSubNav = Craft::$app->getRequest()->getSegment(2)) {

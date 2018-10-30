@@ -86,6 +86,9 @@ class TokensController extends AbstractViewController
     {
         $this->updateVariables($variables, $provider);
 
+        // Set the "Continue Editing" URL
+        $variables['continueEditingUrl'] = $this->getBaseContinueEditingUrl('/tokens');
+
         $variables['title'] .= ' ' . Craft::t('patron', "Tokens");
 
         // Breadcrumbs

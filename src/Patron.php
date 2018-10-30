@@ -282,15 +282,18 @@ class Patron extends Plugin
                 // SETTINGS
                 'patron/settings' => 'patron/cp/view/settings/index',
 
+                // BASE
                 'patron' =>
                     'patron/cp/view/general/index',
 
+                // PROVIDERS
                 'patron/providers' =>
                     'patron/cp/view/providers/default/index',
 
                 'patron/providers/new' =>
                     'patron/cp/view/providers/default/upsert',
 
+                // INSTANCES
                 'patron/providers/<identifier:\d+>' =>
                     'patron/cp/view/providers/default/upsert',
 
@@ -300,8 +303,12 @@ class Patron extends Plugin
                 'patron/providers/<provider:\d+>/instances/new' =>
                     'patron/cp/view/providers/instances/upsert',
 
+                // TOKENS
                 'patron/providers/<provider:\d+>/tokens' =>
                     'patron/cp/view/providers/tokens/index',
+
+                'patron/providers/<provider:\d+>/tokens/<identifier:\d+>' =>
+                    'patron/cp/view/providers/tokens/upsert',
             ]
         );
     }
