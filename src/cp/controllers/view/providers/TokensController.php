@@ -5,7 +5,6 @@ namespace flipbox\patron\cp\controllers\view\providers;
 use Craft;
 use craft\helpers\UrlHelper;
 use flipbox\craft\assets\circleicon\CircleIcon;
-use flipbox\ember\web\assets\rowinfomodal\RowInfoModal;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
 use flipbox\patron\records\Token;
@@ -37,7 +36,6 @@ class TokensController extends AbstractViewController
     public function actionIndex($provider = null)
     {
         Craft::$app->getView()->registerAssetBundle(CircleIcon::class);
-        Craft::$app->getView()->registerAssetBundle(RowInfoModal::class);
 
         // Empty variables for template
         $variables = [];
@@ -68,7 +66,6 @@ class TokensController extends AbstractViewController
     public function actionUpsert($provider = null, $identifier, Token $token = null)
     {
         Craft::$app->getView()->registerAssetBundle(CircleIcon::class);
-        Craft::$app->getView()->registerAssetBundle(RowInfoModal::class);
 
         // Empty variables for template
         $variables = [];

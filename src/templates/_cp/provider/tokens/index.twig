@@ -45,23 +45,7 @@
 
         </tbody>
     </table>
-
 {% endblock %}
-
-{% js %}
-    new Craft.RowInfo(
-        $("#tokens tbody th a"),
-        {
-            modalSettings: {
-                desiredHeight: 200,
-                action: '{{ actionUrl("/patron/cp/tokens/modal") }}',
-                actionData: $.proxy(function (modal) {
-                    return {token: modal.$target.data('id')
-                }
-            }, this)
-        }
-    });
-{% endjs %}
 
 {% macro tr(token, baseActionPath, continueEditingUrl) %}
     {% set isActive = token.enabled and not token.hasExpired() ? 1 : 0 %}
@@ -72,7 +56,6 @@
         <th scope="row" data-title="{{ 'Access Token'|t('patron') }}">
             <span class="status {{ state }}"></span>
             <code>{{ token.accessToken|slice(0, 32) ~ '...' }}</code>
-            <a class="info-expand"></a>
         </th>
         <td data-title="{{ 'Expires'|t('patron') }}">
             {% if token.dateExpires %}
@@ -121,8 +104,9 @@
                         </li>
                     {% endif %}
                         <li>
-                            <a class="formsubmit"
+                            <a class="formsubmit error"
                                data-action="{{ baseActionPath }}/delete"
+                               data-confirm="{{ 'Are you sure you want to delete this token?'|t('patron') }}"
                                class="delete"
                                title="{{ 'Delete'|t('patron') }}" role="button">
                                 {{ "Delete"|t('patron') }}

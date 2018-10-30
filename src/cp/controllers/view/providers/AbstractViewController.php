@@ -73,7 +73,7 @@ abstract class AbstractViewController extends \flipbox\patron\cp\controllers\vie
      */
     protected function getBaseCpProviderPath(): string
     {
-        return $this->getBaseCpPath() . '/' . Craft::$app->getRequest()->getSegment(3);
+        return parent::getBaseCpPath() . '/providers/' . Craft::$app->getRequest()->getSegment(3);
     }
 
     /**
@@ -120,7 +120,7 @@ abstract class AbstractViewController extends \flipbox\patron\cp\controllers\vie
      */
     protected function insertVariables(array &$variables)
     {
-        // apply base view variables
+        // Apply base view variables
         $this->baseVariables($variables);
 
         // Set the "Continue Editing" URL
@@ -146,7 +146,7 @@ abstract class AbstractViewController extends \flipbox\patron\cp\controllers\vie
      */
     protected function updateVariables(array &$variables, Provider $provider)
     {
-        // apply base view variables
+        // Apply base view variables
         $this->baseVariables($variables);
 
         // Set the "Continue Editing" URL

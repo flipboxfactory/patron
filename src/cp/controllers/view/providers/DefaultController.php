@@ -121,6 +121,7 @@ class DefaultController extends AbstractViewController
         // Tabs
         $variables['tabs'] = $this->getTabs($provider);
         $variables['selectedTab'] = 'general';
+        $variables['baseActionInstancePath'] = $this->getBaseActionPath() . '/instances';
 
         return $this->renderTemplate(static::TEMPLATE_UPSERT, $variables);
     }
