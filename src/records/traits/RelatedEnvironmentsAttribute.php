@@ -112,7 +112,7 @@ trait RelatedEnvironmentsAttribute
 
         $records = [];
         foreach ($environments as $key => $environment) {
-            $environment = $this->resolveEnvironmentNEW($environment);
+            $environment = $this->resolveEnvironment($environment);
 
             // Already set, use it
             if (array_key_exists($environment->getAttribute('environment'), $currentEnvironments)) {
@@ -130,7 +130,7 @@ trait RelatedEnvironmentsAttribute
      * @param $environment
      * @return ActiveRecord
      */
-    protected function resolveEnvironmentNEW($environment)
+    protected function resolveEnvironment($environment)
     {
         $class = static::environmentRecordClass();
 
