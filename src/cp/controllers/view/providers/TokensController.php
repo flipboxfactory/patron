@@ -126,7 +126,6 @@ class TokensController extends AbstractViewController
         $allEnvironments = Patron::getInstance()->getSettings()->getEnvironments();
 
         return array_diff($allEnvironments, $usedEnvironments);
-
     }
 
     /*******************************************

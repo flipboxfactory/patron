@@ -49,7 +49,7 @@ class BeforeInsertToken
         /** @var Settings $settings */
         $settings = Flux::getInstance()->getSettings();
 
-        if($settings->applyProviderEnvironmentsToToken === true) {
+        if ($settings->applyProviderEnvironmentsToToken === true) {
             return self::getEnvironmentsFromTokenProvider($token);
         }
 
