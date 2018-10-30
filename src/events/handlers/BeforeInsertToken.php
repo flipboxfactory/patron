@@ -8,8 +8,7 @@
 
 namespace flipbox\patron\events\handlers;
 
-use flipbox\patron\models\Settings;
-use flipbox\flux\Flux;
+use flipbox\patron\Patron;
 use flipbox\patron\records\Token;
 use yii\base\ModelEvent;
 
@@ -43,8 +42,7 @@ class BeforeInsertToken
      */
     protected static function getEnvironments(Token $token): array
     {
-        /** @var Settings $settings */
-        $settings = Flux::getInstance()->getSettings();
+        $settings = Patron::getInstance()->getSettings();
 
         if ($settings->getApplyProviderEnvironmentsToToken() === true) {
             return self::getEnvironmentsFromTokenProvider($token);

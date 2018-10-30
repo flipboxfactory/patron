@@ -33,7 +33,9 @@ class Update extends ModelCreate
     {
         return [
             'callbackUrlPath',
-            'encryptStorageData'
+            'encryptStorageData',
+            'autoPopulateTokenEnvironments',
+            'applyProviderEnvironmentsToToken'
         ];
     }
 

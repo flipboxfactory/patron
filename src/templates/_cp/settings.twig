@@ -19,6 +19,27 @@
         warning: "Changing this may result in misconfigured Providers."|t('patron'),
     }) }}
 
+    {{ forms.lightSwitchField({
+        label: "Auto populate Token environment(s)"|t('patron'),
+        instructions: "When a new Token is created, auto assign it to an environment"|t('patron'),
+        id: 'autoPopulateTokenEnvironments',
+        name: 'autoPopulateTokenEnvironments',
+        on: settings.autoPopulateTokenEnvironments,
+        errors: settings.getErrors('autoPopulateTokenEnvironments'),
+        toggle: "#mirror-provider-elements"
+    }) }}
+
+    <div id="mirror-provider-elements"{% if not settings.autoPopulateTokenEnvironments %} class="hidden"{% endif %}>
+        {{ forms.lightSwitchField({
+            label: "Auto populate Token environment(s) from Provider"|t('patron'),
+            instructions: "Mirror the environments from the associated Provider"|t('patron'),
+            id: 'applyProviderEnvironmentsToToken',
+            name: 'applyProviderEnvironmentsToToken',
+            on: settings.applyProviderEnvironmentsToToken,
+            errors: settings.getErrors('applyProviderEnvironmentsToToken'),
+        }) }}
+    </div>
+
     {% set cols = {
         'value' : {
             type: 'singleline',

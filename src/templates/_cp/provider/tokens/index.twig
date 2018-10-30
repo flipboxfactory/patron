@@ -9,7 +9,6 @@
 {% endblock %}
 
 {% block content %}
-    {{ continueEditingUrl }}
     {% embed "patron/ember/circle-icon" with {
         icon: (provider['icon'] is defined and provider['icon'] ? provider['icon'] : null),
         label: provider.displayName,

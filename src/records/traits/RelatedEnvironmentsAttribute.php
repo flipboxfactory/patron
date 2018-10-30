@@ -108,7 +108,7 @@ trait RelatedEnvironmentsAttribute
             return $this;
         }
 
-        $currentEnvironments = (array) $this->environments;
+        $currentEnvironments = (array)$this->environments;
         $currentEnvironments = ArrayHelper::index($currentEnvironments, 'environment');
 
         $records = [];
@@ -183,7 +183,7 @@ trait RelatedEnvironmentsAttribute
             ->all();
 
         /** @var ActiveRecord $model */
-        foreach ((array) $environments as $model) {
+        foreach ((array)$environments as $model) {
             ArrayHelper::remove($allRecords, $model->getAttribute('environment'));
 
             if (!$model->save()) {

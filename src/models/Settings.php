@@ -81,7 +81,7 @@ class Settings extends Model
      *
      * @var bool
      */
-    private $applyProviderEnvironmentsToToken = true;
+    private $applyProviderEnvironmentsToToken = false;
 
 
     /*******************************************
@@ -358,7 +358,9 @@ class Settings extends Model
                 ],
                 [
                     [
-                        'encryptStorageData'
+                        'encryptStorageData',
+                        'applyProviderEnvironmentsToToken',
+                        'autoPopulateTokenEnvironments'
                     ],
                     'boolean'
                 ],
@@ -389,7 +391,6 @@ class Settings extends Model
             parent::attributes(),
             [
                 'callbackUrlPath',
-                'defaultEnvironments',
                 'encryptStorageData',
                 'environments',
                 'applyProviderEnvironmentsToToken',
