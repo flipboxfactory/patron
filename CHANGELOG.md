@@ -1,5 +1,8 @@
 Changelog
 =========
+## 1.0.0.1 - 2018-11-01
+### Fixed
+- Migration issue when multiple providers exist.
 
 ## 1.0.0 - 2018-10-30
 ### Added
