@@ -125,15 +125,11 @@ class m181019_220655_provider_instances extends Migration
             ProviderEnvironment::tableName()
         );
 
-        $this->dropColumn(
-            ProviderEnvironment::tableName(),
-            'providerId'
-        );
-
         $this->dropPrimaryKey(
             $this->db->getPrimaryKeyName(
                 ProviderEnvironment::tableName(),
                 [
+                    'providerId',
                     'environment'
                 ]
             ),
@@ -153,6 +149,11 @@ class m181019_220655_provider_instances extends Migration
                 'instanceId',
                 'environment'
             ]
+        );
+
+        $this->dropColumn(
+            ProviderEnvironment::tableName(),
+            'providerId'
         );
     }
 
