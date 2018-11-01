@@ -1,6 +1,6 @@
 module.exports = {
-    title: 'HubSpot',
-    description: 'An OAuth2 Client for Craft CMS',
+    title: 'Patron',
+    description: 'An OAuth2 Client manager for Craft CMS',
     base: '/',
     themeConfig: {
         docsRepo: 'flipboxfactory/patron',
@@ -36,7 +36,10 @@ module.exports = {
                     title: 'Configure',
                     collapsable: false,
                     children: [
-                        ['/configure/provider', 'Configure Provider']
+                        ['/configure/', 'Settings'],
+                        ['/configure/provider/', 'Providers'],
+                        ['/configure/provider/instance', 'Provider Instances'],
+                        ['/configure/provider/token', 'Provider Tokens']
                     ]
                 },
                 {

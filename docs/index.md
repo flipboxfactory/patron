@@ -1,6 +1,6 @@
 # Overview
 
-Patron is an OAuth Client for Craft CMS.
+Patron is an OAuth Client manager for Craft CMS.
 
- 
+
 

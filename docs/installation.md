@@ -12,3 +12,7 @@ composer require flipboxfactory/patron
 ### Option 2: Plugin Store
 Within your Craft CMS project admin panel, navigate to the 'Plugin Store' and search for `Patron`.  Installation
 is a button click away.
+
+Once the plugin is installed, head over to [Configure] the plugin.
+
+[Configure]: ../configure "Configure - General Settings"
