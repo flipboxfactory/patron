@@ -4,24 +4,23 @@ This service is used to retrieve one or many [Providers].
 
 [[toc]]
 
-### `find( $identifier, int $siteId = null )`
+### `find( $identifier )`
 
 Returns an [Provider]
 
 | Argument          | Accepts                   | Description
 | ----------        | ----------                | ----------
 | `$identifier`     | [string], [integer], [Provider] | A unique [Provider] identifier
-| `$siteId`         | [integer], [null]         | The [Site] Id that the [Provider] must belong to
 
 ::: code
 ```twig
-{% set element = craft.patron.tokens.find(1) %}
+{% set provider = craft.patron.tokens.find(1) %}
 ```
 
 ```php
 use flipbox\patron\Patron;
 
-$element = Patron::getInstance()->getProviders()->find(1);
+$provider = Patron::getInstance()->getProviders()->find(1);
 ```
 :::
 
@@ -44,7 +43,7 @@ Returns a [Provider Query].
 ```php
 use flipbox\patron\Patron;
 
-$element = Patron::getInstance()->getProviders()->getQuery([
+$query = Patron::getInstance()->getProviders()->getQuery([
     'id' => 1
 ]);
 ```

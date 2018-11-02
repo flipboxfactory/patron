@@ -4,24 +4,23 @@ This service is used to retrieve one or many [Tokens].
 
 [[toc]]
 
-### `find( $identifier, int $siteId = null )`
+### `find( $identifier )`
 
 Returns an [Token]
 
 | Argument          | Accepts                   | Description
 | ----------        | ----------                | ----------
 | `$identifier`     | [string], [integer], [Token] | A unique [Token] identifier
-| `$siteId`         | [integer], [null]         | The [Site] Id that the [Token] must belong to
 
 ::: code
 ```twig
-{% set element = craft.patron.tokens.find(1) %}
+{% set token = craft.patron.tokens.find(1) %}
 ```
 
 ```php
 use flipbox\patron\Patron;
 
-$element = Patron::getInstance()->getTokens()->find(1);
+$token = Patron::getInstance()->getTokens()->find(1);
 ```
 :::
 
@@ -44,7 +43,7 @@ Returns a [Token Query].
 ```php
 use flipbox\patron\Patron;
 
-$element = Patron::getInstance()->getTokens()->getQuery([
+$query = Patron::getInstance()->getTokens()->getQuery([
     'id' => 1
 ]);
 ```

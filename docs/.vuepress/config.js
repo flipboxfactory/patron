@@ -17,7 +17,6 @@ module.exports = {
         },
         nav: [
             {text: 'Details', link: 'https://flipboxdigital.com/software/patron'},
-            {text: 'Documentation', link: 'https://patron.flipboxfactory.com'},
             {text: 'Changelog', link: 'https://github.com/flipboxfactory/patron/blob/master/CHANGELOG.md'},
             {text: 'Repo', link: 'https://github.com/flipboxfactory/patron'}
         ],
@@ -61,6 +60,10 @@ module.exports = {
         },
         toc: {
             includeLevel: [3]
+        },
+        config(md) {
+            let markup = require('./markup') // TODO Change after using theme
+            md.use(markup)
         }
     }
 }

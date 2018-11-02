@@ -4,24 +4,23 @@ This service is used to manage one or many [Token Records].
 
 [[toc]]
 
-### `find( $identifier, int $siteId = null )`
+### `find( $identifier )`
 
 Returns an [Token Record]
 
 | Argument          | Accepts                   | Description
 | ----------        | ----------                | ----------
 | `$identifier`     | [string], [integer], [Token Record] | A unique [Token Record] identifier
-| `$siteId`         | [integer], [null]         | The [Site] Id that the [Token Record] must belong to
 
 ::: code
 ```twig
-{% set element = craft.patron.manageTokens.find(1) %}
+{% set token = craft.patron.manageTokens.find(1) %}
 ```
 
 ```php
 use flipbox\patron\Patron;
 
-$element = Patron::getInstance()->getManageTokens()->find(1);
+$token = Patron::getInstance()->getManageTokens()->find(1);
 ```
 :::
 
@@ -44,7 +43,7 @@ Returns a [Token Query].
 ```php
 use flipbox\patron\Patron;
 
-$element = Patron::getInstance()->getManageTokens()->getQuery([
+$token = Patron::getInstance()->getManageTokens()->getQuery([
     'id' => 1
 ]);
 ```

@@ -4,27 +4,27 @@ This service is used to manage one or many [Provider Records].
 
 [[toc]]
 
-### `find( $identifier, int $siteId = null )`
+### `find( $identifier )`
 
 Returns an [Provider Record]
 
 | Argument          | Accepts                   | Description
 | ----------        | ----------                | ----------
 | `$identifier`     | [string], [integer], [Provider Record] | A unique [Provider Record] identifier
-| `$siteId`         | [integer], [null]         | The [Site] Id that the [Provider Record] must belong to
 
 ::: code
+
 ```twig
-{% set element = craft.patron.manageProviders.find(1) %}
-{% set element = craft.patron.manageProviders.find('flipbox') %}
+{% set provider = craft.patron.manageProviders.find(1) %}
+{% set provider = craft.patron.manageProviders.find('flipbox') %}
 
 ```
 
 ```php
 use flipbox\patron\Patron;
 
-$element = Patron::getInstance()->getManageProviders()->find(1);
-$element = Patron::getInstance()->getManageProviders()->find('flipbox');
+$provider = Patron::getInstance()->getManageProviders()->find(1);
+$provider = Patron::getInstance()->getManageProviders()->find('flipbox');
 ```
 :::
 
@@ -47,7 +47,7 @@ Returns a [Provider Query].
 ```php
 use flipbox\patron\Patron;
 
-$element = Patron::getInstance()->getManageProviders()->getQuery([
+$provider = Patron::getInstance()->getManageProviders()->getQuery([
     'id' => 1
 ]);
 ```
