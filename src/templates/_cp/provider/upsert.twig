@@ -161,6 +161,29 @@
         </div>
     {% endif %}
 
+    {% if pluginLocks|length %}
+        <hr />
+        <div id="locks" class="meta">
+            <h4 class="heading">{{ "Locks"|t('patron') }} <span class="info">{{ "The plugins listed blow have locked this provider from being deleted.  This provider should be deleted through the plugin."|t('patron') }}</span></h4>
+            <ul id="plugin-locks">
+                {% for plugin in pluginLocks %}
+                    <li>
+                        <span class="icon icon-mask">
+                            {%- if plugin.icon is defined -%}
+                                {{ svg(plugin.icon) }}
+                            {%- elseif plugin.fontIcon is defined -%}
+                                <span data-icon="{{ plugin.fontIcon }}"></span>
+                            {%- else -%}
+                                {% include "_includes/defaulticon.svg" with { label: plugin.name } %}
+                            {%- endif -%}
+                        </span>
+                        {{ plugin.name }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
     {% hook 'patron.clients.edit.sidebar' %}
 
 {% endblock %}
