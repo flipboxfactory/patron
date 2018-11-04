@@ -1,6 +1,6 @@
 # Manage Providers
 
-This service is used to manage one or many [Provider Records].
+This service is used to manage one or many [Provider Records] in Craft.
 
 [[toc]]
 

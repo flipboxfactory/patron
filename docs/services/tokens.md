@@ -1,6 +1,6 @@
 # Tokens
 
-This service is used to retrieve one or many [Tokens].
+This service is used to retrieve and use one or many [Tokens].
 
 [[toc]]
 

@@ -1,6 +1,6 @@
 # Manage Tokens
 
-This service is used to manage one or many [Token Records].
+This service is used to manage one or many [Token Records] in Craft.
 
 [[toc]]
 

@@ -1,6 +1,6 @@
 # Providers
 
-This service is used to retrieve one or many [Providers].
+This service is used to retrieve and use one or many [Providers].
 
 [[toc]]
 
