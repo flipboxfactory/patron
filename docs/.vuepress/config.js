@@ -3,6 +3,7 @@ module.exports = {
     description: 'An OAuth2 Client manager for Craft CMS',
     base: '/',
     themeConfig: {
+        logo: '/icon.svg',
         docsRepo: 'flipboxfactory/patron',
         docsDir: 'docs',
         docsBranch: 'master',
