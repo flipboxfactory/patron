@@ -8,8 +8,8 @@
 
 namespace flipbox\patron\records;
 
-use flipbox\ember\helpers\ModelHelper;
-use flipbox\ember\records\ActiveRecord;
+use flipbox\craft\ember\helpers\ModelHelper;
+use flipbox\craft\ember\records\ActiveRecord;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -20,7 +20,7 @@ use flipbox\ember\records\ActiveRecord;
  */
 class ProviderLock extends ActiveRecord
 {
-    use traits\ProviderAttribute;
+    use ProviderAttributeTrait;
 
     /**
      * The table alias

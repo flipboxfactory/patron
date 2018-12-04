@@ -9,7 +9,7 @@
 namespace flipbox\patron\validators;
 
 use Craft;
-use flipbox\patron\records\ProviderInstance as ProviderSettingsRecord;
+use flipbox\patron\records\ProviderInstance;
 use yii\base\InvalidArgumentException;
 use yii\validators\Validator;
 
@@ -25,10 +25,10 @@ class ProviderSettings extends Validator
      */
     public function validateAttribute($model, $attribute)
     {
-        if (!$model instanceof ProviderSettingsRecord) {
+        if (!$model instanceof ProviderInstance) {
             throw new InvalidArgumentException(sprintf(
                 "Model must be an instance of %s, %s given.",
-                ProviderSettingsRecord::class,
+                ProviderInstance::class,
                 get_class($model)
             ));
         }

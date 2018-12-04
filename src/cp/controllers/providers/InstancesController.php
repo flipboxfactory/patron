@@ -4,9 +4,9 @@ namespace flipbox\patron\cp\controllers\providers;
 
 use Craft;
 use craft\helpers\ArrayHelper;
-use flipbox\patron\actions\provider\instance\Create;
-use flipbox\patron\actions\provider\instance\Delete;
-use flipbox\patron\actions\provider\instance\Update;
+use flipbox\patron\actions\provider\CreateProviderInstance;
+use flipbox\patron\actions\provider\DeleteProviderInstance;
+use flipbox\patron\actions\provider\UpdateProviderInstance;
 use flipbox\patron\cp\controllers\AbstractController;
 
 class InstancesController extends AbstractController
@@ -69,7 +69,7 @@ class InstancesController extends AbstractController
     {
         return [
             'create' => [
-                'class' => Create::class,
+                'class' => CreateProviderInstance::class,
                 'checkAccess' => [$this, 'checkAdminAccess']
             ]
         ];
@@ -88,7 +88,7 @@ class InstancesController extends AbstractController
         }
 
         $action = Craft::createObject([
-            'class' => Update::class,
+            'class' => UpdateProviderInstance::class,
             'checkAccess' => [$this, 'checkAdminAccess']
         ], [
             'update',
@@ -113,7 +113,7 @@ class InstancesController extends AbstractController
         }
 
         $action = Craft::createObject([
-            'class' => Delete::class,
+            'class' => DeleteProviderInstance::class,
             'checkAccess' => [$this, 'checkAdminAccess']
         ], [
             'delete',

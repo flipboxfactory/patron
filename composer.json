@@ -1,7 +1,7 @@
 {
   "name": "flipboxfactory/patron",
   "description": "An OAuth2 Client for Craft CMS",
-  "version": "1.0.0.1",
+  "version": "2.0.0",
   "type": "craft-plugin",
   "license": "MIT",
   "authors": [{
@@ -10,10 +10,9 @@
   }],
   "require": {
     "craftcms/cms": "^3.0",
-    "flipboxfactory/craft-ember": "^1.0",
+    "flipboxfactory/craft-ember": "dev-develop",
     "flipboxfactory/craft-assets-card": "^1.0",
     "flipboxfactory/craft-assets-circle-icon": "^1.0",
-    "flipboxdigital/oauth2-guardian": "^1.1",
     "league/oauth2-client": "^2.0",
     "league/oauth2-facebook": "^2.0",
     "league/oauth2-github": "^2.0",

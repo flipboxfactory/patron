@@ -12,10 +12,10 @@ use Craft;
 use craft\base\Model;
 use craft\helpers\StringHelper;
 use craft\validators\UriValidator;
-use flipbox\ember\helpers\ModelHelper;
-use flipbox\ember\helpers\UrlHelper;
-use flipbox\ember\views\Template;
-use flipbox\ember\views\ViewInterface;
+use flipbox\craft\ember\helpers\ModelHelper;
+use flipbox\craft\ember\helpers\UrlHelper;
+use flipbox\craft\ember\views\Template;
+use flipbox\craft\ember\views\ViewInterface;
 use yii\base\Exception;
 
 /**
@@ -38,11 +38,6 @@ class Settings extends Model
      * @var string|null
      */
     private $callbackUrlPath;
-
-    /**
-     * @var string
-     */
-    private $providerOverrideFileName = 'providers';
 
     /**
      * @var array

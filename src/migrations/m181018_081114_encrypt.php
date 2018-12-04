@@ -28,7 +28,39 @@ class m181018_081114_encrypt extends Migration
 
         // Encrypt those that are not
         if (Patron::getInstance()->getSettings()->getEncryptStorageData() === true) {
-            Patron::getInstance()->manageProviders()->changeEncryption(true);
+            $this->changeEncryption(true);
+        }
+    }
+
+    /*******************************************
+     * ENCRYPTION
+     *******************************************/
+
+    /**
+     * @param bool $changeTo
+     * @return void
+     */
+    public function changeEncryption(bool $changeTo)
+    {
+        // Temp
+        Patron::getInstance()->getSettings()->setEncryptStorageData(!$changeTo);
+
+        // Get current providers
+        $records = Provider::findAll([
+            'enabled' => null,
+            'environment' => null
+        ]);
+
+        // Temp
+        Patron::getInstance()->getSettings()->setEncryptStorageData($changeTo);
+
+        // Iterate and save
+        foreach ($records as $record) {
+            Patron::info(
+                'Altering Provider::$clientSecret encryption preferences'
+            );
+
+            $record->save();
         }
     }
 

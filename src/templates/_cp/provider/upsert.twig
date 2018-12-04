@@ -39,7 +39,8 @@
 {% endblock %}
 
 {% block content %}
-    <input type="hidden" name="action" value="{{ baseActionPath }}/{% if provider.id %}update{% else %}create{% endif %}">
+    <input type="hidden" name="action"
+           value="{{ baseActionPath }}/{% if provider.id %}update{% else %}create{% endif %}">
     {% if provider.id %}<input type="hidden" name="provider" value="{{ provider.id }}">{% endif %}
     {{ redirectInput(baseCpPath) }}
 
@@ -65,7 +66,8 @@
         value: provider.class,
         options: providerOptions,
         errors: provider.getErrors('class'),
-        required: true
+        required: true,
+        toggle: true
     }) }}
 
     {% if provider.id %}
@@ -86,10 +88,10 @@
                 {% endfor %}
                 <tr data-id="{{ instance.id }}" data-name="{{ instance.clientId }}">
                     <th scope="row" data-title="{{ 'Provider Instances'|t('patron') }}">
-                        <span class="status{% if craft.patron.settings.environment in environments %} enabled{% endif %}"></span>
                         <code>{{ instance.clientId }}</code>
                     </th>
                     <td data-title="{{ 'Environment(s)'|t('patron') }}">
+                        <span class="status{% if craft.patron.settings.environment in environments %} enabled{% endif %}"></span>
                         <span style="font-size: 10px;">{{ environments|join(', ') }}</span>
                     </td>
                     <td class="thin">
@@ -98,7 +100,8 @@
                             <input type="hidden" name="instance" value="{{ instance.id }}"/>
                             <input type="hidden" name="provider" value="{{ provider.id }}"/>
                             {{ redirectInput(continueEditingUrl) }}
-                            <div class="btn menubtn" data-icon="settings" title="Actions" tabindex="0" role="combobox"></div>
+                            <div class="btn menubtn" data-icon="settings" title="Actions" tabindex="0"
+                                 role="combobox"></div>
                             <div class="menu">
                                 <ul>
                                     <li>
@@ -129,7 +132,8 @@
 
         {% if availableEnvironments|length %}
             <div class="buttons">
-                <a href="{{ url(baseCpPath ~ '/' ~ provider.id ~ '/instances/new') }}" class="btn submit add icon">{{ "Add instance"|t('patron') }}</a>
+                <a href="{{ url(baseCpPath ~ '/' ~ provider.id ~ '/instances/new') }}"
+                   class="btn submit add icon">{{ "Add instance"|t('patron') }}</a>
             </div>
         {% endif %}
     {% endif %}
@@ -162,9 +166,11 @@
     {% endif %}
 
     {% if pluginLocks|length %}
-        <hr />
+        <hr/>
         <div id="locks" class="meta">
-            <h4 class="heading">{{ "Locks"|t('patron') }} <span class="info">{{ "The plugins listed blow have locked this provider from being deleted.  This provider should be deleted through the plugin."|t('patron') }}</span></h4>
+            <h4 class="heading">{{ "Locks"|t('patron') }} <span
+                        class="info">{{ "The plugins listed blow have locked this provider from being deleted.  This provider should be deleted through the plugin."|t('patron') }}</span>
+            </h4>
             <ul id="plugin-locks">
                 {% for plugin in pluginLocks %}
                     <li>

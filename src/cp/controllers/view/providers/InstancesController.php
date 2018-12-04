@@ -5,6 +5,7 @@ namespace flipbox\patron\cp\controllers\view\providers;
 use Craft;
 use craft\helpers\UrlHelper;
 use flipbox\craft\assets\circleicon\CircleIcon;
+use flipbox\craft\ember\exceptions\NotFoundException;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
 use flipbox\patron\records\ProviderInstance;
@@ -27,16 +28,17 @@ class InstancesController extends AbstractViewController
      * @param null $identifier
      * @param ProviderInstance|null $instance
      * @return \yii\web\Response
-     * @throws \flipbox\ember\exceptions\NotFoundException
+     * @throws NotFoundException
      * @throws \yii\base\InvalidConfigException
      */
     public function actionUpsert($provider = null, $identifier = null, ProviderInstance $instance = null)
     {
         Craft::$app->getView()->registerAssetBundle(CircleIcon::class);
 
-        $provider = Patron::getInstance()->manageProviders->getByCondition([
+        $provider = Provider::getOne([
             'id' => $provider,
-            'enabled' => null
+            'enabled' => null,
+            'environment' => null
         ]);
 
         // Empty variables for template
@@ -46,7 +48,7 @@ class InstancesController extends AbstractViewController
             if (null === $identifier) {
                 $instance = new ProviderInstance();
             } else {
-                $instance = ProviderInstance::findOne($identifier);
+                $instance = ProviderInstance::getOne(['id' => $identifier]);
             }
         }
 
@@ -90,7 +92,7 @@ class InstancesController extends AbstractViewController
     /*******************************************
      * BASE VARIABLES
      *******************************************/
-    
+
     /**
      * @inheritdoc
      */

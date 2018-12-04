@@ -9,8 +9,8 @@
 namespace flipbox\patron\controllers;
 
 use craft\helpers\ArrayHelper;
-use flipbox\ember\controllers\AbstractController;
-use flipbox\ember\filters\CallableFilter;
+use flipbox\craft\ember\controllers\AbstractController;
+use flipbox\craft\ember\filters\CallableFilter;
 use flipbox\patron\actions\authorization\Callback;
 use flipbox\patron\Patron;
 

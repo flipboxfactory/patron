@@ -18,6 +18,11 @@ use yii\base\Event;
 class RegisterProviders extends Event
 {
     /**
+     * Event to register providers
+     */
+    const REGISTER_PROVIDERS = 'registerProviders';
+
+    /**
      * @var AbstractProvider[]
      */
     public $providers = [];

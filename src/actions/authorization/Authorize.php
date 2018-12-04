@@ -9,7 +9,9 @@
 namespace flipbox\patron\actions\authorization;
 
 use Craft;
+use flipbox\craft\ember\actions\LookupTrait;
 use flipbox\patron\Patron;
+use flipbox\patron\queries\ProviderQuery;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use yii\web\Controller;
 
@@ -21,7 +23,18 @@ use yii\web\Controller;
  */
 class Authorize extends Action
 {
-    use traits\Lookup;
+    use LookupTrait;
+
+    /**
+     * @param int $id
+     * @return AbstractProvider
+     */
+    protected function find(int $id)
+    {
+        return (new ProviderQuery())
+            ->id($id)
+            ->one();
+    }
 
     /**
      * @inheritdoc
@@ -41,24 +54,12 @@ class Authorize extends Action
     }
 
     /**
-     * @return array
-     */
-    protected function getScopes(): array
-    {
-        if (!$scopes = Craft::$app->getRequest()->getParam('scope')) {
-            return [];
-        }
-
-        return $scopes;
-    }
-
-    /**
      * @param AbstractProvider $provider
      * @param array $scopes
      * @return mixed|\yii\web\Response
      * @throws \yii\web\HttpException
      */
-    public function runInternal(AbstractProvider $provider, array $scopes)
+    protected function runInternal(AbstractProvider $provider, array $scopes)
     {
         $request = Craft::$app->getRequest();
 
@@ -73,6 +74,18 @@ class Authorize extends Action
         }
 
         return $this->performAction($provider, $scopes);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getScopes(): array
+    {
+        if (!$scopes = Craft::$app->getRequest()->getParam('scope')) {
+            return [];
+        }
+
+        return $scopes;
     }
 
     /**

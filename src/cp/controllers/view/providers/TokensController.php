@@ -5,6 +5,7 @@ namespace flipbox\patron\cp\controllers\view\providers;
 use Craft;
 use craft\helpers\UrlHelper;
 use flipbox\craft\assets\circleicon\CircleIcon;
+use flipbox\craft\ember\exceptions\NotFoundException;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
 use flipbox\patron\records\Token;
@@ -30,7 +31,7 @@ class TokensController extends AbstractViewController
     /**
      * @param int|string $provider
      * @return \yii\web\Response
-     * @throws \flipbox\ember\exceptions\NotFoundException
+     * @throws NotFoundException
      * @throws \yii\base\InvalidConfigException
      */
     public function actionIndex($provider)
@@ -40,9 +41,10 @@ class TokensController extends AbstractViewController
         // Empty variables for template
         $variables = [];
 
-        $provider = Patron::getInstance()->manageProviders()->getByCondition([
+        $provider = Provider::getOne([
             'id' => $provider,
-            'enabled' => null
+            'enabled' => null,
+            'environment' => null
         ]);
 
         // Template variables
@@ -62,7 +64,7 @@ class TokensController extends AbstractViewController
      * @param int|string $identifier
      * @param Token|null $token
      * @return \yii\web\Response
-     * @throws \flipbox\ember\exceptions\NotFoundException
+     * @throws NotFoundException
      * @throws \yii\base\InvalidConfigException
      */
     public function actionUpsert($provider, $identifier, Token $token = null)
@@ -72,13 +74,18 @@ class TokensController extends AbstractViewController
         // Empty variables for template
         $variables = [];
 
-        $provider = Patron::getInstance()->manageProviders()->getByCondition([
+        $provider = Provider::getOne([
             'id' => $provider,
-            'enabled' => null
+            'enabled' => null,
+            'environment' => null
         ]);
 
         if (null === $token) {
-            $token = Patron::getInstance()->manageTokens()->get($identifier);
+            $token = Token::getOne([
+                is_numeric($identifier) ? 'id' : 'accessToken' => $identifier,
+                'enabled' => null,
+                'environment' => null
+            ]);
         }
 
         // Template variables

@@ -9,12 +9,16 @@
 namespace flipbox\patron\records;
 
 use Craft;
-use flipbox\ember\helpers\ModelHelper;
-use flipbox\ember\records\ActiveRecordWithId;
-use flipbox\patron\db\ProviderInstanceActiveQuery;
+use craft\helpers\ArrayHelper;
+use craft\helpers\Json;
+use flipbox\craft\ember\helpers\ModelHelper;
+use flipbox\craft\ember\helpers\ObjectHelper;
+use flipbox\craft\ember\records\ActiveRecordWithId;
+use flipbox\patron\events\RegisterProviderSettings;
 use flipbox\patron\helpers\ProviderHelper;
-use flipbox\patron\Patron;
-use flipbox\patron\providers\SettingsInterface;
+use flipbox\patron\queries\ProviderInstanceActiveQuery;
+use flipbox\patron\settings\BaseSettings;
+use flipbox\patron\settings\SettingsInterface;
 use flipbox\patron\validators\ProviderSettings as ProviderSettingsValidator;
 use yii\db\ActiveQueryInterface;
 
@@ -31,8 +35,8 @@ use yii\db\ActiveQueryInterface;
  */
 class ProviderInstance extends ActiveRecordWithId
 {
-    use traits\ProviderAttribute,
-        traits\RelatedEnvironmentsAttribute;
+    use ProviderAttributeTrait,
+        RelatedEnvironmentsAttributeTrait;
 
     /**
      * The table alias
@@ -112,7 +116,8 @@ class ProviderInstance extends ActiveRecordWithId
                     [
                         'clientId',
                         'clientSecret',
-                        'settings'
+                        'settings',
+                        'environments'
                     ],
                     'safe',
                     'on' => [
@@ -234,27 +239,48 @@ class ProviderInstance extends ActiveRecordWithId
     }
 
     /**
-     * @return string
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function getHtml(): string
-    {
-        return $this->getProviderSettings()->inputHtml();
-    }
-
-    /**
      * @return SettingsInterface
      * @throws \yii\base\InvalidConfigException
      */
     public function getProviderSettings(): SettingsInterface
     {
         if (!$this->providerSettings instanceof SettingsInterface) {
-            $this->providerSettings = Patron::getInstance()->getProviderSettings()->resolveSettings(
-                $this->getProvider(),
-                $this->settings
-            );
+            $this->providerSettings = $this->createProviderSettings();
         }
 
         return $this->providerSettings;
+    }
+
+    /**
+     * @return SettingsInterface
+     * @throws \yii\base\InvalidConfigException
+     */
+    protected function createProviderSettings(): SettingsInterface
+    {
+        if (null === ($provider = $this->getProvider())) {
+            return new BaseSettings();
+        }
+
+        $event = new RegisterProviderSettings();
+
+        RegisterProviderSettings::trigger(
+            $provider->class,
+            RegisterProviderSettings::REGISTER_SETTINGS,
+            $event
+        );
+
+        $settings = $this->settings;
+
+        if (is_string($settings)) {
+            $settings = Json::decodeIfJson($settings);
+        }
+
+        if (!is_array($settings)) {
+            $settings = ArrayHelper::toArray($settings, [], true);
+        }
+
+        $settings['class'] = $event->class;
+
+        return ObjectHelper::create($settings, SettingsInterface::class);
     }
 }

@@ -10,7 +10,7 @@ namespace flipbox\patron\cp\controllers;
 
 use Craft;
 use craft\helpers\ArrayHelper;
-use flipbox\patron\cp\actions\settings\Update;
+use flipbox\patron\cp\actions\settings\UpdateSettings;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -63,9 +63,9 @@ class SettingsController extends AbstractController
      */
     public function actionSave()
     {
-        /** @var Update $action */
+        /** @var UpdateSettings $action */
         $action = Craft::createObject([
-            'class' => Update::class,
+            'class' => UpdateSettings::class,
             'checkAccess' => [$this, 'checkUpdateAccess']
         ], [
             'update',

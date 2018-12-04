@@ -8,7 +8,10 @@ use craft\web\View;
 use Flipbox\OAuth2\Client\Provider\Guardian;
 use flipbox\patron\events\RegisterProviderIcon;
 use flipbox\patron\events\RegisterProviders;
+use flipbox\patron\events\RegisterProviderSettings;
 use flipbox\patron\Patron;
+use flipbox\patron\settings\FacebookSettings;
+use flipbox\patron\settings\GuardianSettings;
 use League\OAuth2\Client\Provider\Facebook;
 use League\OAuth2\Client\Provider\Github;
 use League\OAuth2\Client\Provider\Google;
@@ -23,11 +26,6 @@ use yii\web\NotFoundHttpException;
  */
 class Cp extends Module
 {
-    /**
-     * Event to register providers
-     */
-    const EVENT_REGISTER_PROVIDERS = 'registerProviders';
-
     /**
      * @var array
      */
@@ -57,6 +55,23 @@ class Cp extends Module
             'settings' => services\Settings::class
         ]);
 
+        // Register settings for providers
+        RegisterProviderSettings::on(
+            Guardian::class,
+            RegisterProviderSettings::REGISTER_SETTINGS,
+            function (RegisterProviderSettings $event) {
+                $event->class = GuardianSettings::class;
+            }
+        );
+
+        RegisterProviderSettings::on(
+            Facebook::class,
+            RegisterProviderSettings::REGISTER_SETTINGS,
+            function (RegisterProviderSettings $event) {
+                $event->class = FacebookSettings::class;
+            }
+        );
+
         // Ember templates
         Event::on(
             View::class,
@@ -83,6 +98,7 @@ class Cp extends Module
         return parent::beforeAction($action);
     }
 
+
     /*******************************************
      * SERVICES
      *******************************************/
@@ -105,17 +121,16 @@ class Cp extends Module
     {
         $event = new RegisterProviders([
             'providers' => [
-                Google::class,
                 LinkedIn::class,
                 Facebook::class,
                 Instagram::class,
-                Github::class,
-                Guardian::class
+                Google::class,
+                Github::class
             ]
         ]);
 
         $this->trigger(
-            static::EVENT_REGISTER_PROVIDERS,
+            $event::REGISTER_PROVIDERS,
             $event
         );
 

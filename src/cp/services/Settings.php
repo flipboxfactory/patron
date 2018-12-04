@@ -12,6 +12,7 @@ use Craft;
 use flipbox\patron\migrations\AlterEnvironments;
 use flipbox\patron\models\Settings as SettingsModel;
 use flipbox\patron\Patron;
+use flipbox\patron\records\Provider;
 use yii\base\Component;
 
 /**
@@ -38,7 +39,7 @@ class Settings extends Component
         )) {
             // Change encryption
             if ($encryptionChanged) {
-                Patron::getInstance()->manageProviders()->changeEncryption(
+                $this->changeEncryption(
                     $settingsModel->getEncryptStorageData()
                 );
             }
@@ -63,5 +64,37 @@ class Settings extends Component
         ob_end_clean();
 
         return true;
+    }
+
+    /*******************************************
+     * ENCRYPTION
+     *******************************************/
+
+    /**
+     * @param bool $changeTo
+     * @return void
+     */
+    public function changeEncryption(bool $changeTo)
+    {
+        // Temp
+        Patron::getInstance()->getSettings()->setEncryptStorageData(!$changeTo);
+
+        // Get current providers
+        $records = Provider::findAll([
+            'enabled' => null,
+            'environment' => null
+        ]);
+
+        // Temp
+        Patron::getInstance()->getSettings()->setEncryptStorageData($changeTo);
+
+        // Iterate and save
+        foreach ($records as $record) {
+            Patron::info(
+                'Altering Provider::$clientSecret encryption preferences'
+            );
+
+            $record->save();
+        }
     }
 }

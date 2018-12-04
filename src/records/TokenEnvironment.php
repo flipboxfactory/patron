@@ -8,7 +8,7 @@
 
 namespace flipbox\patron\records;
 
-use flipbox\ember\records\ActiveRecord;
+use flipbox\craft\ember\records\ActiveRecord;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -16,8 +16,8 @@ use flipbox\ember\records\ActiveRecord;
  */
 class TokenEnvironment extends ActiveRecord
 {
-    use traits\EnvironmentAttribute,
-        traits\TokenAttribute;
+    use EnvironmentAttributeTrait,
+        TokenAttributeTrait;
 
     /**
      * The table alias

@@ -12,11 +12,11 @@ use Craft;
 use craft\helpers\DateTimeHelper;
 use craft\validators\DateTimeValidator;
 use DateTime;
-use flipbox\ember\helpers\ModelHelper;
-use flipbox\ember\helpers\QueryHelper;
-use flipbox\ember\records\ActiveRecordWithId;
-use flipbox\ember\records\traits\StateAttribute;
-use flipbox\patron\db\TokenActiveQuery;
+use flipbox\craft\ember\helpers\ModelHelper;
+use flipbox\craft\ember\helpers\QueryHelper;
+use flipbox\craft\ember\records\ActiveRecordWithId;
+use flipbox\craft\ember\records\StateAttributeTrait;
+use flipbox\patron\queries\TokenActiveQuery;
 use yii\db\ActiveQueryInterface;
 
 /**
@@ -32,9 +32,9 @@ use yii\db\ActiveQueryInterface;
  */
 class Token extends ActiveRecordWithId
 {
-    use StateAttribute,
-        traits\ProviderAttribute,
-        traits\RelatedEnvironmentsAttribute;
+    use StateAttributeTrait,
+        ProviderAttributeTrait,
+        RelatedEnvironmentsAttributeTrait;
 
     /**
      * The table alias
@@ -97,7 +97,8 @@ class Token extends ActiveRecordWithId
                     [
                         'accessToken',
                         'values',
-                        'dateExpires'
+                        'dateExpires',
+                        'environments'
                     ],
                     'safe',
                     'on' => [

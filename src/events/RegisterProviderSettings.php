@@ -8,7 +8,7 @@
 
 namespace flipbox\patron\events;
 
-use flipbox\patron\providers\Base;
+use flipbox\patron\settings\BaseSettings;
 use yii\base\Event;
 
 /**
@@ -25,5 +25,5 @@ class RegisterProviderSettings extends Event
     /**
      * @var string
      */
-    public $class = Base::class;
+    public $class = BaseSettings::class;
 }

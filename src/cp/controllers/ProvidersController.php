@@ -4,11 +4,11 @@ namespace flipbox\patron\cp\controllers;
 
 use Craft;
 use craft\helpers\ArrayHelper;
-use flipbox\patron\actions\provider\Create;
-use flipbox\patron\actions\provider\Delete;
-use flipbox\patron\actions\provider\Disable;
-use flipbox\patron\actions\provider\Enable;
-use flipbox\patron\actions\provider\Update;
+use flipbox\patron\actions\provider\CreateProvider;
+use flipbox\patron\actions\provider\DeleteProvider;
+use flipbox\patron\actions\provider\DisableProvider;
+use flipbox\patron\actions\provider\EnableProvider;
+use flipbox\patron\actions\provider\UpdateProvider;
 
 class ProvidersController extends AbstractController
 {
@@ -84,7 +84,7 @@ class ProvidersController extends AbstractController
     {
         return [
             'create' => [
-                'class' => Create::class,
+                'class' => CreateProvider::class,
                 'checkAccess' => [$this, 'checkAdminAccess']
             ]
         ];
@@ -103,7 +103,7 @@ class ProvidersController extends AbstractController
         }
 
         $action = Craft::createObject([
-            'class' => Update::class,
+            'class' => UpdateProvider::class,
             'checkAccess' => [$this, 'checkAdminAccess']
         ], [
             'update',
@@ -128,7 +128,7 @@ class ProvidersController extends AbstractController
         }
 
         $action = Craft::createObject([
-            'class' => Delete::class,
+            'class' => DeleteProvider::class,
             'checkAccess' => [$this, 'checkAdminAccess']
         ], [
             'delete',
@@ -153,7 +153,7 @@ class ProvidersController extends AbstractController
         }
 
         $action = Craft::createObject([
-            'class' => Enable::class,
+            'class' => EnableProvider::class,
             'checkAccess' => [$this, 'checkAdminAccess']
         ], [
             'enable',
@@ -178,7 +178,7 @@ class ProvidersController extends AbstractController
         }
 
         $action = Craft::createObject([
-            'class' => Disable::class,
+            'class' => DisableProvider::class,
             'checkAccess' => [$this, 'checkAdminAccess']
         ], [
             'disable',
