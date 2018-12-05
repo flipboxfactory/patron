@@ -5,11 +5,9 @@ namespace flipbox\patron\cp\controllers\view\providers;
 use Craft;
 use craft\helpers\UrlHelper;
 use flipbox\craft\assets\circleicon\CircleIcon;
-use flipbox\craft\ember\exceptions\NotFoundException;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
 use flipbox\patron\records\Token;
-use flipbox\patron\web\assets\providerswitcher\ProvidersAsset;
 
 class TokensController extends AbstractViewController
 {
@@ -29,9 +27,9 @@ class TokensController extends AbstractViewController
     const TEMPLATE_UPSERT = self::TEMPLATE_INDEX . '/upsert';
 
     /**
-     * @param int|string $provider
+     * @param $provider
      * @return \yii\web\Response
-     * @throws NotFoundException
+     * @throws \flipbox\craft\ember\exceptions\RecordNotFoundException
      * @throws \yii\base\InvalidConfigException
      */
     public function actionIndex($provider)
@@ -60,11 +58,11 @@ class TokensController extends AbstractViewController
     }
 
     /**
-     * @param int|string $provider
-     * @param int|string $identifier
+     * @param $provider
+     * @param $identifier
      * @param Token|null $token
      * @return \yii\web\Response
-     * @throws NotFoundException
+     * @throws \flipbox\craft\ember\exceptions\RecordNotFoundException
      * @throws \yii\base\InvalidConfigException
      */
     public function actionUpsert($provider, $identifier, Token $token = null)

@@ -5,7 +5,6 @@ namespace flipbox\patron\cp\controllers\view\providers;
 use Craft;
 use flipbox\craft\assets\card\Card;
 use flipbox\craft\assets\circleicon\CircleIcon;
-use flipbox\craft\ember\exceptions\NotFoundException;
 use flipbox\patron\helpers\ProviderHelper;
 use flipbox\patron\records\Provider;
 use flipbox\patron\web\assets\providers\ProvidersAsset;
@@ -54,7 +53,7 @@ class DefaultController extends AbstractViewController
      * @param Provider|null $provider
      * @return \yii\web\Response
      * @throws \craft\errors\InvalidPluginException
-     * @throws NotFoundException
+     * @throws \flipbox\craft\ember\exceptions\RecordNotFoundException
      * @throws \yii\base\InvalidConfigException
      */
     public function actionUpsert($identifier = null, Provider $provider = null)

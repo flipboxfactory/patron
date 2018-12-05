@@ -11,10 +11,10 @@ namespace flipbox\patron\cp\actions\settings;
 use Craft;
 use craft\helpers\ArrayHelper;
 use flipbox\craft\ember\actions\models\CreateModel;
-use flipbox\craft\ember\exceptions\ModelNotFoundException;
 use flipbox\patron\models\Settings;
 use flipbox\patron\Patron;
 use yii\base\Model;
+use yii\web\NotFoundHttpException;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -90,7 +90,7 @@ class UpdateSettings extends CreateModel
     protected function performAction(Model $model): bool
     {
         if (!$model instanceof Settings) {
-            throw new ModelNotFoundException(sprintf(
+            throw new NotFoundHttpException(sprintf(
                 "Settings must be an instance of '%s', '%s' given.",
                 Settings::class,
                 get_class($model)

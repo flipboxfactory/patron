@@ -5,7 +5,6 @@ namespace flipbox\patron\cp\controllers\view\providers;
 use Craft;
 use craft\helpers\UrlHelper;
 use flipbox\craft\assets\circleicon\CircleIcon;
-use flipbox\craft\ember\exceptions\NotFoundException;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
 use flipbox\patron\records\ProviderInstance;
@@ -28,7 +27,7 @@ class InstancesController extends AbstractViewController
      * @param null $identifier
      * @param ProviderInstance|null $instance
      * @return \yii\web\Response
-     * @throws NotFoundException
+     * @throws \flipbox\craft\ember\exceptions\RecordNotFoundException
      * @throws \yii\base\InvalidConfigException
      */
     public function actionUpsert($provider = null, $identifier = null, ProviderInstance $instance = null)
