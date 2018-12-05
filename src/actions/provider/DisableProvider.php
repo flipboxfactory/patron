@@ -52,6 +52,4 @@ class DisableProvider extends Action
         $record->enabled = false;
         return $record->save(true, ['enabled']);
     }
-
-
 }
