@@ -28,6 +28,7 @@ class Authorize extends Action
     /**
      * @param int $id
      * @return AbstractProvider
+     * @throws \yii\base\InvalidConfigException
      */
     protected function find(int $id)
     {
@@ -38,6 +39,7 @@ class Authorize extends Action
 
     /**
      * @inheritdoc
+     * @throws \yii\base\InvalidConfigException
      */
     public function run(int $id)
     {

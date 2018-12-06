@@ -21,6 +21,7 @@ class TokenIndex extends RecordIndex
 {
     /**
      * @inheritdoc
+     * @throws \yii\base\InvalidConfigException
      */
     protected function createQuery(array $config = []): QueryInterface
     {

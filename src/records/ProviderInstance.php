@@ -146,7 +146,10 @@ class ProviderInstance extends ActiveRecordWithId
     }
 
     /**
-     * @inheritdoc
+     * @param $insert
+     * @return bool
+     * @throws \yii\base\Exception
+     * @throws \yii\base\InvalidConfigException
      */
     public function beforeSave($insert)
     {

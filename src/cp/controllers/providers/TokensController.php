@@ -74,6 +74,7 @@ class TokensController extends AbstractController
     /**
      * @param null $token
      * @return array
+     * @throws \flipbox\craft\ember\exceptions\RecordNotFoundException
      */
     public function actionModal($token = null): array
     {

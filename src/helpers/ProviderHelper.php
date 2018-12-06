@@ -26,6 +26,7 @@ class ProviderHelper
     /**
      * @param $provider
      * @return string
+     * @throws \ReflectionException
      */
     public static function displayName($provider): string
     {
@@ -164,6 +165,8 @@ class ProviderHelper
      * @param string $value
      * @param bool $checkSettings
      * @return string
+     * @throws \yii\base\Exception
+     * @throws \yii\base\InvalidConfigException
      */
     public static function encryptClientSecret(string $value, bool $checkSettings = true): string
     {

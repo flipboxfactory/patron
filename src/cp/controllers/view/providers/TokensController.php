@@ -29,6 +29,7 @@ class TokensController extends AbstractViewController
     /**
      * @param $provider
      * @return \yii\web\Response
+     * @throws \ReflectionException
      * @throws \flipbox\craft\ember\exceptions\RecordNotFoundException
      * @throws \yii\base\InvalidConfigException
      */
@@ -62,6 +63,7 @@ class TokensController extends AbstractViewController
      * @param $identifier
      * @param Token|null $token
      * @return \yii\web\Response
+     * @throws \ReflectionException
      * @throws \flipbox\craft\ember\exceptions\RecordNotFoundException
      * @throws \yii\base\InvalidConfigException
      */
@@ -161,6 +163,7 @@ class TokensController extends AbstractViewController
     /**
      * @param array $variables
      * @param Provider $provider
+     * @throws \ReflectionException
      */
     protected function tokenVariables(array &$variables, Provider $provider)
     {
@@ -184,6 +187,8 @@ class TokensController extends AbstractViewController
     /**
      * @param array $variables
      * @param Provider $provider
+     * @param Token $token
+     * @throws \ReflectionException
      */
     protected function tokenUpdateVariables(array &$variables, Provider $provider, Token $token)
     {

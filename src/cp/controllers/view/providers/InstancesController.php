@@ -27,6 +27,7 @@ class InstancesController extends AbstractViewController
      * @param null $identifier
      * @param ProviderInstance|null $instance
      * @return \yii\web\Response
+     * @throws \ReflectionException
      * @throws \flipbox\craft\ember\exceptions\RecordNotFoundException
      * @throws \yii\base\InvalidConfigException
      */
@@ -116,6 +117,8 @@ class InstancesController extends AbstractViewController
     /**
      * @param array $variables
      * @param Provider $provider
+     * @param ProviderInstance $instance
+     * @throws \ReflectionException
      */
     protected function instanceVariables(array &$variables, Provider $provider, ProviderInstance $instance)
     {

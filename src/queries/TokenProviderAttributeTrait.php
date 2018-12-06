@@ -70,6 +70,7 @@ trait TokenProviderAttributeTrait
      * @param $value
      * @param string $join
      * @return array
+     * @throws \ReflectionException
      */
     protected function parseProviderValue($value, string $join = 'or'): array
     {
@@ -94,6 +95,7 @@ trait TokenProviderAttributeTrait
     /**
      * @param $operator
      * @param $value
+     * @throws \ReflectionException
      */
     protected function resolveProviderValue($operator, &$value)
     {
@@ -138,7 +140,7 @@ trait TokenProviderAttributeTrait
     }
 
     /**
-     *
+     * @throws \ReflectionException
      */
     protected function applyProviderConditions()
     {

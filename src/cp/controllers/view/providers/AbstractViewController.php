@@ -143,6 +143,7 @@ abstract class AbstractViewController extends \flipbox\patron\cp\controllers\vie
     /**
      * @param array $variables
      * @param Provider $provider
+     * @throws \ReflectionException
      */
     protected function updateVariables(array &$variables, Provider $provider)
     {

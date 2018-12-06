@@ -265,8 +265,6 @@ class Provider extends ActiveRecordWithId
      * @param bool $runValidation
      * @param null $attributeNames
      * @return bool
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
      */
     public function saveAndLock(PluginInterface $plugin, $runValidation = true, $attributeNames = null): bool
     {
@@ -568,19 +566,12 @@ class Provider extends ActiveRecordWithId
 
     /**
      * @return string
+     * @throws \ReflectionException
      */
     public function getDisplayName(): string
     {
         return ProviderHelper::displayName(
             $this->class
         );
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->getDisplayName();
     }
 }

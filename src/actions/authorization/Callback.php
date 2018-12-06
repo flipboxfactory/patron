@@ -30,6 +30,7 @@ class Callback extends Action
 
     /**
      * @inheritdoc
+     * @throws \yii\base\InvalidConfigException
      */
     public function run()
     {
@@ -72,7 +73,6 @@ class Callback extends Action
 
     /**
      * @param $code
-     * @param $identifier
      * @param AbstractProvider $provider
      * @return AccessToken|mixed
      * @throws HttpException

@@ -9,7 +9,6 @@
 namespace flipbox\patron\actions\token;
 
 use flipbox\craft\ember\actions\records\UpdateRecord;
-use yii\db\ActiveRecord;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>

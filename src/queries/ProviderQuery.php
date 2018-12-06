@@ -60,6 +60,7 @@ class ProviderQuery extends Query
 
     /**
      * @inheritdoc
+     * @throws \yii\base\InvalidConfigException
      */
     public function populate($rows)
     {
@@ -90,6 +91,7 @@ class ProviderQuery extends Query
 
     /**
      * @param array $config
+     * @param bool $checkSettings
      * @return mixed
      * @throws \yii\base\InvalidConfigException
      */
@@ -108,6 +110,7 @@ class ProviderQuery extends Query
 
     /**
      * @param array $config
+     * @param bool $checkSettings
      * @return array
      */
     protected function prepareConfig(array $config = [], bool $checkSettings = true): array

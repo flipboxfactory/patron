@@ -215,28 +215,6 @@ class Settings extends Model
     }
 
     /*******************************************
-     * PROVIDER OVERRIDE CONFIG
-     *******************************************/
-
-    /**
-     * @param string $providerOverrideFileName
-     * @return string
-     */
-    public function setProviderOverrideFileName(string $providerOverrideFileName): string
-    {
-        $this->providerOverrideFileName = $providerOverrideFileName;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getProviderOverrideFileName(): string
-    {
-        return $this->providerOverrideFileName;
-    }
-
-    /*******************************************
      * CALLBACK
      *******************************************/
 

@@ -109,6 +109,7 @@ class TokenQuery extends Query
 
     /**
      * @inheritdoc
+     * @throws \ReflectionException
      */
     public function prepare($builder)
     {

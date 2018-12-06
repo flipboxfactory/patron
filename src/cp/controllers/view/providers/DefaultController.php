@@ -52,6 +52,7 @@ class DefaultController extends AbstractViewController
      * @param null $identifier
      * @param Provider|null $provider
      * @return \yii\web\Response
+     * @throws \ReflectionException
      * @throws \craft\errors\InvalidPluginException
      * @throws \flipbox\craft\ember\exceptions\RecordNotFoundException
      * @throws \yii\base\InvalidConfigException
