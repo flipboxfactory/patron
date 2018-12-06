@@ -8,7 +8,6 @@
 
 namespace flipbox\patron\events;
 
-use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Facebook;
 use League\OAuth2\Client\Provider\Github;
 use League\OAuth2\Client\Provider\Google;
@@ -20,21 +19,26 @@ use yii\base\Event;
  * @author Flipbox Factory <hello@flipboxfactory.com>
  * @since 1.0.0
  */
-class RegisterProviders extends Event
+class RegisterProviderIcons extends Event
 {
     /**
-     * Event to register providers
+     * The event name
      */
-    const REGISTER_PROVIDERS = 'registerProviders';
+    const REGISTER_ICON = 'registerProviderIcon';
 
     /**
-     * @var AbstractProvider[]
+     * The base icon path
      */
-    public $providers = [
-        LinkedIn::class,
-        Facebook::class,
-        Instagram::class,
-        Google::class,
-        Github::class
+    const ICON_PATH = '@vendor/flipboxfactory/patron/src/icons/';
+
+    /**
+     * @var string
+     */
+    public $icons = [
+        Google::class => self::ICON_PATH . 'google.svg',
+        LinkedIn::class => self::ICON_PATH . 'linkedin.svg',
+        Facebook::class => self::ICON_PATH . 'facebook.svg',
+        Instagram::class => self::ICON_PATH . 'instagram.svg',
+        Github::class => self::ICON_PATH . 'github.svg',
     ];
 }

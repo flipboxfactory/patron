@@ -16,6 +16,12 @@
                 </li>
                 <li>
                     <a class="formsubmit"
+                       data-redirect="{{ (baseCpPath ~ '/{id}/instances/new')|hash }}">
+                        {{ "Save and add instance"|t('app') }}
+                    </a>
+                </li>
+                <li>
+                    <a class="formsubmit"
                        data-redirect="{{ (baseCpPath ~ '/new')|hash }}">
                         {{ "Save and add another"|t('app') }}
                     </a>
@@ -28,7 +34,7 @@
                         <a class="formsubmit error"
                            data-action="{{ baseActionPath }}/delete"
                            data-confirm="{{ 'Are you sure you want to delete this provider?'|t('patron') }}"
-                           data-redirect="{{ baseCpPath|hash }}"
+                           data-redirect="{{ baseCpProvidersPath|hash }}"
                            role="option"
                            tabindex="-1">{{ "Delete"|t('app') }}</a>
                     </li>
@@ -44,19 +50,6 @@
     {% if provider.id %}<input type="hidden" name="provider" value="{{ provider.id }}">{% endif %}
     {{ redirectInput(baseCpPath) }}
 
-    {{ forms.textField({
-        label: "Handle"|t('patron'),
-        instructions: "The unique reference to this provider."|t('patron'),
-        class: "code",
-        id: 'handle',
-        name: 'handle',
-        value: provider.handle,
-        errors: provider.getErrors('handle'),
-        autofocus: true,
-        required: true,
-        first: true
-    }) }}
-
     {{ forms.selectField({
         first: true,
         label: "Provider"|t('patron'),
@@ -70,8 +63,22 @@
         toggle: true
     }) }}
 
+    {{ forms.textField({
+        label: "Handle"|t('patron'),
+        instructions: "The unique reference to this provider."|t('patron'),
+        class: "code",
+        id: 'handle',
+        name: 'handle',
+        value: provider.handle,
+        errors: provider.getErrors('handle'),
+        autofocus: true,
+        required: true,
+        first: true
+    }) }}
+
+    <hr>
+
     {% if provider.id %}
-        <hr>
 
         {% set instances = provider.instances %}
         <table id="instances" class="data fullwidth collapsible{% if instances|length == 0 %} hidden{% endif %}">
@@ -136,6 +143,12 @@
                    class="btn submit add icon">{{ "Add instance"|t('patron') }}</a>
             </div>
         {% endif %}
+    {% else %}
+        <p class="light"><em>{{ "Configure provider settings here after creation."|t('patron') }}</em></p>
+
+        {#{% js %}#}
+            {#new Craft.HandleGenerator('#class', '#handle');#}
+        {#{% endjs %}#}
     {% endif %}
 
 {% endblock %}

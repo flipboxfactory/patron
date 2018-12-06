@@ -17,6 +17,7 @@ use flipbox\patron\queries\ProviderQuery;
 use flipbox\patron\records\Token;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Token\AccessTokenInterface;
 use yii\base\Event;
 use yii\web\HttpException;
 
@@ -120,13 +121,13 @@ class Callback extends Action
     }
 
     /**
-     * @param AccessToken $accessToken
+     * @param AccessTokenInterface $accessToken
      * @param AbstractProvider $provider
      * @return bool
      * @throws \Exception
      */
     protected function persistNewToken(
-        AccessToken $accessToken,
+        AccessTokenInterface $accessToken,
         AbstractProvider $provider
     ): bool {
 

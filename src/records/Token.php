@@ -206,12 +206,11 @@ class Token extends ActiveRecordWithId
         );
     }
 
-
     /**
      * Get all of the associated provider instances.
      *
      * @param array $config
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQueryInterface
      */
     public function getInstances(array $config = [])
     {

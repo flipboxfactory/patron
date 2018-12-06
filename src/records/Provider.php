@@ -86,9 +86,9 @@ class Provider extends ActiveRecordWithId
             return null;
         }
 
-        return Patron::getInstance()->getCp()->getProviderIcon(
-            $this->class
-        );
+        $icons = Patron::getInstance()->getCp()->getProviderIcons();
+
+        return $icons[$this->class] ?? null;
     }
 
     /**

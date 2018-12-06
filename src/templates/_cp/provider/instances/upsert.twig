@@ -102,7 +102,7 @@
 
     <div id="environments" class="meta">
         <h4 class="heading">{{ "Environments"|t('patron') }}</h4>
-        {% set environments = [] %}
+        {% set environments = instance.id ? [] : [craft.patron.settings.environment] %}
         {% for env in instance.environments %}
             {% set environments = environments|merge([env.environment]) %}
         {% endfor %}

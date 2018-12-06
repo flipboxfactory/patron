@@ -284,6 +284,7 @@ class ProviderInstance extends ActiveRecordWithId
 
         $settings['class'] = $event->class;
 
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return ObjectHelper::create($settings, SettingsInterface::class);
     }
 }
