@@ -1,51 +1,50 @@
 # Providers
 
-This service is used to retrieve one or many [Providers].
+Retrieve [Providers] from storage.
 
 [[toc]]
 
-### `find( $identifier )`
+### `clientId( $value )`
 
-Returns an [Provider]
+Returns self; the [Provider Query]
 
 | Argument          | Accepts                   | Description
 | ----------        | ----------                | ----------
-| `$identifier`     | [string], [integer], [Provider] | A unique [Provider] identifier
+| `$value`     | [string], [string\[\]], [null] | A [Provider] Client Id
 
 ::: code
 ```twig
-{% set provider = craft.patron.tokens.find(1) %}
+{% set provider = craft.patron.providers.clientId('abcdefg').one() %}
 ```
 
 ```php
-use flipbox\patron\Patron;
+use flipbox/patron/queries/ProviderQuery;
 
-$provider = Patron::getInstance()->getProviders()->find(1);
+$provider = ProviderQuery::find()
+    ->clientId('abcdefg')
+    ->one();
 ```
 :::
 
-### `getQuery( $criteria )`
+### `id( $value )`
 
-Returns a [Provider Query].
+Returns self; the [Provider Query]
 
 | Argument          | Accepts                   | Description
 | ----------        | ----------                | ----------
-| `$criteria`       | [array]                   | An array of [Provider Query] criteria.
-
+| `$value`     | [integer], [integer\[\]], [string], [string\[\]], [null] | A [Provider] database id
 
 ::: code
 ```twig
-{% set query = craft.patron.tokens.getQuery({
-    id: 1
-}) %}
+{% set provider = craft.patron.providers.id(1).one() %}
 ```
 
 ```php
-use flipbox\patron\Patron;
+use flipbox/patron/queries/ProviderQuery;
 
-$query = Patron::getInstance()->getProviders()->getQuery([
-    'id' => 1
-]);
+$provider = ProviderQuery::find()
+    ->id(1)
+    ->one();
 ```
 :::
 

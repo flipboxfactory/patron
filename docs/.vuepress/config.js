@@ -42,12 +42,10 @@ module.exports = {
                     ]
                 },
                 {
-                    title: 'Services',
+                    title: 'Queries',
                     collapsable: false,
                     children: [
-                        ['/services/manage-providers', 'Manage Providers'],
-                        ['/services/manage-tokens', 'Manage Tokens'],
-                        ['/services/providers', 'Providers'],
+                        ['/queries/providers', 'Providers'],
                         ['/services/tokens', 'Tokens']
                     ]
                 }

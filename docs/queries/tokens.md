@@ -1,51 +1,50 @@
 # Tokens
 
-This service is used to retrieve one or many [Tokens].
+Retrieve [Tokens] from storage.
 
 [[toc]]
 
-### `find( $identifier )`
+### `clientId( $value )`
 
-Returns an [Token]
+Returns self; the [Token Query]
 
 | Argument          | Accepts                   | Description
 | ----------        | ----------                | ----------
-| `$identifier`     | [string], [integer], [Token] | A unique [Token] identifier
+| `$value`     | [string], [string\[\]], [null] | A [Token] Client Id
 
 ::: code
 ```twig
-{% set token = craft.patron.tokens.find(1) %}
+{% set token = craft.patron.tokens.clientId('abcdefg').one() %}
 ```
 
 ```php
-use flipbox\patron\Patron;
+use flipbox/patron/queries/TokenQuery;
 
-$token = Patron::getInstance()->getTokens()->find(1);
+$token = TokenQuery::find()
+    ->clientId('abcdefg')
+    ->one();
 ```
 :::
 
-### `getQuery( $criteria )`
+### `id( $value )`
 
-Returns a [Token Query].
+Returns self; the [Token Query]
 
 | Argument          | Accepts                   | Description
 | ----------        | ----------                | ----------
-| `$criteria`       | [array]                   | An array of [Token Query] criteria.
-
+| `$value`     | [integer], [integer\[\]], [string], [string\[\]], [null] | A [Token] database id
 
 ::: code
 ```twig
-{% set query = craft.patron.tokens.getQuery({
-    id: 1
-}) %}
+{% set token = craft.patron.tokens.id(1).one() %}
 ```
 
 ```php
-use flipbox\patron\Patron;
+use flipbox/patron/queries/TokenQuery;
 
-$query = Patron::getInstance()->getTokens()->getQuery([
-    'id' => 1
-]);
+$token = TokenQuery::find()
+    ->id(1)
+    ->one();
 ```
 :::
 
