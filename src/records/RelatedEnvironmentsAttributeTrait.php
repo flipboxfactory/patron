@@ -66,12 +66,12 @@ trait RelatedEnvironmentsAttributeTrait
      * @param array $config
      * @return array
      */
-    protected abstract function prepareEnvironmentRecordConfig(array $config = []): array;
+    abstract protected function prepareEnvironmentRecordConfig(array $config = []): array;
 
     /**
      * @return ActiveQueryInterface
      */
-    protected abstract function environmentRelationshipQuery(): ActiveQueryInterface;
+    abstract protected function environmentRelationshipQuery(): ActiveQueryInterface;
 
     /**
      * Get all of the associated environments.
