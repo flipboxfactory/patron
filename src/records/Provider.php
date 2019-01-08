@@ -78,6 +78,20 @@ class Provider extends ActiveRecordWithId
     }
 
     /**
+     * @inheritdoc
+     */
+    protected static function findByCondition($condition)
+    {
+        if (!is_numeric($condition) && is_string($condition)) {
+            $condition = ['handle' => $condition];
+        }
+
+        /** @noinspection PhpInternalEntityUsedInspection */
+        return parent::findByCondition($condition);
+    }
+
+
+    /**
      * @return string|null
      */
     public function getIcon()
@@ -288,6 +302,15 @@ class Provider extends ActiveRecordWithId
     {
         if (null === ($pluginId = $this->getPluginId($plugin))) {
             return false;
+        }
+
+        $record = ProviderLock::findOne([
+            'providerId' => $this->getId(),
+            'pluginId' => $pluginId
+        ]);
+
+        if (!empty($record)) {
+            return true;
         }
 
         $record = new ProviderLock();
