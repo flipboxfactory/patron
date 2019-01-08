@@ -43,6 +43,11 @@ trait ProviderAttributesTrait
     public $handle;
 
     /**
+     * @var string|string[]|null The provider classes(s). Prefix IDs with "not " to exclude them.
+     */
+    public $class;
+
+    /**
      * @param $enabled
      * @return $this
      */
@@ -83,6 +88,16 @@ trait ProviderAttributesTrait
     }
 
     /**
+     * @param $class
+     * @return $this
+     */
+    public function class($class)
+    {
+        $this->class = $class;
+        return $this;
+    }
+
+    /**
      * @throws QueryAbortedException
      */
     protected function applyProviderConditions()
@@ -96,7 +111,7 @@ trait ProviderAttributesTrait
             $this->andWhere(Db::parseParam('enabled', $this->enabled));
         }
 
-        $attributes = ['id', 'name', 'handle'];
+        $attributes = ['id', 'name', 'handle', 'class'];
 
         foreach ($attributes as $attribute) {
             if (($value = $this->{$attribute}) !== null) {
