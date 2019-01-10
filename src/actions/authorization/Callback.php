@@ -9,9 +9,16 @@
 namespace flipbox\patron\actions\authorization;
 
 use Craft;
+use flipbox\craft\ember\actions\LookupTrait;
+use flipbox\patron\events\PersistToken;
+use flipbox\patron\helpers\ProviderHelper;
 use flipbox\patron\Patron;
+use flipbox\patron\queries\ProviderQuery;
+use flipbox\patron\records\Token;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Token\AccessTokenInterface;
+use yii\base\Event;
 use yii\web\HttpException;
 
 /**
@@ -20,10 +27,11 @@ use yii\web\HttpException;
  */
 class Callback extends Action
 {
-    use traits\Lookup;
+    use LookupTrait;
 
     /**
      * @inheritdoc
+     * @throws \yii\base\InvalidConfigException
      */
     public function run()
     {
@@ -53,8 +61,19 @@ class Callback extends Action
     }
 
     /**
+     * @param int $id
+     * @return AbstractProvider
+     * @throws \yii\base\InvalidConfigException
+     */
+    protected function find(int $id)
+    {
+        return (new ProviderQuery())
+            ->id($id)
+            ->one();
+    }
+
+    /**
      * @param $code
-     * @param $identifier
      * @param AbstractProvider $provider
      * @return AccessToken|mixed
      * @throws HttpException
@@ -92,13 +111,62 @@ class Callback extends Action
             );
 
             // Save token
-            Patron::getInstance()->getTokens()->persistNewToken(
+            $this->persistNewToken(
                 $accessToken,
                 $provider
             );
 
             return $accessToken;
         });
+    }
+
+    /**
+     * @param AccessTokenInterface $accessToken
+     * @param AbstractProvider $provider
+     * @return bool
+     * @throws \Exception
+     */
+    protected function persistNewToken(
+        AccessTokenInterface $accessToken,
+        AbstractProvider $provider
+    ): bool {
+
+        $record = new Token();
+
+        $record->setAttributes(
+            [
+                'accessToken' => $accessToken->getToken(),
+                'refreshToken' => $accessToken->getRefreshToken(),
+                'providerId' => ProviderHelper::lookupId($provider),
+                'values' => $accessToken->getValues(),
+                'dateExpires' => $accessToken->getExpires(),
+                'enabled' => true
+            ]
+        );
+
+        $event = new PersistToken([
+            'token' => $accessToken,
+            'provider' => $provider,
+            'record' => $record
+        ]);
+
+        Event::trigger(
+            get_class($provider),
+            Patron::EVENT_BEFORE_PERSIST_TOKEN,
+            $event
+        );
+
+        if (!$record->save()) {
+            return false;
+        }
+
+        Event::trigger(
+            get_class($provider),
+            Patron::EVENT_AFTER_PERSIST_TOKEN,
+            $event
+        );
+
+        return true;
     }
 
     /**

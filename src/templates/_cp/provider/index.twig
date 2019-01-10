@@ -14,8 +14,8 @@
             {% set icon %}
                 {{ circleIcon(
                     (provider['icon'] is defined and provider['icon'] ? provider['icon'] : null),
-                    provider.displayName,
-                    provider.enabled ? 'active' : 'suspended'
+                provider.displayName,
+                provider.enabled ? 'active' : 'suspended'
                 ) }}
             {% endset %}
             {% embed "patron/ember/card" with {
@@ -59,20 +59,20 @@
                             {% endif %}
                         </ul>
                         {% if not provider.locks|length %}
-                        <hr>
-                        <ul>
-                            <li>
-                                <a class="formsubmit error"
-                                   data-param="provider"
-                                   data-value="{{ provider.id }}"
-                                   data-action="{{ baseActionPath }}/delete"
-                                   data-confirm="{{ 'Are you sure you want to delete this provider?'|t('patron') }}"
-                                   data-redirect="{{ continueEditingUrl|hash }}" class="delete"
-                                   title="{{ 'Delete'|t('patron') }}" role="button">
-                                    {{ "Delete"|t('patron') }}
-                                </a>
-                            </li>
-                        </ul>
+                            <hr>
+                            <ul>
+                                <li>
+                                    <a class="formsubmit error"
+                                       data-param="provider"
+                                       data-value="{{ provider.id }}"
+                                       data-action="{{ baseActionPath }}/delete"
+                                       data-confirm="{{ 'Are you sure you want to delete this provider?'|t('patron') }}"
+                                       data-redirect="{{ continueEditingUrl|hash }}" class="delete"
+                                       title="{{ 'Delete'|t('patron') }}" role="button">
+                                        {{ "Delete"|t('patron') }}
+                                    </a>
+                                </li>
+                            </ul>
                         {% endif %}
                     </div>
                 {% endblock %}

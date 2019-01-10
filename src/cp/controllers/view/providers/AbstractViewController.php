@@ -77,6 +77,14 @@ abstract class AbstractViewController extends \flipbox\patron\cp\controllers\vie
     }
 
     /**
+     * @inheritdoc
+     */
+    protected function getBaseCpProvidersPath(): string
+    {
+        return parent::getBaseCpPath() . '/providers';
+    }
+
+    /**
      * @return string
      */
     protected function getBaseActionPath(): string
@@ -143,6 +151,7 @@ abstract class AbstractViewController extends \flipbox\patron\cp\controllers\vie
     /**
      * @param array $variables
      * @param Provider $provider
+     * @throws \ReflectionException
      */
     protected function updateVariables(array &$variables, Provider $provider)
     {
@@ -151,6 +160,7 @@ abstract class AbstractViewController extends \flipbox\patron\cp\controllers\vie
 
         // Set the "Continue Editing" URL
         $variables['continueEditingUrl'] = $this->getBaseContinueEditingUrl('/' . $provider->getId());
+        $variables['baseCpProvidersPath'] = $this->getBaseCpProvidersPath();
         $variables['baseCpProviderPath'] = $this->getBaseCpProviderPath();
 
         // Append title

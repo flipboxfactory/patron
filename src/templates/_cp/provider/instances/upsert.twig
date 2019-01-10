@@ -33,7 +33,8 @@
 {% endblock %}
 
 {% block content %}
-    <input type="hidden" name="action" value="{{ baseActionPath }}/{% if instance.id %}update{% else %}create{% endif %}">
+    <input type="hidden" name="action"
+           value="{{ baseActionPath }}/{% if instance.id %}update{% else %}create{% endif %}">
     <input type="hidden" name="provider" value="{{ provider.id }}">
     {% if instance.id %}<input type="hidden" name="instance" value="{{ instance.id }}">{% endif %}
     {{ redirectInput(baseCpProviderPath) }}
@@ -76,7 +77,7 @@
 
     <div id="settings">
         {% namespace 'settings' %}
-            {{ instance.getHtml()|raw }}
+            {{ instance.providerSettings.inputHtml()|raw }}
         {% endnamespace %}
     </div>
 
@@ -101,7 +102,7 @@
 
     <div id="environments" class="meta">
         <h4 class="heading">{{ "Environments"|t('patron') }}</h4>
-        {% set environments = [] %}
+        {% set environments = instance.id ? [] : [craft.patron.settings.environment] %}
         {% for env in instance.environments %}
             {% set environments = environments|merge([env.environment]) %}
         {% endfor %}

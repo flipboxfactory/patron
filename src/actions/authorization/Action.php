@@ -8,7 +8,7 @@
 
 namespace flipbox\patron\actions\authorization;
 
-use flipbox\ember\actions\traits\CheckAccess;
+use flipbox\craft\ember\actions\CheckAccessTrait;
 use yii\web\HttpException;
 
 /**
@@ -17,7 +17,7 @@ use yii\web\HttpException;
  */
 class Action extends \yii\base\Action
 {
-    use CheckAccess;
+    use CheckAccessTrait;
 
     /**
      *

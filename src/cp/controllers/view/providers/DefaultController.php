@@ -5,9 +5,8 @@ namespace flipbox\patron\cp\controllers\view\providers;
 use Craft;
 use flipbox\craft\assets\card\Card;
 use flipbox\craft\assets\circleicon\CircleIcon;
-use flipbox\patron\helpers\ProviderHelper as ProviderHelper;
+use flipbox\patron\helpers\ProviderHelper;
 use flipbox\patron\records\Provider;
-use flipbox\patron\services\ManageProviders as ProviderService;
 use flipbox\patron\web\assets\providers\ProvidersAsset;
 
 class DefaultController extends AbstractViewController
@@ -21,14 +20,6 @@ class DefaultController extends AbstractViewController
      * The upsert view template path
      */
     const TEMPLATE_UPSERT = self::TEMPLATE_INDEX . '/upsert';
-
-    /**
-     * @return ProviderService
-     */
-    protected function providerService(): ProviderService
-    {
-        return $this->module->module->manageProviders();
-    }
 
     /**
      * @return \yii\web\Response
@@ -49,7 +40,10 @@ class DefaultController extends AbstractViewController
         $variables['fullPageForm'] = true;
 
         // Configured providers
-        $variables['providers'] = $this->providerService()->findAll();
+        $variables['providers'] = Provider::findAll([
+            'enabled' => null,
+            'environment' => null
+        ]);
 
         return $this->renderTemplate(static::TEMPLATE_INDEX, $variables);
     }
@@ -58,8 +52,9 @@ class DefaultController extends AbstractViewController
      * @param null $identifier
      * @param Provider|null $provider
      * @return \yii\web\Response
+     * @throws \ReflectionException
      * @throws \craft\errors\InvalidPluginException
-     * @throws \flipbox\ember\exceptions\NotFoundException
+     * @throws \flipbox\craft\ember\exceptions\RecordNotFoundException
      * @throws \yii\base\InvalidConfigException
      */
     public function actionUpsert($identifier = null, Provider $provider = null)
@@ -71,9 +66,13 @@ class DefaultController extends AbstractViewController
 
         if (null === $provider) {
             if (null === $identifier) {
-                $provider = $this->providerService()->create();
+                $provider = new Provider();
             } else {
-                $provider = $this->providerService()->get($identifier);
+                $provider = Provider::getOne([
+                    'enabled' => null,
+                    'environment' => null,
+                    is_numeric($identifier) ? 'id' : 'handle' => $identifier
+                ]);
             }
         }
 
@@ -93,6 +92,7 @@ class DefaultController extends AbstractViewController
                 'value' => $availableProvider
             ];
         }
+        $variables['providers'] = $providers;
         $variables['providerOptions'] = $providerOptions;
         $variables['provider'] = $provider;
 

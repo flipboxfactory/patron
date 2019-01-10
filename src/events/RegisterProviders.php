@@ -9,6 +9,11 @@
 namespace flipbox\patron\events;
 
 use League\OAuth2\Client\Provider\AbstractProvider;
+use League\OAuth2\Client\Provider\Facebook;
+use League\OAuth2\Client\Provider\Github;
+use League\OAuth2\Client\Provider\Google;
+use League\OAuth2\Client\Provider\Instagram;
+use League\OAuth2\Client\Provider\LinkedIn;
 use yii\base\Event;
 
 /**
@@ -18,7 +23,18 @@ use yii\base\Event;
 class RegisterProviders extends Event
 {
     /**
+     * Event to register providers
+     */
+    const REGISTER_PROVIDERS = 'registerProviders';
+
+    /**
      * @var AbstractProvider[]
      */
-    public $providers = [];
+    public $providers = [
+        LinkedIn::class,
+        Facebook::class,
+        Instagram::class,
+        Google::class,
+        Github::class
+    ];
 }

@@ -12,15 +12,15 @@ use Craft;
 use craft\base\PluginInterface;
 use craft\db\Query;
 use craft\helpers\StringHelper;
-use flipbox\ember\helpers\ModelHelper;
-use flipbox\ember\helpers\ObjectHelper;
-use flipbox\ember\helpers\QueryHelper;
-use flipbox\ember\records\ActiveRecordWithId;
-use flipbox\ember\records\traits\StateAttribute;
-use flipbox\ember\traits\HandleRules;
-use flipbox\patron\db\ProviderActiveQuery;
+use flipbox\craft\ember\helpers\ModelHelper;
+use flipbox\craft\ember\helpers\ObjectHelper;
+use flipbox\craft\ember\helpers\QueryHelper;
+use flipbox\craft\ember\models\HandleRulesTrait;
+use flipbox\craft\ember\records\ActiveRecordWithId;
+use flipbox\craft\ember\records\StateAttributeTrait;
 use flipbox\patron\helpers\ProviderHelper;
 use flipbox\patron\Patron;
+use flipbox\patron\queries\ProviderActiveQuery;
 use flipbox\patron\validators\ProviderValidator;
 use yii\helpers\ArrayHelper;
 
@@ -36,8 +36,8 @@ use yii\helpers\ArrayHelper;
  */
 class Provider extends ActiveRecordWithId
 {
-    use HandleRules,
-        StateAttribute;
+    use HandleRulesTrait,
+        StateAttributeTrait;
 
     /**
      * The table alias
@@ -67,20 +67,6 @@ class Provider extends ActiveRecordWithId
     private $insertInstances;
 
     /**
-     * @return string|null
-     */
-    public function getIcon()
-    {
-        if ($this->class === null) {
-            return null;
-        }
-
-        return Patron::getInstance()->getCp()->getProviderIcon(
-            $this->class
-        );
-    }
-
-    /**
      * @inheritdoc
      * @return ProviderActiveQuery
      * @throws \yii\base\InvalidConfigException
@@ -89,6 +75,34 @@ class Provider extends ActiveRecordWithId
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return Craft::createObject(ProviderActiveQuery::class, [get_called_class()]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected static function findByCondition($condition)
+    {
+        if (!is_numeric($condition) && is_string($condition)) {
+            $condition = ['handle' => $condition];
+        }
+
+        /** @noinspection PhpInternalEntityUsedInspection */
+        return parent::findByCondition($condition);
+    }
+
+
+    /**
+     * @return string|null
+     */
+    public function getIcon()
+    {
+        if ($this->class === null) {
+            return null;
+        }
+
+        $icons = Patron::getInstance()->getCp()->getProviderIcons();
+
+        return $icons[$this->class] ?? null;
     }
 
     /**
@@ -265,8 +279,6 @@ class Provider extends ActiveRecordWithId
      * @param bool $runValidation
      * @param null $attributeNames
      * @return bool
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
      */
     public function saveAndLock(PluginInterface $plugin, $runValidation = true, $attributeNames = null): bool
     {
@@ -285,8 +297,6 @@ class Provider extends ActiveRecordWithId
     /**
      * @param PluginInterface $plugin
      * @return bool
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
      */
     public function addLock(PluginInterface $plugin): bool
     {
@@ -294,10 +304,23 @@ class Provider extends ActiveRecordWithId
             return false;
         }
 
-        return Patron::getInstance()->getProviderLocks()->associateByIds(
-            $this->getId() ?: 0,
-            $pluginId
-        );
+        $record = ProviderLock::findOne([
+            'providerId' => $this->getId(),
+            'pluginId' => $pluginId
+        ]);
+
+        if (!empty($record)) {
+            return true;
+        }
+
+        $record = new ProviderLock();
+
+        $record->setAttributes([
+            'providerId' => $this->getId(),
+            'pluginId' => $pluginId
+        ]);
+
+        return (bool)$record->save();
     }
 
     /**
@@ -311,10 +334,14 @@ class Provider extends ActiveRecordWithId
             return false;
         }
 
-        return Patron::getInstance()->getProviderLocks()->dissociateByIds(
-            $this->getId() ?: 0,
-            $pluginId
-        );
+        if (null === ($record = ProviderLock::findOne([
+                'providerId' => $this->getId() ?: 0,
+                'pluginId' => $pluginId
+            ]))) {
+            return true;
+        }
+
+        return (bool)$record->delete();
     }
 
     /**
@@ -562,6 +589,7 @@ class Provider extends ActiveRecordWithId
 
     /**
      * @return string
+     * @throws \ReflectionException
      */
     public function getDisplayName(): string
     {

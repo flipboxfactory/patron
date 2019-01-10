@@ -4,12 +4,13 @@ namespace flipbox\patron\cp\controllers\providers;
 
 use Craft;
 use craft\helpers\ArrayHelper;
-use flipbox\patron\actions\token\Delete;
-use flipbox\patron\actions\token\Disable;
-use flipbox\patron\actions\token\Enable;
-use flipbox\patron\actions\token\Update;
+use flipbox\patron\actions\token\DeleteToken;
+use flipbox\patron\actions\token\DisableToken;
+use flipbox\patron\actions\token\EnableToken;
+use flipbox\patron\actions\token\UpdateToken;
 use flipbox\patron\cp\controllers\AbstractController;
 use flipbox\patron\Patron;
+use flipbox\patron\records\Token;
 
 class TokensController extends AbstractController
 {
@@ -73,7 +74,7 @@ class TokensController extends AbstractController
     /**
      * @param null $token
      * @return array
-     * @throws \flipbox\ember\exceptions\NotFoundException
+     * @throws \flipbox\craft\ember\exceptions\RecordNotFoundException
      */
     public function actionModal($token = null): array
     {
@@ -84,7 +85,11 @@ class TokensController extends AbstractController
         $view = $this->getView();
         return [
             'html' => Patron::getInstance()->getSettings()->getTokenView()->render([
-                'token' => Patron::getInstance()->manageTokens()->get($token)
+                'token' => Token::getOne([
+                    'accessToken' => $token,
+                    'enabled' => null,
+                    'environment' => null
+                ])
             ]),
             'headHtml' => $view->getHeadHtml(),
             'footHtml' => $view->getBodyHtml()
@@ -104,7 +109,7 @@ class TokensController extends AbstractController
         }
 
         $action = Craft::createObject([
-            'class' => Update::class,
+            'class' => UpdateToken::class,
             'checkAccess' => [$this, 'checkAdminAccess']
         ], [
             'update',
@@ -129,7 +134,7 @@ class TokensController extends AbstractController
         }
 
         $action = Craft::createObject([
-            'class' => Disable::class,
+            'class' => DisableToken::class,
             'checkAccess' => [$this, 'checkAdminAccess']
         ], [
             'revoke',
@@ -154,7 +159,7 @@ class TokensController extends AbstractController
         }
 
         $action = Craft::createObject([
-            'class' => Enable::class,
+            'class' => EnableToken::class,
             'checkAccess' => [$this, 'checkAdminAccess']
         ], [
             'reinstate',
@@ -179,7 +184,7 @@ class TokensController extends AbstractController
         }
 
         $action = Craft::createObject([
-            'class' => Delete::class,
+            'class' => DeleteToken::class,
             'checkAccess' => [$this, 'checkAdminAccess']
         ], [
             'delete',

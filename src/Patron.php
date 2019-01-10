@@ -14,8 +14,11 @@ use craft\events\RegisterUrlRulesEvent;
 use craft\helpers\UrlHelper;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
-use flipbox\ember\modules\LoggerTrait;
+use flipbox\craft\ember\helpers\QueryHelper;
+use flipbox\craft\ember\modules\LoggerTrait;
 use flipbox\patron\models\Settings as SettingsModel;
+use flipbox\patron\queries\ProviderQuery;
+use flipbox\patron\queries\TokenQuery;
 use yii\base\Event;
 
 /**
@@ -24,17 +27,21 @@ use yii\base\Event;
  *
  * @method SettingsModel getSettings()
  *
- * @property services\Providers $providers
- * @property services\ProviderSettings $providerSettings
- * @property services\ProviderLocks $providerLocks
- * @property services\Tokens $tokens
- * @property services\ManageProviders $manageProviders
- * @property services\ManageTokens $manageTokens
  * @property services\Session $session
  */
 class Patron extends Plugin
 {
     use LoggerTrait;
+
+    /**
+     * The before persist token event name
+     */
+    const EVENT_BEFORE_PERSIST_TOKEN = 'beforePersistToken';
+
+    /**
+     *  The after persist token event name
+     */
+    const EVENT_AFTER_PERSIST_TOKEN = 'afterPersistToken';
 
     /**
      * @return string
@@ -53,19 +60,12 @@ class Patron extends Plugin
 
         // Components
         $this->setComponents([
-            'providers' => services\Providers::class,
-            'providerSettings' => services\ProviderSettings::class,
-            'providerLocks' => services\ProviderLocks::class,
-            'tokens' => services\Tokens::class,
-            'manageProviders' => services\ManageProviders::class,
-            'manageTokens' => services\ManageTokens::class,
             'session' => services\Session::class
         ]);
 
         // Modules
         $this->setModules([
             'cp' => cp\Cp::class
-
         ]);
 
         // Template variables
@@ -126,6 +126,11 @@ class Patron extends Plugin
         }
     }
 
+
+    /*******************************************
+     * NAV
+     *******************************************/
+
     /**
      * @inheritdoc
      */
@@ -147,6 +152,11 @@ class Patron extends Plugin
             ]
         );
     }
+
+
+    /*******************************************
+     * SETTINGS
+     *******************************************/
 
     /**
      * @inheritdoc
@@ -171,74 +181,45 @@ class Patron extends Plugin
     }
 
     /*******************************************
-     * SERVICES
+     * QUERIES
      *******************************************/
 
     /**
-     * @noinspection PhpDocMissingThrowsInspection
-     * @return services\Providers
+     * @param array $config
+     * @return ProviderQuery
      */
-    public function getProviders(): services\Providers
+    public function getProviders(array $config = []): ProviderQuery
     {
-        /** @noinspection PhpUnhandledExceptionInspection */
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->get('providers');
+        $query = new ProviderQuery();
+
+        QueryHelper::configure(
+            $query,
+            $config
+        );
+
+        return $query;
     }
 
     /**
-     * @noinspection PhpDocMissingThrowsInspection
-     * @return services\ProviderSettings
+     * @param array $config
+     * @return TokenQuery
      */
-    public function getProviderSettings(): services\ProviderSettings
+    public function getTokens(array $config = []): TokenQuery
     {
-        /** @noinspection PhpUnhandledExceptionInspection */
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->get('providerSettings');
+        $query = new TokenQuery();
+
+        QueryHelper::configure(
+            $query,
+            $config
+        );
+
+        return $query;
     }
 
-    /**
-     * @noinspection PhpDocMissingThrowsInspection
-     * @return services\ProviderLocks
-     */
-    public function getProviderLocks(): services\ProviderLocks
-    {
-        /** @noinspection PhpUnhandledExceptionInspection */
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->get('providerLocks');
-    }
 
-    /**
-     * @noinspection PhpDocMissingThrowsInspection
-     * @return services\Tokens
-     */
-    public function getTokens(): services\Tokens
-    {
-        /** @noinspection PhpUnhandledExceptionInspection */
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->get('tokens');
-    }
-
-    /**
-     * @noinspection PhpDocMissingThrowsInspection
-     * @return services\ManageProviders
-     */
-    public function manageProviders(): services\ManageProviders
-    {
-        /** @noinspection PhpUnhandledExceptionInspection */
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->get('manageProviders');
-    }
-
-    /**
-     * @noinspection PhpDocMissingThrowsInspection
-     * @return services\ManageTokens
-     */
-    public function manageTokens(): services\ManageTokens
-    {
-        /** @noinspection PhpUnhandledExceptionInspection */
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->get('manageTokens');
-    }
+    /*******************************************
+     * SERVICES
+     *******************************************/
 
     /**
      * @noinspection PhpDocMissingThrowsInspection
@@ -266,6 +247,7 @@ class Patron extends Plugin
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->getModule('cp');
     }
+
 
     /*******************************************
      * EVENTS

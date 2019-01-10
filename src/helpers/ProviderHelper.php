@@ -11,8 +11,11 @@ namespace flipbox\patron\helpers;
 use Craft;
 use craft\helpers\StringHelper;
 use flipbox\patron\Patron;
+use flipbox\patron\records\Provider;
+use flipbox\patron\records\ProviderInstance;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use ReflectionClass;
+use yii\db\Query;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -23,6 +26,7 @@ class ProviderHelper
     /**
      * @param $provider
      * @return string
+     * @throws \ReflectionException
      */
     public static function displayName($provider): string
     {
@@ -41,6 +45,7 @@ class ProviderHelper
      * @param AbstractProvider $provider
      * @param array $properties
      * @return array
+     * @throws \ReflectionException
      */
     public static function getProtectedProperties(
         AbstractProvider $provider,
@@ -61,10 +66,107 @@ class ProviderHelper
         return $values;
     }
 
+    /*******************************************
+     * GET ID
+     *******************************************/
+
+    /**
+     * @param AbstractProvider $provider
+     * @return int|null
+     * @throws \ReflectionException
+     */
+    public static function lookupId(AbstractProvider $provider)
+    {
+        list($clientId, $clientSecret) = ProviderHelper::getProtectedProperties(
+            $provider,
+            ['clientId', 'clientSecret']
+        );
+
+        if (Patron::getInstance()->getSettings()->getEncryptStorageData() === true) {
+            return self::lookupIdFromEncryptedClientSecret(
+                get_class($provider),
+                $clientId,
+                $clientSecret
+            );
+        }
+
+        return self::lookupIdFromUnencryptedClientSecret(
+            get_class($provider),
+            $clientId,
+            $clientSecret
+        );
+    }
+
+    /**
+     * @param string $class
+     * @param string $clientId
+     * @param string $clientSecret
+     * @return int|null
+     */
+    protected static function lookupIdFromEncryptedClientSecret(string $class, string $clientId, string $clientSecret)
+    {
+        $condition = [
+            'class' => $class,
+            'clientId' => $clientId,
+        ];
+
+        $rows = (new Query())
+            ->select(['providerId', 'clientSecret'])
+            ->from([ProviderInstance::tableName() . ' ' . ProviderInstance::tableAlias()])
+            ->leftJoin(
+                [Provider::tableName() . ' ' . Provider::tableAlias()],
+                Provider::tableAlias() . '.id=providerId'
+            )
+            ->where($condition)
+            ->all();
+
+        foreach ($rows as $row) {
+            $secret = $row['clientSecret'] ?? '';
+
+            if ($clientSecret === ProviderHelper::decryptClientSecret($secret)) {
+                return (int)$row['providerId'];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $class
+     * @param string $clientId
+     * @param string $clientSecret
+     * @return int|null
+     */
+    protected static function lookupIdFromUnencryptedClientSecret(string $class, string $clientId, string $clientSecret)
+    {
+        $condition = [
+            'class' => $class,
+            'clientId' => $clientId,
+            'clientSecret' => $clientSecret
+        ];
+
+        if (!$providerId = (new Query())
+            ->select(['providerId'])
+            ->from([ProviderInstance::tableName() . ' ' . ProviderInstance::tableAlias()])
+            ->leftJoin(
+                [Provider::tableName() . ' ' . Provider::tableAlias()],
+                Provider::tableAlias() . '.id=providerId'
+            )
+            ->where($condition)
+            ->scalar()
+        ) {
+            return null;
+        }
+
+        return (int)$providerId;
+    }
+
     /**
      * @param string $value
      * @param bool $checkSettings
      * @return string
+     * @throws \yii\base\Exception
+     * @throws \yii\base\InvalidConfigException
      */
     public static function encryptClientSecret(string $value, bool $checkSettings = true): string
     {

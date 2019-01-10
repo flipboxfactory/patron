@@ -1,5 +1,9 @@
 Changelog
 =========
+## 2.0.0 - 2019-01-10
+### Changed
+- Updated dependencies and moved class structures
+
 ## 1.0.0.1 - 2018-11-01
 ### Fixed
 - Migration issue when multiple providers exist.

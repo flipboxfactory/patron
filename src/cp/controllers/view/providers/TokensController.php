@@ -8,7 +8,6 @@ use flipbox\craft\assets\circleicon\CircleIcon;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
 use flipbox\patron\records\Token;
-use flipbox\patron\web\assets\providerswitcher\ProvidersAsset;
 
 class TokensController extends AbstractViewController
 {
@@ -28,9 +27,10 @@ class TokensController extends AbstractViewController
     const TEMPLATE_UPSERT = self::TEMPLATE_INDEX . '/upsert';
 
     /**
-     * @param int|string $provider
+     * @param $provider
      * @return \yii\web\Response
-     * @throws \flipbox\ember\exceptions\NotFoundException
+     * @throws \ReflectionException
+     * @throws \flipbox\craft\ember\exceptions\RecordNotFoundException
      * @throws \yii\base\InvalidConfigException
      */
     public function actionIndex($provider)
@@ -40,9 +40,10 @@ class TokensController extends AbstractViewController
         // Empty variables for template
         $variables = [];
 
-        $provider = Patron::getInstance()->manageProviders()->getByCondition([
+        $provider = Provider::getOne([
             'id' => $provider,
-            'enabled' => null
+            'enabled' => null,
+            'environment' => null
         ]);
 
         // Template variables
@@ -58,11 +59,12 @@ class TokensController extends AbstractViewController
     }
 
     /**
-     * @param int|string $provider
-     * @param int|string $identifier
+     * @param $provider
+     * @param $identifier
      * @param Token|null $token
      * @return \yii\web\Response
-     * @throws \flipbox\ember\exceptions\NotFoundException
+     * @throws \ReflectionException
+     * @throws \flipbox\craft\ember\exceptions\RecordNotFoundException
      * @throws \yii\base\InvalidConfigException
      */
     public function actionUpsert($provider, $identifier, Token $token = null)
@@ -72,13 +74,18 @@ class TokensController extends AbstractViewController
         // Empty variables for template
         $variables = [];
 
-        $provider = Patron::getInstance()->manageProviders()->getByCondition([
+        $provider = Provider::getOne([
             'id' => $provider,
-            'enabled' => null
+            'enabled' => null,
+            'environment' => null
         ]);
 
         if (null === $token) {
-            $token = Patron::getInstance()->manageTokens()->get($identifier);
+            $token = Token::getOne([
+                is_numeric($identifier) ? 'id' : 'accessToken' => $identifier,
+                'enabled' => null,
+                'environment' => null
+            ]);
         }
 
         // Template variables
@@ -156,6 +163,7 @@ class TokensController extends AbstractViewController
     /**
      * @param array $variables
      * @param Provider $provider
+     * @throws \ReflectionException
      */
     protected function tokenVariables(array &$variables, Provider $provider)
     {
@@ -179,6 +187,8 @@ class TokensController extends AbstractViewController
     /**
      * @param array $variables
      * @param Provider $provider
+     * @param Token $token
+     * @throws \ReflectionException
      */
     protected function tokenUpdateVariables(array &$variables, Provider $provider, Token $token)
     {
