@@ -32,7 +32,7 @@ class RegisterProviderIcons extends Event
     const ICON_PATH = '@vendor/flipboxfactory/patron/src/icons/';
 
     /**
-     * @var string
+     * @var array
      */
     public $icons = [
         Google::class => self::ICON_PATH . 'google.svg',
