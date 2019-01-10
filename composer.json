@@ -10,7 +10,7 @@
   }],
   "require": {
     "craftcms/cms": "^3.0",
-    "flipboxfactory/craft-ember": "^2.0",
+    "flipboxfactory/craft-ember": "^2.1",
     "flipboxfactory/craft-assets-card": "^1.0",
     "flipboxfactory/craft-assets-circle-icon": "^1.0",
     "league/oauth2-client": "^2.4",
@@ -38,17 +38,17 @@
   "extra": {
     "name": "Patron",
     "handle": "patron",
+    "class": "flipbox\\patron\\Patron",
     "developer": "Flipbox Digital",
     "developerUrl": "https://www.flipboxdigital.com",
-    "class": "flipbox\\patron\\Patron",
     "changelogUrl": "https://raw.githubusercontent.com/flipboxfactory/patron/master/CHANGELOG.md",
-    "downloadUrl": "https://github.com/flipboxfactory/patron/archive/master.zip",
+    "documentationUrl": "https://patron.flipboxfactory.com",
     "hasCpSettings": true,
     "hasCpSection": true,
     "schemaVersion": "1.2.0",
     "branch-alias": {
       "dev-develop": "2.0.x-dev",
-      "dev-master": "1.0.x-dev"
+      "dev-master": "2.0.x-dev"
     }
   }
 }
