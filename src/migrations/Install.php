@@ -38,11 +38,6 @@ class Install extends Migration
             return false;
         }
 
-        // Encryption
-        if (false === (new m181018_081114_encrypt())->safeUp()) {
-            return false;
-        }
-
         // Provider Settings
         if (false === (new m181019_220655_provider_instances())->safeUp()) {
             return false;
@@ -58,11 +53,6 @@ class Install extends Migration
     {
         // Provider Settings
         if (false === (new m181019_220655_provider_instances())->safeDown()) {
-            return false;
-        }
-
-        // Encryption
-        if (false === (new m181018_081114_encrypt())->safeDown()) {
             return false;
         }
 
