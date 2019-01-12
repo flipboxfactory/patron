@@ -32,9 +32,9 @@ class TokenActiveQuery extends ActiveQuery
     public function init()
     {
         $this->orderBy = [
-            Token::tableName() . '.enabled' => SORT_DESC,
-            Token::tableName() . '.dateExpires' => SORT_DESC,
-            Token::tableName() . '.dateUpdated' => SORT_DESC
+            Token::tableAlias() . '.enabled' => SORT_DESC,
+            Token::tableAlias() . '.dateExpires' => SORT_DESC,
+            Token::tableAlias() . '.dateUpdated' => SORT_DESC
         ];
 
         $this->from = [Token::tableName() . ' ' . Token::tableAlias()];
