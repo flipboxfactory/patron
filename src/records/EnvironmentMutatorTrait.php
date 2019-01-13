@@ -27,9 +27,9 @@ trait EnvironmentMutatorTrait
     /**
      * @inheritdoc
      */
-    public function setEnvironment($environment)
+    public function setEnvironment(string $environment = null)
     {
-        $this->environment = (int)$environment;
+        $this->environment = $environment;
         return $this;
     }
 }

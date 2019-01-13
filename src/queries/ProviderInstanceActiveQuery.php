@@ -47,7 +47,7 @@ class ProviderInstanceActiveQuery extends ActiveQuery
         parent::init();
 
         if ($this->from === null) {
-            $this->from = [ProviderInstance::tableName() . ' ' . ProviderInstance::tableAlias()];
+            $this->from = [ProviderInstance::tableName()];
         }
     }
 
@@ -80,7 +80,7 @@ class ProviderInstanceActiveQuery extends ActiveQuery
 
         foreach ($attributes as $attribute) {
             if (null !== ($value = $this->{$attribute})) {
-                $this->andWhere(Db::parseParam(ProviderInstance::tableAlias() . '.' . $attribute, $value));
+                $this->andWhere(Db::parseParam($attribute, $value));
             }
         }
 

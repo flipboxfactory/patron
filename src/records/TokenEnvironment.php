@@ -9,6 +9,7 @@
 namespace flipbox\patron\records;
 
 use flipbox\craft\ember\records\ActiveRecord;
+use flipbox\patron\Patron;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -46,6 +47,13 @@ class TokenEnvironment extends ActiveRecord
                         'tokenId'
                     ],
                     'required'
+                ],
+                [
+                    [
+                        'environment'
+                    ],
+                    'in',
+                    'range' => Patron::getInstance()->getSettings()->getEnvironments()
                 ]
             ]
         );
