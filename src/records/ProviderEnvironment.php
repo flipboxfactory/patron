@@ -9,6 +9,7 @@
 namespace flipbox\patron\records;
 
 use flipbox\craft\ember\records\ActiveRecord;
+use flipbox\patron\Patron;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -49,6 +50,13 @@ class ProviderEnvironment extends ActiveRecord
                         'instanceId'
                     ],
                     'required'
+                ],
+                [
+                    [
+                        'environment'
+                    ],
+                    'in',
+                    'range' => Patron::getInstance()->getSettings()->getEnvironments()
                 ]
             ]
         );
