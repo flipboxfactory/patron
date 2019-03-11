@@ -53,6 +53,7 @@ class Settings extends Model
      * Encrypt data in storage
      *
      * @var bool
+     * @deprecated
      */
     private $encryptStorageData = true;
 
@@ -85,6 +86,7 @@ class Settings extends Model
 
     /**
      * @return bool
+     * @deprecated
      */
     public function getEncryptStorageData(): bool
     {
@@ -94,6 +96,7 @@ class Settings extends Model
     /**
      * @param bool $value
      * @return $this
+     * @deprecated
      */
     public function setEncryptStorageData(bool $value)
     {
