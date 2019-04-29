@@ -33,7 +33,6 @@ class ViewProvider extends ViewRecord
     {
         return Provider::findOne([
             'enabled' => null,
-            'environment' => null,
             'id' => $id
         ]);
     }

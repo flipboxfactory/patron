@@ -14,10 +14,8 @@ use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 use flipbox\craft\ember\helpers\ObjectHelper;
 use flipbox\craft\ember\queries\AuditAttributesTrait;
-use flipbox\patron\helpers\ProviderHelper;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
-use flipbox\patron\records\ProviderInstance;
 use League\OAuth2\Client\Provider\AbstractProvider;
 
 /**
@@ -45,34 +43,10 @@ class ProviderQuery extends Query
         $this->from = [Provider::tableName() . ' ' . Provider::tableAlias()];
 
         $this->select = [
-            Provider::tableAlias() . '.*',
-            ProviderInstance::tableAlias() . '.clientId',
-            ProviderInstance::tableAlias() . '.clientSecret',
-            ProviderInstance::tableAlias() . '.settings'
+            Provider::tableAlias() . '.*'
         ];
 
         parent::init();
-
-        if ($this->environment === null) {
-            $this->environment = Patron::getInstance()->getSettings()->getEnvironment();
-        }
-    }
-
-    /**
-     * @inheritdoc
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function populate($rows)
-    {
-        $results = parent::populate($rows);
-
-        if (Patron::getInstance()->getSettings()->getEncryptStorageData() === true) {
-            foreach ($results as $key => $result) {
-                $results[$key] = $this->createObject($result, false);
-            }
-        }
-
-        return $results;
     }
 
     /**
@@ -95,9 +69,9 @@ class ProviderQuery extends Query
      * @return mixed
      * @throws \yii\base\InvalidConfigException
      */
-    protected function createObject(array $config, bool $checkSettings = true)
+    protected function createObject(array $config)
     {
-        $config = $this->prepareConfig($config, $checkSettings);
+        $config = $this->prepareConfig($config);
 
         // Provider class
         $class = ObjectHelper::checkConfig(
@@ -110,20 +84,20 @@ class ProviderQuery extends Query
 
     /**
      * @param array $config
-     * @param bool $checkSettings
      * @return array
      */
-    protected function prepareConfig(array $config = [], bool $checkSettings = true): array
+    protected function prepareConfig(array $config = []): array
     {
-        // Extract 'clientSecret'
-        $clientSecret = ArrayHelper::remove($config, 'clientSecret');
-
-        if (!empty($clientSecret)) {
-            $config['clientSecret'] = ProviderHelper::decryptClientSecret($clientSecret, $checkSettings);
-        }
-
         // Merge in settings
         $config = array_merge($config, $this->extractSettings($config));
+
+        // Apply override settings
+        if (null !== ($handle = $config['handle'] ?? null)) {
+            $config = array_merge(
+                $config,
+                Patron::getInstance()->getSettings()->getProvider($handle)
+            );
+        }
 
         // This doesn't change
         $config['redirectUri'] = Patron::getInstance()->getSettings()->getCallbackUrl();

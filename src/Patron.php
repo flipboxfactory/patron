@@ -11,14 +11,24 @@ namespace flipbox\patron;
 use Craft;
 use craft\base\Plugin;
 use craft\events\RegisterUrlRulesEvent;
+use craft\helpers\ArrayHelper;
+use craft\helpers\Json;
 use craft\helpers\UrlHelper;
+use craft\services\ProjectConfig;
 use craft\web\twig\variables\CraftVariable;
 use craft\web\UrlManager;
+use flipbox\craft\ember\helpers\ObjectHelper;
 use flipbox\craft\ember\helpers\QueryHelper;
 use flipbox\craft\ember\modules\LoggerTrait;
+use flipbox\patron\events\handlers\ProjectConfigHandler;
+use flipbox\patron\events\RegisterProviderSettings;
 use flipbox\patron\models\Settings as SettingsModel;
 use flipbox\patron\queries\ProviderQuery;
 use flipbox\patron\queries\TokenQuery;
+use flipbox\patron\records\Provider;
+use flipbox\patron\records\Token;
+use flipbox\patron\settings\BaseSettings;
+use flipbox\patron\settings\SettingsInterface;
 use yii\base\Event;
 
 /**
@@ -68,6 +78,11 @@ class Patron extends Plugin
             'cp' => cp\Cp::class
         ]);
 
+
+        // Project config
+        $this->registerProjectConfigEvents();
+
+
         // Template variables
         Event::on(
             CraftVariable::class,
@@ -99,31 +114,119 @@ class Patron extends Plugin
                 }
             }
         );
+    }
 
-        // Add default environments upon creation
-        $defaultEnvironments = $this->getSettings()->getDefaultEnvironments();
-        if (!empty($defaultEnvironments)) {
-            Event::on(
-                records\ProviderInstance::class,
-                records\ProviderInstance::EVENT_BEFORE_INSERT,
-                [
-                    events\handlers\BeforeInsertProviderInstance::class,
-                    'handle'
-                ]
-            );
+    /**
+     * Register project config events, if we're able to
+     */
+    protected function registerProjectConfigEvents()
+    {
+        if (!version_compare(Craft::$app->getVersion(), '3.1', '>=')) {
+            return;
         }
 
-        // Replicate environments to token
-        if ($this->getSettings()->getAutoPopulateTokenEnvironments() === true) {
-            Event::on(
-                records\Token::class,
-                records\Token::EVENT_BEFORE_INSERT,
+        // Project Config
+        Craft::$app->projectConfig
+            ->onAdd(
+                'patronProviders.{uid}',
                 [
-                    events\handlers\BeforeInsertToken::class,
-                    'handle'
+                    ProjectConfigHandler::class,
+                    'handleChangedProvider'
+                ]
+            )
+            ->onUpdate(
+                'patronProviders.{uid}',
+                [ProjectConfigHandler::class,
+                    'handleChangedProvider'
+                ]
+            )
+            ->onRemove(
+                'patronProviders.{uid}',
+                [ProjectConfigHandler::class,
+                    'handleDeletedProvider'
+                ]
+            )
+            ->onAdd(
+                'patronTokens.{uid}',
+                [ProjectConfigHandler::class,
+                    'handleChangedToken'
+                ]
+            )
+            ->onUpdate(
+                'patronTokens.{uid}',
+                [ProjectConfigHandler::class,
+                    'handleChangedToken'
+                ]
+            )
+            ->onRemove(
+                'patronTokens.{uid}',
+                [ProjectConfigHandler::class,
+                    'handleDeletedToken'
                 ]
             );
-        }
+
+        Event::on(
+            ProjectConfig::class,
+            ProjectConfig::EVENT_REBUILD,
+            [
+                events\handlers\ProjectConfigHandler::class,
+                'rebuild'
+            ]
+        );
+
+        Event::on(
+            Provider::class,
+            Provider::EVENT_AFTER_INSERT,
+            [
+                events\ManageProviderProjectConfig::class,
+                'save'
+            ]
+        );
+
+        Event::on(
+            Provider::class,
+            Provider::EVENT_AFTER_UPDATE,
+            [
+                events\ManageProviderProjectConfig::class,
+                'save'
+            ]
+        );
+
+        Event::on(
+            Provider::class,
+            Provider::EVENT_AFTER_DELETE,
+            [
+                events\ManageProviderProjectConfig::class,
+                'delete'
+            ]
+        );
+
+        Event::on(
+            Token::class,
+            Token::EVENT_AFTER_INSERT,
+            [
+                events\ManageTokenProjectConfig::class,
+                'save'
+            ]
+        );
+
+        Event::on(
+            Token::class,
+            Token::EVENT_AFTER_UPDATE,
+            [
+                events\ManageTokenProjectConfig::class,
+                'save'
+            ]
+        );
+
+        Event::on(
+            Token::class,
+            Token::EVENT_AFTER_DELETE,
+            [
+                events\ManageTokenProjectConfig::class,
+                'delete'
+            ]
+        );
     }
 
 
@@ -250,6 +353,45 @@ class Patron extends Plugin
 
 
     /*******************************************
+     * PROVIDER SETTINGS
+     *******************************************/
+
+    /**
+     * @param string|null $class
+     * @param array $settings
+     * @return SettingsInterface
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function providerSettings(string $class = null, $settings = []): SettingsInterface
+    {
+        if (null === $class) {
+            return new BaseSettings();
+        }
+
+        $event = new RegisterProviderSettings();
+
+        RegisterProviderSettings::trigger(
+            $class,
+            RegisterProviderSettings::REGISTER_SETTINGS,
+            $event
+        );
+
+        if (is_string($settings)) {
+            $settings = Json::decodeIfJson($settings);
+        }
+
+        if (!is_array($settings)) {
+            $settings = ArrayHelper::toArray($settings, []);
+        }
+
+        $settings['class'] = $event->class;
+
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return ObjectHelper::create($settings, SettingsInterface::class);
+    }
+
+
+    /*******************************************
      * EVENTS
      *******************************************/
 
@@ -275,15 +417,8 @@ class Patron extends Plugin
                 'patron/providers/new' =>
                     'patron/cp/view/providers/default/upsert',
 
-                // INSTANCES
                 'patron/providers/<identifier:\d+>' =>
                     'patron/cp/view/providers/default/upsert',
-
-                'patron/providers/<provider:\d+>/instances/<identifier:\d+>' =>
-                    'patron/cp/view/providers/instances/upsert',
-
-                'patron/providers/<provider:\d+>/instances/new' =>
-                    'patron/cp/view/providers/instances/upsert',
 
                 // TOKENS
                 'patron/providers/<provider:\d+>/tokens' =>

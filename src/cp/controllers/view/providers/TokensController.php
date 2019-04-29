@@ -5,7 +5,6 @@ namespace flipbox\patron\cp\controllers\view\providers;
 use Craft;
 use craft\helpers\UrlHelper;
 use flipbox\craft\assets\circleicon\CircleIcon;
-use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
 use flipbox\patron\records\Token;
 
@@ -42,8 +41,7 @@ class TokensController extends AbstractViewController
 
         $provider = Provider::getOne([
             'id' => $provider,
-            'enabled' => null,
-            'environment' => null
+            'enabled' => null
         ]);
 
         // Template variables
@@ -76,41 +74,21 @@ class TokensController extends AbstractViewController
 
         $provider = Provider::getOne([
             'id' => $provider,
-            'enabled' => null,
-            'environment' => null
+            'enabled' => null
         ]);
 
         if (null === $token) {
             $token = Token::getOne([
                 is_numeric($identifier) ? 'id' : 'accessToken' => $identifier,
                 'enabled' => null,
-                'environment' => null
             ]);
         }
 
         // Template variables
         $this->tokenUpdateVariables($variables, $provider, $token);
 
-        $availableEnvironments = array_merge(
-            $this->availableTokenEnvironments($token),
-            $token->getEnvironments()
-                ->indexBy(null)
-                ->select(['environment'])
-                ->column()
-        );
-
-        $environmentOptions = [];
-        foreach (Patron::getInstance()->getSettings()->getEnvironments() as $env) {
-            $environmentOptions[] = [
-                'label' => Craft::t('patron', $env),
-                'value' => $env,
-                'disabled' => !in_array($env, $availableEnvironments, true)
-            ];
-        }
-
         $variables['provider'] = $provider;
         $variables['token'] = $token;
-        $variables['environmentOptions'] = $environmentOptions;
 
         // Full page form in the CP
         $variables['fullPageForm'] = true;
@@ -120,18 +98,6 @@ class TokensController extends AbstractViewController
         $variables['selectedTab'] = 'tokens';
 
         return $this->renderTemplate(static::TEMPLATE_UPSERT, $variables);
-    }
-
-    /**
-     * @param Token $token
-     * @return array
-     */
-    protected function availableTokenEnvironments(Token $token): array
-    {
-        $usedEnvironments = array_keys($token->environments);
-        $allEnvironments = Patron::getInstance()->getSettings()->getEnvironments();
-
-        return array_diff($allEnvironments, $usedEnvironments);
     }
 
     /*******************************************

@@ -8,6 +8,7 @@
 
 namespace flipbox\patron\settings;
 
+use craft\helpers\Json;
 use yii\base\Model;
 
 /**
@@ -22,5 +23,13 @@ class BaseSettings extends Model implements SettingsInterface
     public function inputHtml(): string
     {
         return '';
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return Json::encode($this->toArray());
     }
 }

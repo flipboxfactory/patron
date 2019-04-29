@@ -10,7 +10,6 @@ namespace flipbox\patron\queries;
 
 use craft\helpers\Db;
 use flipbox\craft\ember\helpers\QueryHelper;
-use flipbox\patron\helpers\ProviderHelper;
 use flipbox\patron\records\Provider as ProviderRecord;
 use flipbox\patron\records\Token;
 use League\OAuth2\Client\Provider\AbstractProvider;
@@ -68,75 +67,21 @@ trait TokenProviderAttributeTrait
 
     /**
      * @param $value
-     * @param string $join
-     * @return array
-     * @throws \ReflectionException
+     * @return array|string
      */
-    protected function parseProviderValue($value, string $join = 'or'): array
+    protected function parseProviderValue($value)
     {
-        if (false === QueryHelper::parseBaseParam($value, $join)) {
-            foreach ($value as $operator => &$v) {
-                $this->resolveProviderValue($operator, $v);
+        return QueryHelper::prepareParam(
+            $value,
+            function (string $identifier) {
+                $value = (new Query())
+                    ->select(['id'])
+                    ->from([ProviderRecord::tableName()])
+                    ->where(['handle' => $identifier])
+                    ->scalar();
+                return empty($value) ? false : $value;
             }
-        }
-
-        // Filter null and empties
-        $value = array_filter($value, function ($arr): bool {
-            return $arr !== null && $arr !== '';
-        });
-
-        if (empty($value)) {
-            return [];
-        }
-
-        return array_merge([$join], $value);
-    }
-
-    /**
-     * @param $operator
-     * @param $value
-     * @throws \ReflectionException
-     */
-    protected function resolveProviderValue($operator, &$value)
-    {
-        if ($value instanceof AbstractProvider) {
-            $value = ProviderHelper::lookupId($value);
-        }
-
-        if (false === QueryHelper::findParamValue($value, $operator)) {
-            if (is_string($value)) {
-                $value = $this->resolveProviderStringValue($value);
-            }
-
-            if ($value instanceof ProviderRecord) {
-                $value = $value->id;
-            }
-
-            if ($value) {
-                $value = QueryHelper::assembleParamValue($value, $operator);
-            }
-        }
-    }
-
-    /**
-     * @param string $value
-     * @return int|null
-     */
-    protected function resolveProviderStringValue(string $value)
-    {
-        if (is_numeric($value)) {
-            $condition = ['id' => $value];
-        } else {
-            $condition = ['handle' => $value];
-        }
-
-        $id = (new Query())
-            ->select(['id'])
-            ->from([ProviderRecord::tableName()])
-            ->where($condition)
-            ->scalar();
-
-        return $id ? (int)$id : null;
+        );
     }
 
     /**

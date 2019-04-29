@@ -11,7 +11,6 @@ namespace flipbox\patron\queries;
 use craft\db\QueryAbortedException;
 use craft\helpers\Db;
 use flipbox\patron\records\Provider;
-use flipbox\patron\records\ProviderInstance;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -19,8 +18,7 @@ use flipbox\patron\records\ProviderInstance;
  */
 trait ProviderAttributesTrait
 {
-    use ProviderClientAttributesTrait,
-        ProviderEnvironmentAttributesTrait;
+    use ProviderClientAttributesTrait;
 
     /**
      * @var bool|null The enabled state
@@ -120,34 +118,5 @@ trait ProviderAttributesTrait
         }
 
         $this->applyClientConditions();
-        $this->applyInstanceConditions();
-        $this->applyEnvironmentConditions();
-    }
-
-    /*******************************************
-     * PARAMS
-     *******************************************/
-
-    /**
-     * Apply environment params
-     */
-    protected function applyInstanceConditions()
-    {
-        $alias = ProviderInstance::tableAlias();
-
-        $this->leftJoin(
-            ProviderInstance::tableName() . ' ' . $alias,
-            '[[' . $alias . '.providerId]] = [[' . Provider::tableAlias() . '.id]]'
-        );
-
-        $attributes = ['clientId', 'clientSecret'];
-
-        foreach ($attributes as $attribute) {
-            if (null !== ($value = $this->{$attribute})) {
-                $this->andWhere(Db::parseParam($alias . '.' . $attribute, $value));
-            }
-        }
-
-        $this->distinct(true);
     }
 }

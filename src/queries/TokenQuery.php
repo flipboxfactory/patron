@@ -14,7 +14,6 @@ use craft\helpers\DateTimeHelper;
 use craft\helpers\Json;
 use flipbox\craft\ember\queries\AuditAttributesTrait;
 use flipbox\craft\ember\queries\PopulateObjectTrait;
-use flipbox\patron\Patron;
 use flipbox\patron\records\Token;
 use League\OAuth2\Client\Token\AccessToken;
 
@@ -25,7 +24,6 @@ use League\OAuth2\Client\Token\AccessToken;
 class TokenQuery extends Query
 {
     use TokenAttributesTrait,
-        TokenEnvironmentAttributeTrait,
         TokenProviderAttributeTrait,
         PopulateObjectTrait,
         AuditAttributesTrait;
@@ -44,10 +42,6 @@ class TokenQuery extends Query
         $this->select = [Token::tableAlias() . '.*'];
 
         parent::init();
-
-        if ($this->environment === null) {
-            $this->environment = Patron::getInstance()->getSettings()->getEnvironment();
-        }
     }
 
     /*******************************************
@@ -55,8 +49,9 @@ class TokenQuery extends Query
      *******************************************/
 
     /**
-     * @inheritdoc
-     * @return AccessToken
+     * @param null $db
+     * @return array|AccessToken|null
+     * @throws \Exception
      */
     public function one($db = null)
     {
@@ -70,6 +65,7 @@ class TokenQuery extends Query
     /**
      * @param array $config
      * @return AccessToken
+     * @throws \Exception
      */
     protected function createObject(array $config)
     {
@@ -115,7 +111,6 @@ class TokenQuery extends Query
     {
         $this->applyTokenConditions();
         $this->applyProviderConditions();
-        $this->applyEnvironmentConditions();
         $this->applyAuditAttributeConditions();
 
         return parent::prepare($builder);

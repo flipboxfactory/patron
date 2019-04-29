@@ -9,30 +9,33 @@
 namespace flipbox\patron\migrations;
 
 use craft\db\Migration;
+use flipbox\patron\records\Provider;
 
-/**
- * Class m181019_220655_provider_instances
- * @package flipbox\patron\migrations
- *
- * @deprecated
- */
-class m181019_220655_provider_instances extends Migration
+class m190426_101341_project_config extends Migration
 {
     /**
      * @inheritdoc
      */
     public function safeUp()
     {
-        return true;
-    }
+        $this->addColumn(
+            Provider::tableName(),
+            'clientId',
+            $this->char(Provider::CLIENT_ID_LENGTH)->notNull()
+        );
 
+        $this->addColumn(
+            Provider::tableName(),
+            'clientSecret',
+            $this->char(Provider::CLIENT_SECRET_LENGTH)
+        );
+    }
 
     /**
      * @inheritdoc
      */
     public function safeDown()
     {
-        $this->dropTableIfExists(ProviderInstance::tableName());
         return true;
     }
 }

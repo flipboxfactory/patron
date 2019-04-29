@@ -9,7 +9,7 @@
 namespace flipbox\patron\queries;
 
 use craft\helpers\Db;
-use flipbox\patron\records\ProviderInstance;
+use flipbox\patron\records\Provider;
 use yii\db\Expression;
 
 /**
@@ -61,7 +61,7 @@ trait ProviderClientAttributesTrait
     }
 
     /**
-     * Apply environment params
+     * Apply params
      */
     protected function applyClientConditions()
     {
@@ -70,7 +70,7 @@ trait ProviderClientAttributesTrait
         foreach ($attributes as $attribute) {
             if (($value = $this->{$attribute}) !== null) {
                 $this->andWhere(
-                    Db::parseParam(ProviderInstance::tableAlias() . '.' . $attribute, $value)
+                    Db::parseParam(Provider::tableAlias() . '.' . $attribute, $value)
                 );
             }
         }

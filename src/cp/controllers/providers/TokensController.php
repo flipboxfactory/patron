@@ -88,7 +88,6 @@ class TokensController extends AbstractController
                 'token' => Token::getOne([
                     'accessToken' => $token,
                     'enabled' => null,
-                    'environment' => null
                 ])
             ]),
             'headHtml' => $view->getHeadHtml(),

@@ -11,7 +11,6 @@ namespace flipbox\patron\queries;
 use flipbox\craft\ember\queries\ActiveQuery;
 use flipbox\craft\ember\queries\AuditAttributesTrait;
 use flipbox\craft\ember\queries\UserAttributeTrait;
-use flipbox\patron\Patron;
 use flipbox\patron\records\Token;
 
 /**
@@ -22,7 +21,6 @@ class TokenActiveQuery extends ActiveQuery
 {
     use TokenAttributesTrait,
         TokenProviderAttributeTrait,
-        TokenEnvironmentAttributeTrait,
         UserAttributeTrait,
         AuditAttributesTrait;
 
@@ -40,10 +38,6 @@ class TokenActiveQuery extends ActiveQuery
         $this->from = [Token::tableName() . ' ' . Token::tableAlias()];
 
         parent::init();
-
-        if ($this->environment === null) {
-            $this->environment = Patron::getInstance()->getSettings()->getEnvironment();
-        }
     }
 
     /*******************************************
@@ -58,7 +52,6 @@ class TokenActiveQuery extends ActiveQuery
     {
         $this->applyTokenConditions();
         $this->applyProviderConditions();
-        $this->applyEnvironmentConditions();
         $this->applyAuditAttributeConditions();
 
         return parent::prepare($builder);

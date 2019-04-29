@@ -18,7 +18,6 @@ use flipbox\patron\Patron;
  */
 interface SettingsInterface
 {
-
     /**
      * @return string
      */

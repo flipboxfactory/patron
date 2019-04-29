@@ -24,7 +24,6 @@ class UpdateToken extends UpdateRecord
     public $validBodyParams = [
         'provider',
         'enabled',
-        'environments'
     ];
 
     /**

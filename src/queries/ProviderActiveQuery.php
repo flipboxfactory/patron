@@ -11,7 +11,6 @@ namespace flipbox\patron\queries;
 use craft\db\QueryAbortedException;
 use flipbox\craft\ember\queries\ActiveQuery;
 use flipbox\craft\ember\queries\AuditAttributesTrait;
-use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
 
 /**
@@ -39,10 +38,6 @@ class ProviderActiveQuery extends ActiveQuery
         $this->from = [Provider::tableName() . ' ' . Provider::tableAlias()];
 
         parent::init();
-
-        if ($this->environment === null) {
-            $this->environment = Patron::getInstance()->getSettings()->getEnvironment();
-        }
     }
 
     /*******************************************

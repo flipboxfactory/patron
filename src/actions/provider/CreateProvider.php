@@ -18,15 +18,31 @@ use yii\db\ActiveRecord;
  */
 class CreateProvider extends CreateRecord
 {
+    use PopulateSettingsTrait;
+
     /**
      * @inheritdoc
      */
     public $validBodyParams = [
         'handle',
+        'clientId',
+        'clientSecret',
         'scopes',
         'class',
         'enabled'
     ];
+
+    /**
+     * @param ActiveRecord|Provider $record
+     * @return ActiveRecord
+     */
+    protected function populate(ActiveRecord $record): ActiveRecord
+    {
+        parent::populate($record);
+        $this->populateSettings($record);
+
+        return $record;
+    }
 
     /**
      * @inheritdoc

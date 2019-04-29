@@ -5,13 +5,11 @@ namespace flipbox\patron\cp;
 use Craft;
 use craft\events\RegisterTemplateRootsEvent;
 use craft\web\View;
-use Flipbox\OAuth2\Client\Provider\Guardian;
 use flipbox\patron\events\RegisterProviderIcons;
 use flipbox\patron\events\RegisterProviders;
 use flipbox\patron\events\RegisterProviderSettings;
 use flipbox\patron\Patron;
 use flipbox\patron\settings\FacebookSettings;
-use flipbox\patron\settings\GuardianSettings;
 use League\OAuth2\Client\Provider\Facebook;
 use yii\base\Event;
 use yii\base\Module;
@@ -38,20 +36,6 @@ class Cp extends Module
     public function init()
     {
         parent::init();
-
-        // Components
-        $this->setComponents([
-            'settings' => services\Settings::class
-        ]);
-
-        // Register settings for providers
-        RegisterProviderSettings::on(
-            Guardian::class,
-            RegisterProviderSettings::REGISTER_SETTINGS,
-            function (RegisterProviderSettings $event) {
-                $event->class = GuardianSettings::class;
-            }
-        );
 
         RegisterProviderSettings::on(
             Facebook::class,
@@ -85,22 +69,6 @@ class Cp extends Module
         }
 
         return parent::beforeAction($action);
-    }
-
-
-    /*******************************************
-     * SERVICES
-     *******************************************/
-
-    /**
-     * @noinspection PhpDocMissingThrowsInspection
-     * @return services\Settings
-     */
-    public function getSettings(): services\Settings
-    {
-        /** @noinspection PhpUnhandledExceptionInspection */
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->get('settings');
     }
 
 

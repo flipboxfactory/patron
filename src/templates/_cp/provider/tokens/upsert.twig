@@ -103,27 +103,6 @@
         </div>
     {% endif %}
 
-    <div id="environments" class="meta">
-        <h4 class="heading">{{ "Environments"|t('patron') }}</h4>
-        {% set environments = [] %}
-        {% for env in token.environments %}
-            {% set environments = environments|merge([env.environment]) %}
-        {% endfor %}
-        {% namespace 'environments' %}
-            {% for environment in environmentOptions %}
-                {{ forms.lightswitchField({
-                    label: environment.label,
-                    id: environment.value,
-                    name: environment.value,
-                    value: environment.value,
-                    small: true,
-                    on: environment.value in environments,
-                    disabled: environment.disabled
-                }) }}
-            {% endfor %}
-        {% endnamespace %}
-    </div>
-
     {% hook 'patron.tokens.edit.sidebar' %}
 
 {% endblock %}
