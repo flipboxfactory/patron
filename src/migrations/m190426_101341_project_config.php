@@ -34,6 +34,14 @@ class m190426_101341_project_config extends Migration
             $this->char(Provider::CLIENT_SECRET_LENGTH)
         );
 
+        $this->addColumn(
+            Provider::tableName(),
+            'settings',
+            $this->text()
+        );
+
+        $this->getDb()->getSchema()->refresh();
+
         if (!$this->providerInstances()) {
             return false;
         }
