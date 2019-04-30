@@ -17,7 +17,6 @@ class m181018_081114_encrypt extends Migration
      */
     public function safeUp()
     {
-
     }
 
 

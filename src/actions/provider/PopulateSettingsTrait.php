@@ -29,7 +29,8 @@ trait PopulateSettingsTrait
             $allSettings = [$allSettings];
         }
 
-        $record->settings = $allSettings[$record->class] ?? null;;
+        $record->settings = $allSettings[$record->class] ?? null;
+        ;
 
         return $record;
     }
