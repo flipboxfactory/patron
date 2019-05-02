@@ -22,23 +22,32 @@ class m190426_101341_project_config extends Migration
      */
     public function safeUp()
     {
-        $this->addColumn(
-            Provider::tableName(),
-            'clientId',
-            $this->string(Provider::CLIENT_ID_LENGTH)->notNull()
-        );
+        $schema = $this->getDb()->getSchema();
+        $table = $schema->getTableSchema($schema->getRawTableName(Provider::tableName()));
 
-        $this->addColumn(
-            Provider::tableName(),
-            'clientSecret',
-            $this->string(Provider::CLIENT_SECRET_LENGTH)
-        );
+        if (!$table->columns['clientId']) {
+            $this->addColumn(
+                Provider::tableName(),
+                'clientId',
+                $this->string(Provider::CLIENT_ID_LENGTH)->notNull()
+            );
+        }
 
-        $this->addColumn(
-            Provider::tableName(),
-            'settings',
-            $this->text()
-        );
+        if (!$table->columns['clientSecret']) {
+            $this->addColumn(
+                Provider::tableName(),
+                'clientSecret',
+                $this->string(Provider::CLIENT_SECRET_LENGTH)
+            );
+        }
+
+        if (!$table->columns['settings']) {
+            $this->addColumn(
+                Provider::tableName(),
+                'settings',
+                $this->text()
+            );
+        }
 
         $this->getDb()->getSchema()->refresh();
 

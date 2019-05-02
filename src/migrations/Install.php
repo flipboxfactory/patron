@@ -74,8 +74,8 @@ class Install extends Migration
         $this->createTable(ProviderRecord::tableName(), [
             'id' => $this->primaryKey(),
             'handle' => $this->string()->notNull(),
-            'clientId' => $this->char(ProviderRecord::CLIENT_ID_LENGTH)->notNull(),
-            'clientSecret' => $this->char(ProviderRecord::CLIENT_SECRET_LENGTH),
+            'clientId' => $this->string(ProviderRecord::CLIENT_ID_LENGTH)->notNull(),
+            'clientSecret' => $this->string(ProviderRecord::CLIENT_SECRET_LENGTH),
             'scopes' => $this->string(),
             'class' => $this->string()->notNull(),
             'settings' => $this->text(),
