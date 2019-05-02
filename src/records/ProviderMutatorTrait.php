@@ -158,7 +158,6 @@ trait ProviderMutatorTrait
         if (is_numeric($provider) || is_string($provider)) {
             return Provider::findOne([
                 'enabled' => null,
-                'environment' => null,
                 is_numeric($provider) ? 'id' : 'handle' => $provider
             ]);
         }

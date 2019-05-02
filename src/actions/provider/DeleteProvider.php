@@ -43,7 +43,6 @@ class DeleteProvider extends DeleteRecord
     {
         return Provider::findOne([
             'enabled' => null,
-            'environment' => null,
             'id' => $id
         ]);
     }

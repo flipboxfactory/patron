@@ -1,0 +1,156 @@
+.card-items {
+    margin-top: 12px;
+}
+
+.card-items .card-item .card {
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    background: #FFF;
+    padding: 20px 20px 10px;
+    margin-bottom: 48px;
+    position: relative;
+}
+
+.card-items .card-item .card .circle-icon {
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    margin-left: -24px;
+}
+
+.card-items .card-item .card > .title {
+    margin-top: 18px;
+    margin-bottom: 0;
+    text-align: center;
+    font-size: 18px;
+    line-height: 22px;
+}
+
+.card-items .card-item .card > .sub-title {
+    margin-top: 6px;
+    text-align: center;
+    font-size: 12px;
+}
+
+.card-items .card-item .card hr {
+    opacity: .3;
+    margin: 14px 0;
+}
+
+.card-items .card-item .card > .meta > .c3 {
+    height: 30px;
+    float: right;
+    margin: 0 0 8px;
+    z-index: 99;
+}
+
+.card-items .card-item .card > .meta:after {
+    content: '.';
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+.card-items .card-item .card .menubtn {
+    position: absolute;
+    right: 0;
+    top: 4px;
+    opacity: 0;
+    cursor: pointer;
+    transition: opacity .25s ease-in-out;
+    -moz-transition: opacity .25s ease-in-out;
+    -webkit-transition: opacity .25s ease-in-out;
+}
+
+.card-items .card-item .card .menubtn:after {
+    content: '';
+}
+
+.card-items .card-item .card .menubtn.active {
+    opacity: 1;
+}
+
+.card-items .card-item .card:hover, .card-items .card-item .card:active {
+    border-color: rgba(0, 0, 20, 0.4);
+    -webkit-box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.1);
+}
+
+.card-items .card-item .card:hover > .circle-icon > .icon, .card-items .card-item .card:active > .circle-icon > .icon {
+    border-color: rgba(0, 0, 20, 0.6);
+}
+
+.card-items .card-item .card:hover .menubtn, .card-items .card-item .card:active .menubtn {
+    opacity: 1;
+}
+
+.card-items .card-item a.card:hover, .card-items .card-item a.card:active {
+    border-color: rgba(13, 120, 242, 0.6);
+}
+
+.card-items .card-item a.card:hover > .circle-icon > .icon, .card-items .card-item a.card:active > .circle-icon > .icon {
+    border-color: rgba(13, 120, 242, 0.8);
+}
+
+@media only screen and (min-width: 420px) {
+    .card-items {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .card-items .card-item {
+        display: flex;
+    }
+
+    .card-items .card-item .card {
+        width: 100%;
+        margin-left: 12px;
+        margin-right: 12px;
+    }
+}
+
+@media only screen and (min-width: 1224px) {
+    .card-items .card-item {
+        width: 25%;
+    }
+
+    .card-items .card-item:nth-child(4n+1) .card {
+        margin-left: 0;
+    }
+
+    .card-items .card-item:nth-child(4n+4) .card {
+        margin-right: 0;
+    }
+}
+
+@media only screen and (min-width: 824px) and (max-width: 1224px) {
+    .card-items .card-item {
+        width: 33%;
+    }
+
+    .card-items .card-item:nth-child(3n+1) .card {
+        margin-left: 0;
+    }
+
+    .card-items .card-item:nth-child(3n+3) .card {
+        margin-right: 0;
+    }
+}
+
+@media only screen and (min-width: 420px) and (max-width: 824px) {
+    .card-items .card-item {
+        width: 50%;
+    }
+
+    .card-items .card-item:nth-child(2n+1) .card {
+        margin-left: 0;
+    }
+
+    .card-items .card-item:nth-child(2n+2) .card {
+        margin-right: 0;
+    }
+}
+
+/*# sourceMappingURL=Card.css.map */

@@ -10,6 +10,7 @@ namespace flipbox\patron\actions\provider;
 
 use flipbox\craft\ember\actions\records\UpdateRecord;
 use flipbox\patron\records\Provider;
+use yii\db\ActiveRecord;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -17,15 +18,31 @@ use flipbox\patron\records\Provider;
  */
 class UpdateProvider extends UpdateRecord
 {
+    use PopulateSettingsTrait;
+
     /**
      * @inheritdoc
      */
     public $validBodyParams = [
         'handle',
+        'clientId',
+        'clientSecret',
         'scopes',
         'class',
         'enabled'
     ];
+
+    /**
+     * @param ActiveRecord|Provider $record
+     * @return ActiveRecord
+     */
+    protected function populate(ActiveRecord $record): ActiveRecord
+    {
+        parent::populate($record);
+        $this->populateSettings($record);
+
+        return $record;
+    }
 
     /**
      * @inheritdoc
@@ -43,7 +60,6 @@ class UpdateProvider extends UpdateRecord
     {
         return Provider::findOne([
             'enabled' => null,
-            'environment' => null,
             'id' => $id
         ]);
     }

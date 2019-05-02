@@ -8,25 +8,29 @@
 {% endblock %}
 
 {% block content %}
-    {% from "patron/ember/circle-icon" import circleIcon %}
+    {% from "patron/_components/circle-icon" import circleIcon %}
+    {% if not providers|length %}
+        <em>{{ "Unable to find any OAuth2 providers."|t('patron') }} <a href="{{ url(baseCpPath ~ '/new') }}">{{ "Create one"|t('patron') }}</a>{{ " to get started."|t('patron') }}</em>
+    {% endif %}
+
     <div class="card-items">
         {% for provider in providers %}
             {% set icon %}
                 {{ circleIcon(
-                    (provider['icon'] is defined and provider['icon'] ? provider['icon'] : null),
-                provider.displayName,
-                provider.enabled ? 'active' : 'suspended'
+                    provider.info['icon'] ?? null,
+                    provider.info['name'] ?? '',
+                    provider.enabled ? 'active' : 'suspended'
                 ) }}
             {% endset %}
-            {% embed "patron/ember/card" with {
+            {% embed "patron/_components/card" with {
                 id: provider.id,
-                name: provider.displayName
+                name: provider.info['name'] ?? ''
             } %}
                 {% block cardIcon %}
                     {{ icon }}
                 {% endblock %}
                 {% block cardTitleContent %}
-                    <a href="{{ url(baseCpPath ~ '/' ~ provider.id) }}">{{ provider.displayName }}</a>
+                    <a href="{{ url(baseCpPath ~ '/' ~ provider.id) }}">{{ provider.info['name'] ?? '' }}</a>
                 {% endblock %}
                 {% block cardSubTitleContent %}
                     {{ provider.handle }}

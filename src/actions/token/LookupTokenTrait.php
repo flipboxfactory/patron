@@ -24,7 +24,6 @@ trait LookupTokenTrait
     {
         return Token::findOne([
             'enabled' => null,
-            'environment' => null,
             is_numeric($token) ? 'id' : 'accessToken' => $token
         ]);
     }

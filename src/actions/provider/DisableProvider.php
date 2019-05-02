@@ -39,7 +39,6 @@ class DisableProvider extends Action
     {
         return Provider::findOne([
             'enabled' => null,
-            'environment' => null,
             'id' => $id
         ]);
     }

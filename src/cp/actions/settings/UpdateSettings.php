@@ -9,7 +9,6 @@
 namespace flipbox\patron\cp\actions\settings;
 
 use Craft;
-use craft\helpers\ArrayHelper;
 use flipbox\craft\ember\actions\models\CreateModel;
 use flipbox\patron\models\Settings;
 use flipbox\patron\Patron;
@@ -37,52 +36,6 @@ class UpdateSettings extends CreateModel
     public $statusCodeSuccess = 200;
 
     /**
-     * @inheritdoc
-     * @param Settings $model
-     * @return Settings
-     */
-    protected function populate(Model $model): Model
-    {
-        $model->setEnvironments(
-            $this->environmentValuesFromBody()
-        );
-
-        return parent::populate($model);
-    }
-
-    /**
-     * Normalize settings from body
-     *
-     * @return array
-     */
-    protected function environmentValuesFromBody(): array
-    {
-        $environmentArray = [];
-        if ($rawEnvironments = Craft::$app->getRequest()->getBodyParam('environments', [])) {
-            foreach (ArrayHelper::toArray($rawEnvironments) as $rawEnvironment) {
-                $environmentArray = array_merge(
-                    $environmentArray,
-                    $this->normalizeEnvironmentValue($rawEnvironment)
-                );
-            }
-        }
-        return array_values($environmentArray);
-    }
-
-    /**
-     * @param string|array $value
-     * @return array
-     */
-    protected function normalizeEnvironmentValue($value = []): array
-    {
-        if (is_array($value)) {
-            $value = ArrayHelper::getValue($value, 'value');
-        }
-
-        return [$value => $value];
-    }
-
-    /**
      * @param Model $model
      * @return bool
      * @throws \Throwable
@@ -97,7 +50,10 @@ class UpdateSettings extends CreateModel
             ));
         }
 
-        return Patron::getInstance()->getCp()->getSettings()->save($model);
+        return Craft::$app->getPlugins()->savePluginSettings(
+            Patron::getInstance(),
+            $model->toArray()
+        );
     }
 
     /**

@@ -24,9 +24,9 @@ class FacebookSettings extends BaseSettings
     public $graphApiVersion = 'v2.10';
 
     /**
-     * @return string
-     * @throws \Twig_Error_Loader
-     * @throws \yii\base\Exception
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      */
     public function inputHtml(): string
     {

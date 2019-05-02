@@ -32,10 +32,8 @@ class AuthorizationController extends AbstractController
                     'class' => CallableFilter::class,
                     'actions' => [
                         'callback' => function () {
-                            $sessionService = Patron::getInstance()->getSession();
-
-                            $redirectUrl = $sessionService->getRedirectUrl();
-                            $sessionService->removeAll();
+                            $redirectUrl = Patron::getInstance()->getSession()->getRedirectUrl();
+                            Patron::getInstance()->getSession()->removeAll();
 
                             if ($redirectUrl) {
                                 return $this->redirect($redirectUrl);

@@ -12,7 +12,6 @@ use Craft;
 use craft\base\Model;
 use craft\helpers\StringHelper;
 use craft\validators\UriValidator;
-use flipbox\craft\ember\helpers\ModelHelper;
 use flipbox\craft\ember\helpers\UrlHelper;
 use flipbox\craft\ember\views\Template;
 use flipbox\craft\ember\views\ViewInterface;
@@ -40,177 +39,125 @@ class Settings extends Model
     private $callbackUrlPath;
 
     /**
-     * @var array
+     * @var array|null
      */
-    private $environments = [];
-
-    /**
-     * @var string
-     */
-    private $environment = null;
-
-    /**
-     * Encrypt data in storage
-     *
-     * @var bool
-     */
-    private $encryptStorageData = true;
-
-    /**
-     * Default environments to apply to new Providers when they're created
-     *
-     * @var array
-     */
-    private $defaultEnvironments = [];
-
-    /**
-     * Auto populate token enviornments upon creation.
-     *
-     * @var bool
-     */
-    private $autoPopulateTokenEnvironments = true;
-
-    /**
-     * If [[Settings::$autoPopulateTokenEnvironments]] is true, and this is enabled, the environments
-     * will mirror the provider environments.
-     *
-     * @var bool
-     */
-    private $applyProviderEnvironmentsToToken = false;
+    private $providers = [];
 
 
     /*******************************************
-     * ENCRYPTION
+     * PROVIDER OVERRIDES
      *******************************************/
 
     /**
-     * @return bool
+     * Get an array provider override configurations
+     *
+     * @return array
      */
-    public function getEncryptStorageData(): bool
+    public function getProviders(): array
     {
-        return (bool)$this->encryptStorageData;
+        return $this->providers;
     }
+
+    /**
+     * Set an array provider override configurations
+     *
+     * @param array $providers
+     * @return static
+     */
+    public function setProviders(array $providers)
+    {
+        $this->providers = $providers;
+        return $this;
+    }
+
+    /**
+     * Get a provider override configuration by the provider handle
+     *
+     * @param string $handle
+     * @return array
+     */
+    public function getProvider(string $handle): array
+    {
+        return $this->providers[$handle] ?? [];
+    }
+
+
+    /*******************************************
+     * ENCRYPTION [DEPRECATED]
+     *******************************************/
 
     /**
      * @param bool $value
      * @return $this
+     *
+     * @deprecated
      */
     public function setEncryptStorageData(bool $value)
     {
-        $this->encryptStorageData = $value;
         return $this;
     }
 
     /*******************************************
-     * TOKEN ENVIORNMENTS
+     * TOKEN ENVIRONMENTS [DEPRECATED]
      *******************************************/
-
-    /**
-     * @return bool
-     */
-    public function getAutoPopulateTokenEnvironments(): bool
-    {
-        return (bool)$this->autoPopulateTokenEnvironments;
-    }
 
     /**
      * @param bool $value
      * @return $this
+     *
+     * @deprecated
      */
     public function setAutoPopulateTokenEnvironments(bool $value)
     {
-        $this->autoPopulateTokenEnvironments = $value;
         return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getApplyProviderEnvironmentsToToken(): bool
-    {
-        return (bool)$this->applyProviderEnvironmentsToToken;
     }
 
     /**
      * @param bool $value
      * @return $this
+     *
+     * @deprecated
      */
     public function setApplyProviderEnvironmentsToToken(bool $value)
     {
-        $this->applyProviderEnvironmentsToToken = $value;
         return $this;
     }
 
     /*******************************************
-     * ENVIRONMENTS
+     * ENVIRONMENTS [DEPRECATED]
      *******************************************/
-
-    /**
-     * @return string
-     */
-    public function getEnvironment(): string
-    {
-        if ($this->environment === null) {
-            $this->environment = Craft::$app->getConfig()->env;
-        }
-
-        return $this->environment;
-    }
 
     /**
      * @param string $environment
      * @return $this
+     *
+     * @deprecated
      */
     public function setEnvironment(string $environment)
     {
-        $this->environment = $environment;
         return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getEnvironments(): array
-    {
-        if (empty($this->environments)) {
-            $this->environments[] = Craft::$app->getConfig()->env;
-        }
-
-        return $this->environments;
     }
 
     /**
      * @param array $environments
      * @return $this
+     *
+     * @deprecated
      */
     public function setEnvironments(array $environments)
     {
-        $this->environments = $environments;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getDefaultEnvironments(): array
-    {
-        if (empty($this->defaultEnvironments)) {
-            $this->defaultEnvironments[] = Craft::$app->getConfig()->env;
-        }
-
-        return array_intersect(
-            $this->getEnvironments(),
-            $this->defaultEnvironments
-        );
-    }
 
     /**
      * @param array $environments
      * @return $this
+     *
+     * @deprecated
      */
     public function setDefaultEnvironments(array $environments)
     {
-        $this->defaultEnvironments = $environments;
         return $this;
     }
 
@@ -241,7 +188,7 @@ class Settings extends Model
     /**
      * @param $callbackUrlPath
      * @return $this
-     * @throws \yii\base\Exception
+     * @throws Exception
      */
     public function setCallbackUrlPath($callbackUrlPath)
     {
@@ -285,17 +232,7 @@ class Settings extends Model
      *******************************************/
 
     /**
-     * @return ViewInterface
-     */
-    public function getProviderEnvironmentView(): ViewInterface
-    {
-        return new Template([
-            'template' => 'patron/_cp/provider/_environment'
-        ]);
-    }
-
-    /**
-     * @return ViewInterface
+     * @return ViewInterface'
      */
     public function getProviderSettingsView(): ViewInterface
     {
@@ -303,17 +240,6 @@ class Settings extends Model
             'template' => 'patron/_cp/provider/_settings'
         ]);
     }
-
-    /**
-     * @return ViewInterface
-     */
-    public function getTokenView(): ViewInterface
-    {
-        return new Template([
-            'template' => 'patron/_modal/token'
-        ]);
-    }
-
 
     /**
      * @inheritdoc
@@ -331,24 +257,11 @@ class Settings extends Model
                 ],
                 [
                     [
-                        'encryptStorageData',
-                        'applyProviderEnvironmentsToToken',
-                        'autoPopulateTokenEnvironments'
-                    ],
-                    'boolean'
-                ],
-                [
-                    [
-                        'callbackUrlPath',
-                        'defaultEnvironments',
-                        'encryptStorageData',
-                        'environments',
-                        'applyProviderEnvironmentsToToken',
-                        'autoPopulateTokenEnvironments',
+                        'providers'
                     ],
                     'safe',
                     'on' => [
-                        ModelHelper::SCENARIO_DEFAULT
+                        self::SCENARIO_DEFAULT
                     ]
                 ]
             ]
@@ -364,10 +277,7 @@ class Settings extends Model
             parent::attributes(),
             [
                 'callbackUrlPath',
-                'encryptStorageData',
-                'environments',
-                'applyProviderEnvironmentsToToken',
-                'autoPopulateTokenEnvironments',
+                'providers'
             ]
         );
     }
@@ -381,11 +291,7 @@ class Settings extends Model
             parent::attributeLabels(),
             [
                 'callbackUrlPath' => Craft::t('patron', 'Callback Url Path'),
-                'defaultEnvironments' => Craft::t('patron', 'Default Enviornments'),
-                'encryptStorageData' => Craft::t('patron', 'Encrypt Storage Data'),
-                'environments' => Craft::t('patron', 'Environments'),
-                'autoPopulateTokenEnvironments' => Craft::t('patron', 'Auto Populate Token Environments'),
-                'applyProviderEnvironmentsToToken' => Craft::t('patron', 'Apply Provider Environments to Token')
+                'providers' => Craft::t('patron', 'Provider Overrides')
             ]
         );
     }

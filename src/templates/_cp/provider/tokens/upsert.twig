@@ -38,15 +38,15 @@
     <input type="hidden" name="token" value="{{ token.id }}">
     {{ redirectInput(baseCpPath) }}
 
-    {% embed "patron/ember/circle-icon" with {
-        icon: (provider['icon'] is defined and provider['icon'] ? provider['icon'] : null),
-        label: provider.displayName,
+    {% embed "patron/_components/circle-icon" with {
+        icon: provider.info['icon'] ?? null,
+        label: provider.info['name'] ?? '',
         status: provider.enabled ? 'active' : 'pending',
         class: ['large']
     } %}
         {% block circleIconTextContent %}
             <h3 class="title">
-                <a href="{{ url(baseCpPath) }}">{{ provider.displayName }}</a>
+                <a href="{{ url(baseCpPath) }}">{{ provider.info['name'] ?? '' }}</a>
             </h3>
             <h5 class="sub-title">{{ provider.handle }}</h5>
         {% endblock %}
@@ -102,27 +102,6 @@
             </div>
         </div>
     {% endif %}
-
-    <div id="environments" class="meta">
-        <h4 class="heading">{{ "Environments"|t('patron') }}</h4>
-        {% set environments = [] %}
-        {% for env in token.environments %}
-            {% set environments = environments|merge([env.environment]) %}
-        {% endfor %}
-        {% namespace 'environments' %}
-            {% for environment in environmentOptions %}
-                {{ forms.lightswitchField({
-                    label: environment.label,
-                    id: environment.value,
-                    name: environment.value,
-                    value: environment.value,
-                    small: true,
-                    on: environment.value in environments,
-                    disabled: environment.disabled
-                }) }}
-            {% endfor %}
-        {% endnamespace %}
-    </div>
 
     {% hook 'patron.tokens.edit.sidebar' %}
 

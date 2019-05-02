@@ -35,8 +35,6 @@ class Callback extends Action
      */
     public function run()
     {
-        $patron = Patron::getInstance();
-
         // Get code
         if (!$code = Craft::$app->getRequest()->getParam('code')) {
             return $this->handleInvalidCodeResponse();
@@ -49,7 +47,7 @@ class Callback extends Action
         }
 
         // Get provider
-        $identifier = $patron->getSession()->getProvider();
+        $identifier = Patron::getInstance()->getSession()->getProvider();
         if (!$identifier || (!$provider = $this->find($identifier))) {
             return $this->handleNotFoundResponse();
         }

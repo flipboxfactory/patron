@@ -3,8 +3,8 @@
 namespace flipbox\patron\cp\controllers\view\providers;
 
 use Craft;
-use flipbox\craft\assets\card\Card;
-use flipbox\craft\assets\circleicon\CircleIcon;
+use flipbox\patron\web\assets\card\Card;
+use flipbox\patron\web\assets\circleIcon\CircleIcon;
 use flipbox\patron\helpers\ProviderHelper;
 use flipbox\patron\records\Provider;
 use flipbox\patron\web\assets\providers\ProvidersAsset;
@@ -41,8 +41,7 @@ class DefaultController extends AbstractViewController
 
         // Configured providers
         $variables['providers'] = Provider::findAll([
-            'enabled' => null,
-            'environment' => null
+            'enabled' => null
         ]);
 
         return $this->renderTemplate(static::TEMPLATE_INDEX, $variables);
@@ -70,7 +69,6 @@ class DefaultController extends AbstractViewController
             } else {
                 $provider = Provider::getOne([
                     'enabled' => null,
-                    'environment' => null,
                     is_numeric($identifier) ? 'id' : 'handle' => $identifier
                 ]);
             }
@@ -83,15 +81,19 @@ class DefaultController extends AbstractViewController
             $this->updateVariables($variables, $provider);
         }
 
+        $providerInfo = $this->module->getProviderInfo();
+
         // Available providers options
         $providerOptions = [];
         $providers = $this->module->getProviders();
         foreach ($providers as $availableProvider) {
+            $info = $providerInfo[$availableProvider] ?? [];
             $providerOptions[] = [
-                'label' => ProviderHelper::displayName($availableProvider),
+                'label' => $info['name'] ?? ProviderHelper::displayName($availableProvider),
                 'value' => $availableProvider
             ];
         }
+
         $variables['providers'] = $providers;
         $variables['providerOptions'] = $providerOptions;
         $variables['provider'] = $provider;
@@ -99,7 +101,7 @@ class DefaultController extends AbstractViewController
         $pluginLocks = [];
         $pluginHandles = $provider->getLocks()
             ->alias('locks')
-            ->leftJoin('{{%plugins}} plugins', 'plugins.id=locks.pluginId')
+            ->leftJoin('{{%plugins}} plugins', '[[plugins.id]]=[[locks.pluginId]]')
             ->select(['handle'])->column();
 
         foreach ($pluginHandles as $pluginHandle) {
@@ -113,7 +115,6 @@ class DefaultController extends AbstractViewController
 
         // Plugins that have locked this provider
         $variables['pluginLocks'] = $pluginLocks;
-        $variables['availableEnvironments'] = $this->availableEnvironments($provider);
 
         // Full page form in the CP
         $variables['fullPageForm'] = true;
@@ -121,7 +122,6 @@ class DefaultController extends AbstractViewController
         // Tabs
         $variables['tabs'] = $this->getTabs($provider);
         $variables['selectedTab'] = 'general';
-        $variables['baseActionInstancePath'] = $this->getBaseActionPath() . '/instances';
 
         return $this->renderTemplate(static::TEMPLATE_UPSERT, $variables);
     }

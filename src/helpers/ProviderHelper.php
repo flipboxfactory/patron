@@ -8,11 +8,8 @@
 
 namespace flipbox\patron\helpers;
 
-use Craft;
 use craft\helpers\StringHelper;
-use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
-use flipbox\patron\records\ProviderInstance;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use ReflectionClass;
 use yii\db\Query;
@@ -82,130 +79,22 @@ class ProviderHelper
             ['clientId', 'clientSecret']
         );
 
-        if (Patron::getInstance()->getSettings()->getEncryptStorageData() === true) {
-            return self::lookupIdFromEncryptedClientSecret(
-                get_class($provider),
-                $clientId,
-                $clientSecret
-            );
-        }
-
-        return self::lookupIdFromUnencryptedClientSecret(
-            get_class($provider),
-            $clientId,
-            $clientSecret
-        );
-    }
-
-    /**
-     * @param string $class
-     * @param string $clientId
-     * @param string $clientSecret
-     * @return int|null
-     */
-    protected static function lookupIdFromEncryptedClientSecret(string $class, string $clientId, string $clientSecret)
-    {
         $condition = [
-            'class' => $class,
-            'clientId' => $clientId,
-        ];
-
-        $rows = (new Query())
-            ->select(['providerId', 'clientSecret'])
-            ->from([ProviderInstance::tableName() . ' ' . ProviderInstance::tableAlias()])
-            ->leftJoin(
-                [Provider::tableName() . ' ' . Provider::tableAlias()],
-                Provider::tableAlias() . '.id=providerId'
-            )
-            ->where($condition)
-            ->all();
-
-        foreach ($rows as $row) {
-            $secret = $row['clientSecret'] ?? '';
-
-            if ($clientSecret === ProviderHelper::decryptClientSecret($secret)) {
-                return (int)$row['providerId'];
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param string $class
-     * @param string $clientId
-     * @param string $clientSecret
-     * @return int|null
-     */
-    protected static function lookupIdFromUnencryptedClientSecret(string $class, string $clientId, string $clientSecret)
-    {
-        $condition = [
-            'class' => $class,
+            'class' => get_class($provider),
             'clientId' => $clientId,
             'clientSecret' => $clientSecret
         ];
 
         if (!$providerId = (new Query())
-            ->select(['providerId'])
-            ->from([ProviderInstance::tableName() . ' ' . ProviderInstance::tableAlias()])
-            ->leftJoin(
-                [Provider::tableName() . ' ' . Provider::tableAlias()],
-                Provider::tableAlias() . '.id=providerId'
-            )
+            ->select(['id'])
+            ->from([Provider::tableName() . ' ' . Provider::tableAlias()])
             ->where($condition)
             ->scalar()
         ) {
             return null;
-        }
+        };
 
         return (int)$providerId;
-    }
-
-    /**
-     * @param string $value
-     * @param bool $checkSettings
-     * @return string
-     * @throws \yii\base\Exception
-     * @throws \yii\base\InvalidConfigException
-     */
-    public static function encryptClientSecret(string $value, bool $checkSettings = true): string
-    {
-        if ($checkSettings === true && Patron::getInstance()->getSettings()->getEncryptStorageData() != true) {
-            return $value;
-        }
-
-        return base64_encode(Craft::$app->getSecurity()->encryptByKey($value));
-    }
-
-    /**
-     * @param string $value
-     * @param bool $checkSettings
-     * @return string
-     */
-    public static function decryptClientSecret(string $value, bool $checkSettings = true): string
-    {
-        if ($checkSettings === true && Patron::getInstance()->getSettings()->getEncryptStorageData() != true) {
-            return $value;
-        }
-
-        try {
-            return Craft::$app->getSecurity()->decryptByKey(
-                base64_decode($value)
-            );
-        } catch (\Exception $e) {
-            Patron::error(
-                Craft::t(
-                    'patron',
-                    "Unable to decrypt client secret '{secret}'. Message: '{message}'",
-                    [
-                        'secret' => $value,
-                        'message' => $e->getMessage()
-                    ]
-                )
-            );
-        }
-
-        return $value;
     }
 
 
@@ -214,6 +103,7 @@ class ProviderHelper
      * @param ReflectionClass $reflectionClass
      * @param string $property
      * @return mixed
+     * @throws \ReflectionException
      */
     public static function getProtectedProperty(
         AbstractProvider $provider,

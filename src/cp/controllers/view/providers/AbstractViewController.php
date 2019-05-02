@@ -18,21 +18,6 @@ abstract class AbstractViewController extends \flipbox\patron\cp\controllers\vie
      */
     const TEMPLATE_BASE = 'patron/_cp/provider';
 
-    /*******************************************
-     * ENVIRONMENTS
-     *******************************************/
-
-    /**
-     * @param Provider $provider
-     * @return array
-     */
-    protected function availableEnvironments(Provider $provider): array
-    {
-        $usedEnvironments = array_keys($provider->environments);
-        $allEnvironments = Patron::getInstance()->getSettings()->getEnvironments();
-
-        return array_diff($allEnvironments, $usedEnvironments);
-    }
 
     /*******************************************
      * TABS
@@ -163,12 +148,14 @@ abstract class AbstractViewController extends \flipbox\patron\cp\controllers\vie
         $variables['baseCpProvidersPath'] = $this->getBaseCpProvidersPath();
         $variables['baseCpProviderPath'] = $this->getBaseCpProviderPath();
 
+        $providerInfo = $provider->getInfo();
+
         // Append title
-        $variables['title'] .= ' - ' . $provider->getDisplayName();
+        $variables['title'] .= ' - ' . ($providerInfo['name'] ?? '');
 
         // Breadcrumbs
         $variables['crumbs'][] = [
-            'label' => $provider->getDisplayName(),
+            'label' => $providerInfo['name'] ?? '',
             'url' => UrlHelper::url(
                 Patron::getInstance()->getUniqueId() . '/providers/' . $provider->getId()
             )

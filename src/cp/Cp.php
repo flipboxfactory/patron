@@ -3,17 +3,13 @@
 namespace flipbox\patron\cp;
 
 use Craft;
-use craft\events\RegisterTemplateRootsEvent;
-use craft\web\View;
-use Flipbox\OAuth2\Client\Provider\Guardian;
-use flipbox\patron\events\RegisterProviderIcons;
+use flipbox\patron\events\RegisterProviderInfo;
 use flipbox\patron\events\RegisterProviders;
 use flipbox\patron\events\RegisterProviderSettings;
+use flipbox\patron\helpers\ProviderHelper;
 use flipbox\patron\Patron;
 use flipbox\patron\settings\FacebookSettings;
-use flipbox\patron\settings\GuardianSettings;
 use League\OAuth2\Client\Provider\Facebook;
-use yii\base\Event;
 use yii\base\Module;
 use yii\web\NotFoundHttpException;
 
@@ -25,7 +21,7 @@ class Cp extends Module
     /**
      * @var array
      */
-    private $icons;
+    private $info;
 
     /**
      * @var array
@@ -39,37 +35,11 @@ class Cp extends Module
     {
         parent::init();
 
-        // Components
-        $this->setComponents([
-            'settings' => services\Settings::class
-        ]);
-
-        // Register settings for providers
-        RegisterProviderSettings::on(
-            Guardian::class,
-            RegisterProviderSettings::REGISTER_SETTINGS,
-            function (RegisterProviderSettings $event) {
-                $event->class = GuardianSettings::class;
-            }
-        );
-
         RegisterProviderSettings::on(
             Facebook::class,
             RegisterProviderSettings::REGISTER_SETTINGS,
             function (RegisterProviderSettings $event) {
                 $event->class = FacebookSettings::class;
-            }
-        );
-
-        // Ember templates
-        Event::on(
-            View::class,
-            View::EVENT_REGISTER_CP_TEMPLATE_ROOTS,
-            function (RegisterTemplateRootsEvent $e) {
-                $e->roots['patron/ember/card'] = Craft::$app->getPath()->getVendorPath() .
-                    '/flipboxfactory/craft-assets-card/src/templates';
-                $e->roots['patron/ember/circle-icon'] = Craft::$app->getPath()->getVendorPath() .
-                    '/flipboxfactory/craft-assets-circle-icon/src/templates';
             }
         );
     }
@@ -85,22 +55,6 @@ class Cp extends Module
         }
 
         return parent::beforeAction($action);
-    }
-
-
-    /*******************************************
-     * SERVICES
-     *******************************************/
-
-    /**
-     * @noinspection PhpDocMissingThrowsInspection
-     * @return services\Settings
-     */
-    public function getSettings(): services\Settings
-    {
-        /** @noinspection PhpUnhandledExceptionInspection */
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->get('settings');
     }
 
 
@@ -128,21 +82,52 @@ class Cp extends Module
     }
 
     /**
+     * This should give is some additional information about the provider.
+     *
+     * ```
+     * [
+     *      Provider::class => [
+     *          'name' => 'Provider Name',
+     *          'icon' => 'path/to/icon.svg'
+     *      ]
+     * ]
+     * ```
+     *
      * @return array
+     * @throws \ReflectionException
      */
-    public function getProviderIcons(): array
+    public function getProviderInfo(): array
     {
-        if ($this->icons === null) {
-            $event = new RegisterProviderIcons();
+        if ($this->info === null) {
+            $event = new RegisterProviderInfo();
 
             $this->trigger(
-                $event::REGISTER_ICON,
+                $event::REGISTER_INFO,
                 $event
             );
 
-            $this->icons = $event->icons;
+            $this->info = $event->info;
+
+            $this->formatInfoArray($this->info);
         }
 
-        return $this->icons;
+        return $this->info;
+    }
+
+    /**
+     * @param array $providers
+     * @throws \ReflectionException
+     */
+    private function formatInfoArray(array &$providers)
+    {
+        foreach ($providers as $class => &$provider) {
+            if (is_string($provider)) {
+                $provider = [
+                    'icon' => $provider
+                ];
+            }
+
+            $provider['name'] = $provider['name'] ?? ProviderHelper::displayName($class);
+        }
     }
 }

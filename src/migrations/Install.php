@@ -10,7 +10,6 @@ namespace flipbox\patron\migrations;
 
 use craft\db\Migration;
 use flipbox\patron\records\Provider as ProviderRecord;
-use flipbox\patron\records\ProviderInstance;
 use flipbox\patron\records\Token as TokensRecord;
 
 /**
@@ -28,18 +27,8 @@ class Install extends Migration
         $this->createIndexes();
         $this->addForeignKeys();
 
-        // Environments
-        if (false === (new m180716_121422_environments())->safeUp()) {
-            return false;
-        }
-
         // Locks
         if (false === (new m181010_081033_provider_locks())->safeUp()) {
-            return false;
-        }
-
-        // Provider Settings
-        if (false === (new m181019_220655_provider_instances())->safeUp()) {
             return false;
         }
 
@@ -51,18 +40,8 @@ class Install extends Migration
      */
     public function safeDown()
     {
-        // Provider Settings
-        if (false === (new m181019_220655_provider_instances())->safeDown()) {
-            return false;
-        }
-
         // Locks
         if (false === (new m181010_081033_provider_locks())->safeDown()) {
-            return false;
-        }
-
-        // Environments
-        if (false === (new m180716_121422_environments())->safeDown()) {
             return false;
         }
 
@@ -95,8 +74,8 @@ class Install extends Migration
         $this->createTable(ProviderRecord::tableName(), [
             'id' => $this->primaryKey(),
             'handle' => $this->string()->notNull(),
-            'clientId' => $this->char(ProviderInstance::CLIENT_ID_LENGTH)->notNull(),
-            'clientSecret' => $this->char(ProviderInstance::CLIENT_SECRET_LENGTH),
+            'clientId' => $this->string(ProviderRecord::CLIENT_ID_LENGTH)->notNull(),
+            'clientSecret' => $this->string(ProviderRecord::CLIENT_SECRET_LENGTH),
             'scopes' => $this->string(),
             'class' => $this->string()->notNull(),
             'settings' => $this->text(),
