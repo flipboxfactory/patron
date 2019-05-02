@@ -44,18 +44,6 @@ class Cp extends Module
                 $event->class = FacebookSettings::class;
             }
         );
-
-        // Ember templates
-        Event::on(
-            View::class,
-            View::EVENT_REGISTER_CP_TEMPLATE_ROOTS,
-            function (RegisterTemplateRootsEvent $e) {
-                $e->roots['patron/ember/card'] = Craft::$app->getPath()->getVendorPath() .
-                    '/flipboxfactory/craft-assets-card/src/templates';
-                $e->roots['patron/ember/circle-icon'] = Craft::$app->getPath()->getVendorPath() .
-                    '/flipboxfactory/craft-assets-circle-icon/src/templates';
-            }
-        );
     }
 
     /**

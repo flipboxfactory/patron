@@ -44,6 +44,11 @@ class Patron extends Plugin
     use LoggerTrait;
 
     /**
+     * @var string
+     */
+    public static $category = 'patron';
+
+    /**
      * The before persist token event name
      */
     const EVENT_BEFORE_PERSIST_TOKEN = 'beforePersistToken';
@@ -428,5 +433,25 @@ class Patron extends Plugin
                     'patron/cp/view/providers/tokens/upsert',
             ]
         );
+    }
+
+    /*******************************************
+     * TRANSLATE
+     *******************************************/
+
+    /**
+     * Translates a message to the specified language.
+     *
+     * This is a shortcut method of [[\Craft::t()]].
+     *     *
+     * @param string $message the message to be translated.
+     * @param array $params the parameters that will be used to replace the corresponding placeholders in the message.
+     * @param string $language the language code (e.g. `en-US`, `en`). If this is null, the current
+     * [[\yii\base\Application::language|application language]] will be used.
+     * @return string the translated message.
+     */
+    public static function t($message, $params = [], $language = null)
+    {
+        return Craft::t(self::$category, $message, $params, $language);
     }
 }

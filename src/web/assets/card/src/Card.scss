@@ -1,0 +1,226 @@
+@charset "UTF-8";
+@import "../../../../../vendor/craftcms/cms/lib/craftcms-sass/mixins";
+
+$sidebarWidth: 225px;
+$detailsWidth: 350px;
+$minFullUiWidth: 1224px;
+$minHorizontalUiWidth: $minFullUiWidth - $sidebarWidth;
+
+.card-items {
+  margin-top: 12px;
+
+  .card-item {
+    .card {
+      border: 1px solid rgba(0, 0, 0, 0.07);
+      background: #FFF;
+      padding: 20px 20px 10px;
+      margin-bottom: 48px;
+      position: relative;
+
+      .circle-icon {
+        position: absolute;
+        top: -16px;
+        left: 50%;
+        margin-left: -24px;
+
+      }
+
+      > .title {
+        margin-top: 18px;
+        margin-bottom: 0;
+        text-align: center;
+        font-size: 18px;
+        line-height: 22px;
+
+      }
+
+      > .sub-title {
+        margin-top: 6px;
+        text-align: center;
+        font-size: 12px;
+
+      }
+
+      hr {
+        opacity: .3;
+        margin: 14px 0;
+
+      }
+
+      > .meta {
+
+        // Chart
+        > .c3 {
+          height: 30px;
+          float: right;
+          margin: 0 0 8px;
+          z-index: 99;
+
+        }
+
+        &:after {
+          @include clearafter;
+
+        }
+
+      }
+
+      .menubtn {
+        position: absolute;
+        right: 0;
+        top: 4px;
+        opacity: 0;
+        cursor: pointer;
+        transition: opacity .25s ease-in-out;
+        -moz-transition: opacity .25s ease-in-out;
+        -webkit-transition: opacity .25s ease-in-out;
+
+        &:after {
+          content: '';
+
+        }
+
+        &.active {
+          opacity: 1;
+
+        }
+
+      }
+
+      &:hover,
+      &:active {
+
+        & {
+          border-color: rgba(0, 0, 20, 0.4);
+
+          -webkit-box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.1);
+          -moz-box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.1);
+          box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.1);
+
+        }
+
+        > .circle-icon > .icon {
+          border-color: rgba(0, 0, 20, 0.6);
+
+        }
+
+        .menubtn {
+          opacity: 1;
+
+        }
+
+      }
+
+    }
+
+    a.card {
+      &:hover,
+      &:active {
+
+        & {
+          border-color: rgba(13, 120, 242, .6);
+
+        }
+
+        > .circle-icon > .icon {
+          border-color: rgba(13, 120, 242, .8);
+
+        }
+
+      }
+
+    }
+
+  }
+
+  // Columns
+  @media only screen and (min-width: 420px) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+
+    .card-item {
+      display: flex;
+
+      .card {
+        width: 100%;
+        margin-left: 12px;
+        margin-right: 12px;
+
+      }
+
+    }
+
+  }
+
+  // Four columns
+  @media only screen and (min-width: $minFullUiWidth) {
+
+    .card-item {
+      width: 25%;
+
+      &:nth-child(4n+1) {
+        .card {
+          margin-left: 0;
+        }
+
+      }
+
+      &:nth-child(4n+4) {
+        .card {
+          margin-right: 0;
+        }
+
+      }
+
+    }
+
+  }
+
+  // Three columns
+  @media only screen and (min-width: 824px) and (max-width: $minFullUiWidth) {
+    .card-item {
+      width: 33%;
+
+      &:nth-child(3n+1) {
+        .card {
+          margin-left: 0;
+        }
+
+      }
+
+      &:nth-child(3n+3) {
+        .card {
+          margin-right: 0;
+        }
+
+      }
+
+    }
+
+  }
+
+  // Three columns
+  @media only screen and (min-width: 420px) and (max-width: 824px) {
+    .card-item {
+      width: 50%;
+
+      &:nth-child(2n+1) {
+        .card {
+          margin-left: 0;
+        }
+
+      }
+
+      &:nth-child(2n+2) {
+        .card {
+          margin-right: 0;
+        }
+
+      }
+
+    }
+
+  }
+
+}

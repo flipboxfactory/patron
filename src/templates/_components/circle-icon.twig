@@ -1,0 +1,31 @@
+{% block circleIconHeading %}
+    <div class="circle-icon-heading">
+        {% block circleIconVisual %}
+            {% from _self import circleIcon %}
+            {{ circleIcon(
+                icon ?? null,
+                label ?? null,
+                status ?? null,
+                class ?? null
+            ) }}
+        {% endblock %}
+        {% block circleIconText %}
+            <div class="meta">
+                {% block circleIconTextContent %}{% endblock %}
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% macro circleIcon(icon, label, status, class) %}
+<span class="circle-icon{% if class %} {{ class|join(' ') }}{% endif %}">
+    <span class="icon{% if icon %} icon-mask{% endif %}">
+        {%- if icon -%}
+            {{ (svg(icon) ?: "<span data-icon='#{icon}'></span>")|raw }}
+        {%- else -%}
+            {% include "_includes/defaulticon.svg" with { label: label } %}
+        {%- endif -%}
+    </span>
+    {% if status is not null %}<span class="status {{ status }}"></span>{% endif %}
+</span>
+{% endmacro %}

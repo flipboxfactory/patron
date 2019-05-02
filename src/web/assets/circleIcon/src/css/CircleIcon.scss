@@ -1,0 +1,130 @@
+@charset "UTF-8";
+
+@mixin svg-mask($color) {
+  rect:not(.ignore), circle:not(.ignore), ellipse:not(.ignore), line:not(.ignore), polyline:not(.ignore), polygon:not(.ignore), path:not(.ignore), text:not(.ignore) {
+    fill: $color;
+    fill-opacity: 1;
+    stroke-width: 0;
+  }
+}
+
+@mixin svg-text-mask($color) {
+  text:not(.ignore) {
+    fill: $color;
+    fill-opacity: 1;
+    stroke-width: 0;
+  }
+}
+
+.circle-icon {
+  $size: 42px;
+  position: relative;
+
+  &,
+  > .icon {
+    display: block;
+    background: #FFF;
+    width: $size;
+    height: $size;
+
+  }
+
+  > .icon {
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    border-radius: 50%;
+    padding: 1px;
+
+    > svg {
+      width: 100%;
+      height: 100%;
+      @include svg-text-mask(#FFF);
+
+    }
+
+    &.icon-mask {
+      > svg {
+        @include svg-mask(#a6a6a6);
+
+      }
+
+    }
+
+  }
+
+  > .status {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    margin-left: 10px;
+  }
+
+  &.large {
+    $size: $size * 1.5;
+
+    &,
+    > .icon {
+      display: block;
+      background: #FFF;
+      width: $size;
+      height: $size;
+
+    }
+
+    > .status {
+      top: 6px;
+      margin-left: 18px;
+
+    }
+
+  }
+
+}
+
+.circle-icon-heading {
+  .meta {
+    margin-top: 12px;
+
+    .title {
+      font-size: 18px;
+      line-height: 22px;
+      margin-bottom: 0;
+
+    }
+
+    .sub-title {
+      color: rgba(0, 0, 0, 0.5);
+      font-size: 12px;
+      line-height: 16px;
+      margin-top: 4px;
+
+    }
+
+  }
+
+  .actions {
+    float: none !important;
+    margin-top: 12px;
+
+  }
+
+  // Columns
+  @media only screen and (min-width: 420px) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+
+    .meta {
+      padding-left: 24px;
+
+    }
+
+    .actions {
+      margin-left: auto;
+
+    }
+
+  }
+
+}
+

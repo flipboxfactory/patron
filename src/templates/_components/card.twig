@@ -1,0 +1,20 @@
+{% block card %}
+    <div class="card-item " data-id="{{ id ?? null }}" data-name="{{ name ?? null }}">
+        <div class="card">
+            {% block cardIcon %}{% endblock %}
+            {% block cardTitle %}
+                <h3 class="title">{% block cardTitleContent %}{% endblock %}</h3>
+            {% endblock %}
+            {% block cardSubTitle %}
+                <h5 class="sub-title">{% block cardSubTitleContent %}{% endblock %}</h5>
+            {% endblock %}
+            {% block cardMeta %}{% endblock %}
+            {% block cardActionForm %}
+                <form method="post" accept-charset="UTF-8">
+                    {{ csrfInput() }}
+                    {% block cardActionFormContent %}{% endblock %}
+                </form>
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}

@@ -25,13 +25,13 @@ class m190426_101341_project_config extends Migration
         $this->addColumn(
             Provider::tableName(),
             'clientId',
-            $this->char(Provider::CLIENT_ID_LENGTH)->notNull()
+            $this->string(Provider::CLIENT_ID_LENGTH)->notNull()
         );
 
         $this->addColumn(
             Provider::tableName(),
             'clientSecret',
-            $this->char(Provider::CLIENT_SECRET_LENGTH)
+            $this->string(Provider::CLIENT_SECRET_LENGTH)
         );
 
         $this->addColumn(

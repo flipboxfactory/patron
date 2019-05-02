@@ -232,17 +232,6 @@ class Settings extends Model
      *******************************************/
 
     /**
-     * @return ViewInterface
-     * @deprecated
-     */
-    public function getProviderEnvironmentView(): ViewInterface
-    {
-        return new Template([
-            'template' => 'patron/_cp/provider/_environment'
-        ]);
-    }
-
-    /**
      * @return ViewInterface'
      */
     public function getProviderSettingsView(): ViewInterface
@@ -251,17 +240,6 @@ class Settings extends Model
             'template' => 'patron/_cp/provider/_settings'
         ]);
     }
-
-    /**
-     * @return ViewInterface
-     */
-    public function getTokenView(): ViewInterface
-    {
-        return new Template([
-            'template' => 'patron/_modal/token'
-        ]);
-    }
-
 
     /**
      * @inheritdoc

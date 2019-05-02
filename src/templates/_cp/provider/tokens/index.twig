@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-    {% embed "patron/ember/circle-icon" with {
+    {% embed "patron/_components/circle-icon" with {
         icon: (provider['icon'] is defined and provider['icon'] ? provider['icon'] : null),
         label: provider.displayName,
         status: provider.enabled ? 'active' : 'pending',

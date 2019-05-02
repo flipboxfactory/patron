@@ -73,30 +73,6 @@ class TokensController extends AbstractController
 
     /**
      * @param null $token
-     * @return array
-     * @throws \flipbox\craft\ember\exceptions\RecordNotFoundException
-     */
-    public function actionModal($token = null): array
-    {
-        if (null === $token) {
-            $token = Craft::$app->getRequest()->getBodyParam('token');
-        }
-
-        $view = $this->getView();
-        return [
-            'html' => Patron::getInstance()->getSettings()->getTokenView()->render([
-                'token' => Token::getOne([
-                    'accessToken' => $token,
-                    'enabled' => null,
-                ])
-            ]),
-            'headHtml' => $view->getHeadHtml(),
-            'footHtml' => $view->getBodyHtml()
-        ];
-    }
-
-    /**
-     * @param null $token
      * @return mixed
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\web\BadRequestHttpException

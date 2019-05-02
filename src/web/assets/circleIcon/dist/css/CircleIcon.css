@@ -1,0 +1,64 @@
+.circle-icon {
+  position: relative; }
+  .circle-icon,
+  .circle-icon > .icon {
+    display: block;
+    background: #FFF;
+    width: 42px;
+    height: 42px; }
+  .circle-icon > .icon {
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    border-radius: 50%;
+    padding: 1px; }
+    .circle-icon > .icon > svg {
+      width: 100%;
+      height: 100%; }
+      .circle-icon > .icon > svg text:not(.ignore) {
+        fill: #FFF;
+        fill-opacity: 1;
+        stroke-width: 0; }
+    .circle-icon > .icon.icon-mask > svg rect:not(.ignore), .circle-icon > .icon.icon-mask > svg circle:not(.ignore), .circle-icon > .icon.icon-mask > svg ellipse:not(.ignore), .circle-icon > .icon.icon-mask > svg line:not(.ignore), .circle-icon > .icon.icon-mask > svg polyline:not(.ignore), .circle-icon > .icon.icon-mask > svg polygon:not(.ignore), .circle-icon > .icon.icon-mask > svg path:not(.ignore), .circle-icon > .icon.icon-mask > svg text:not(.ignore) {
+      fill: #a6a6a6;
+      fill-opacity: 1;
+      stroke-width: 0; }
+  .circle-icon > .status {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    margin-left: 10px; }
+  .circle-icon.large,
+  .circle-icon.large > .icon {
+    display: block;
+    background: #FFF;
+    width: 63px;
+    height: 63px; }
+  .circle-icon.large > .status {
+    top: 6px;
+    margin-left: 18px; }
+
+.circle-icon-heading .meta {
+  margin-top: 12px; }
+  .circle-icon-heading .meta .title {
+    font-size: 18px;
+    line-height: 22px;
+    margin-bottom: 0; }
+  .circle-icon-heading .meta .sub-title {
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 12px;
+    line-height: 16px;
+    margin-top: 4px; }
+.circle-icon-heading .actions {
+  float: none !important;
+  margin-top: 12px; }
+@media only screen and (min-width: 420px) {
+  .circle-icon-heading {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center; }
+    .circle-icon-heading .meta {
+      padding-left: 24px; }
+    .circle-icon-heading .actions {
+      margin-left: auto; } }
+
+/*# sourceMappingURL=CircleIcon.css.map */

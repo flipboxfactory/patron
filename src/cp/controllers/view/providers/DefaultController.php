@@ -3,11 +3,10 @@
 namespace flipbox\patron\cp\controllers\view\providers;
 
 use Craft;
-use flipbox\craft\assets\card\Card;
-use flipbox\craft\assets\circleicon\CircleIcon;
+use flipbox\patron\web\assets\card\Card;
+use flipbox\patron\web\assets\circleIcon\CircleIcon;
 use flipbox\patron\helpers\ProviderHelper;
 use flipbox\patron\records\Provider;
-use flipbox\patron\settings\BaseSettings;
 use flipbox\patron\web\assets\providers\ProvidersAsset;
 
 class DefaultController extends AbstractViewController
@@ -99,7 +98,7 @@ class DefaultController extends AbstractViewController
         $pluginLocks = [];
         $pluginHandles = $provider->getLocks()
             ->alias('locks')
-            ->leftJoin('{{%plugins}} plugins', 'plugins.id=locks.pluginId')
+            ->leftJoin('{{%plugins}} plugins', '[[plugins.id]]=[[locks.pluginId]]')
             ->select(['handle'])->column();
 
         foreach ($pluginHandles as $pluginHandle) {

@@ -4,7 +4,7 @@ namespace flipbox\patron\cp\controllers\view\providers;
 
 use Craft;
 use craft\helpers\UrlHelper;
-use flipbox\craft\assets\circleicon\CircleIcon;
+use flipbox\patron\web\assets\circleIcon\CircleIcon;
 use flipbox\patron\records\Provider;
 use flipbox\patron\records\Token;
 
