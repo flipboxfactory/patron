@@ -33,13 +33,10 @@ Choose one of the following ways to add [Patron] to your project:
 Once the plugin is included in your project, navigate to the Control Panel, go to Settings → Plugins and click the “Install” button for [Patron].
 
 ## Features
-[Patron] provides an admin interface for [The PHP League's OAuth2 client package](https://oauth2-client.thephpleague.com/).
-a field precisely to their requirements.
-
-Here are some of the features at a glance:
+[Patron] provides an Craft CMS admin interface for [The PHP League's OAuth2 client package](https://oauth2-client.thephpleague.com/). Additional features include:
 * [Project Config compatible](https://docs.craftcms.com/v3/project-config.html)
 * [Provider locking](#provider-locking) (for plugin developers)
-* Native providers: Facebook, GitHub, Google, LinkedIn, Instagram
+* Ships with native providers: Facebook, GitHub, Google, LinkedIn, Instagram
 * [Register your own OAuth2 Providers](#third-party-providers)
 
 ### Templating
@@ -67,10 +64,31 @@ Retrieving tokens:
 
 ![Settings](resources/screenshots/settings.png)
 
+--- 
+
+
+### Settings
+The settings (including provider configurations) can be overridden with the plugins configuration file: `config/patron.php`
+
+It's recommended that sensitive data (such as the client secret) is accessed via environmental variables:
+```php
+[
+    'providerHandle' => [
+        'clientId' => getenv('SOME_PROVIDER_CLIENT_ID'),
+        'clientSecret' => getenv('SOME_PROVIDER_CLIENT_SECRET'),
+    ],
+    'anotherProviderHandle' => [
+            'clientId' => getenv('SOME_OTHER_PROVIDER_CLIENT_ID'),
+            'clientSecret' => getenv('SOME_OTHER_PROVIDER_CLIENT_SECRET'),
+        ]
+]
+```
+
+
 ### Third Party Providers
 Adding addition providers to [Patron] is handled through the following events:
 
-1. Register a compatible [The PHP League OAuth2 provider](https://oauth2-client.thephpleague.com/providers/implementing/) using a [fully qualified class name](https://php.net/manual/en/language.oop5.basic.php#language.oop5.basic.class.class).  The PHP League has a [helpful list](https://oauth2-client.thephpleague.com/providers/thirdparty/) that have been contributed by the community.
+1. Register a compatible [The PHP League OAuth2 provider](https://oauth2-client.thephpleague.com/providers/implementing/) using a [fully qualified class name](https://php.net/manual/en/language.oop5.basic.php#language.oop5.basic.class.class).  The PHP League has an [extensive list](https://oauth2-client.thephpleague.com/providers/thirdparty/) that have been contributed by the community.
     ```php
     \yii\base\Event::on(
         \flipbox\patron\cp\Cp::class,
