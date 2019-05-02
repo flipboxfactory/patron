@@ -14,6 +14,7 @@ use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 use flipbox\craft\ember\helpers\ObjectHelper;
 use flipbox\craft\ember\queries\AuditAttributesTrait;
+use flipbox\craft\ember\queries\PopulateObjectTrait;
 use flipbox\patron\Patron;
 use flipbox\patron\records\Provider;
 use League\OAuth2\Client\Provider\AbstractProvider;
@@ -25,7 +26,8 @@ use League\OAuth2\Client\Provider\AbstractProvider;
 class ProviderQuery extends Query
 {
     use ProviderAttributesTrait,
-        AuditAttributesTrait;
+        AuditAttributesTrait,
+        PopulateObjectTrait;
 
     /**
      * @inheritdoc
@@ -49,9 +51,14 @@ class ProviderQuery extends Query
         parent::init();
     }
 
+
+    /*******************************************
+     * RESULTS
+     *******************************************/
+
     /**
      * @inheritdoc
-     * @return AbstractProvider
+     * @return array|mixed|null
      * @throws \yii\base\InvalidConfigException
      */
     public function one($db = null)
@@ -63,9 +70,12 @@ class ProviderQuery extends Query
         return $this->createObject($config);
     }
 
+    /*******************************************
+     * CREATE OBJECT
+     *******************************************/
+
     /**
      * @param array $config
-     * @param bool $checkSettings
      * @return mixed
      * @throws \yii\base\InvalidConfigException
      */

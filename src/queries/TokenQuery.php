@@ -25,8 +25,8 @@ class TokenQuery extends Query
 {
     use TokenAttributesTrait,
         TokenProviderAttributeTrait,
-        PopulateObjectTrait,
-        AuditAttributesTrait;
+        AuditAttributesTrait,
+        PopulateObjectTrait;
 
     /**
      * @inheritdoc
@@ -44,13 +44,13 @@ class TokenQuery extends Query
         parent::init();
     }
 
+
     /*******************************************
      * RESULTS
      *******************************************/
 
     /**
-     * @param null $db
-     * @return array|AccessToken|null
+     * @inheritdoc
      * @throws \Exception
      */
     public function one($db = null)
@@ -61,6 +61,10 @@ class TokenQuery extends Query
 
         return $this->createObject($config);
     }
+
+    /*******************************************
+     * CREATE OBJECT
+     *******************************************/
 
     /**
      * @param array $config

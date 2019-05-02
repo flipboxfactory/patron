@@ -81,12 +81,15 @@ class DefaultController extends AbstractViewController
             $this->updateVariables($variables, $provider);
         }
 
+        $providerInfo = $this->module->getProviderInfo();
+
         // Available providers options
         $providerOptions = [];
         $providers = $this->module->getProviders();
         foreach ($providers as $availableProvider) {
+            $info = $providerInfo[$availableProvider] ?? [];
             $providerOptions[] = [
-                'label' => ProviderHelper::displayName($availableProvider),
+                'label' => $info['name'] ?? ProviderHelper::displayName($availableProvider),
                 'value' => $availableProvider
             ];
         }

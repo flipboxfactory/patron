@@ -29,4 +29,11 @@ interface SettingsInterface
      * @return mixed
      */
     public function validate($attributeNames = null, $clearErrors = true);
+
+    /**
+     * A string representation of the settings, for database storage
+     *
+     * @return mixed
+     */
+    public function __toString();
 }

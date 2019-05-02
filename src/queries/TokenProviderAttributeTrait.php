@@ -8,8 +8,10 @@
 
 namespace flipbox\patron\queries;
 
+use craft\db\QueryAbortedException;
 use craft\helpers\Db;
 use flipbox\craft\ember\helpers\QueryHelper;
+use flipbox\patron\helpers\ProviderHelper;
 use flipbox\patron\records\Provider as ProviderRecord;
 use flipbox\patron\records\Token;
 use League\OAuth2\Client\Provider\AbstractProvider;
@@ -68,10 +70,16 @@ trait TokenProviderAttributeTrait
     /**
      * @param $value
      * @return array|string
+     * @throws QueryAbortedException
+     * @throws \ReflectionException
      */
     protected function parseProviderValue($value)
     {
-        return QueryHelper::prepareParam(
+        if ($value instanceof AbstractProvider) {
+            $value = ProviderHelper::lookupId($value);
+        }
+
+        $return = QueryHelper::prepareParam(
             $value,
             function (string $identifier) {
                 $value = (new Query())
@@ -82,9 +90,16 @@ trait TokenProviderAttributeTrait
                 return empty($value) ? false : $value;
             }
         );
+
+        if ($return !== null && empty($return)) {
+            throw new QueryAbortedException();
+        }
+
+        return $return;
     }
 
     /**
+     * @throws QueryAbortedException
      * @throws \ReflectionException
      */
     protected function applyProviderConditions()

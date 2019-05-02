@@ -10,14 +10,14 @@
 
 {% block content %}
     {% embed "patron/_components/circle-icon" with {
-        icon: (provider['icon'] is defined and provider['icon'] ? provider['icon'] : null),
-        label: provider.displayName,
+        icon: provider.info['icon'] ?? null,
+        label: provider.info['name'] ?? '',
         status: provider.enabled ? 'active' : 'pending',
         class: ['large']
     } %}
         {% block circleIconTextContent %}
             <h3 class="title">
-                <a href="{{ url(baseCpPath) }}">{{ provider.displayName }}</a>
+                <a href="{{ url(baseCpPath) }}">{{ provider.info['name'] ?? '' }}</a>
             </h3>
             <h5 class="sub-title">{{ provider.handle }}</h5>
         {% endblock %}

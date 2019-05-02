@@ -79,17 +79,28 @@ class Provider extends ActiveRecordWithId
     }
 
     /**
-     * @return string|null
+     * An array of additional information about the provider.  As an example:
+     *
+     * ```
+     * [
+     *      'name' => 'Provider Name',
+     *      'icon' => '/path/to/icon.svg'
+     * ]
+     * ```
+     * @return array
+     * @throws \ReflectionException
      */
-    public function getIcon()
+    public function getInfo(): array
     {
         if ($this->class === null) {
-            return null;
+            return [];
         }
 
-        $icons = Patron::getInstance()->getCp()->getProviderIcons();
+        $info = Patron::getInstance()->getCp()->getProviderInfo();
 
-        return $icons[$this->class] ?? null;
+        return $info[$this->class] ?? [
+            'name' => ProviderHelper::displayName($this->class)
+        ];
     }
 
     /**
@@ -423,21 +434,6 @@ class Provider extends ActiveRecordWithId
         }
 
         return true;
-    }
-
-    /**
-     * @return string
-     * @throws \ReflectionException
-     */
-    public function getDisplayName(): string
-    {
-        if (empty($this->class)) {
-            return 'Unknown';
-        }
-
-        return ProviderHelper::displayName(
-            $this->class
-        );
     }
 
 

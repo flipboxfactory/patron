@@ -17,20 +17,20 @@
         {% for provider in providers %}
             {% set icon %}
                 {{ circleIcon(
-                    (provider['icon'] is defined and provider['icon'] ? provider['icon'] : null),
-                provider.displayName,
-                provider.enabled ? 'active' : 'suspended'
+                    provider.info['icon'] ?? null,
+                    provider.info['name'] ?? '',
+                    provider.enabled ? 'active' : 'suspended'
                 ) }}
             {% endset %}
             {% embed "patron/_components/card" with {
                 id: provider.id,
-                name: provider.displayName
+                name: provider.info['name'] ?? ''
             } %}
                 {% block cardIcon %}
                     {{ icon }}
                 {% endblock %}
                 {% block cardTitleContent %}
-                    <a href="{{ url(baseCpPath ~ '/' ~ provider.id) }}">{{ provider.displayName }}</a>
+                    <a href="{{ url(baseCpPath ~ '/' ~ provider.id) }}">{{ provider.info['name'] ?? '' }}</a>
                 {% endblock %}
                 {% block cardSubTitleContent %}
                     {{ provider.handle }}

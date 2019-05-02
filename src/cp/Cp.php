@@ -3,15 +3,13 @@
 namespace flipbox\patron\cp;
 
 use Craft;
-use craft\events\RegisterTemplateRootsEvent;
-use craft\web\View;
-use flipbox\patron\events\RegisterProviderIcons;
+use flipbox\patron\events\RegisterProviderInfo;
 use flipbox\patron\events\RegisterProviders;
 use flipbox\patron\events\RegisterProviderSettings;
+use flipbox\patron\helpers\ProviderHelper;
 use flipbox\patron\Patron;
 use flipbox\patron\settings\FacebookSettings;
 use League\OAuth2\Client\Provider\Facebook;
-use yii\base\Event;
 use yii\base\Module;
 use yii\web\NotFoundHttpException;
 
@@ -23,7 +21,7 @@ class Cp extends Module
     /**
      * @var array
      */
-    private $icons;
+    private $info;
 
     /**
      * @var array
@@ -84,21 +82,52 @@ class Cp extends Module
     }
 
     /**
+     * This should give is some additional information about the provider.
+     *
+     * ```
+     * [
+     *      Provider::class => [
+     *          'name' => 'Provider Name',
+     *          'icon' => 'path/to/icon.svg'
+     *      ]
+     * ]
+     * ```
+     *
      * @return array
+     * @throws \ReflectionException
      */
-    public function getProviderIcons(): array
+    public function getProviderInfo(): array
     {
-        if ($this->icons === null) {
-            $event = new RegisterProviderIcons();
+        if ($this->info === null) {
+            $event = new RegisterProviderInfo();
 
             $this->trigger(
-                $event::REGISTER_ICON,
+                $event::REGISTER_INFO,
                 $event
             );
 
-            $this->icons = $event->icons;
+            $this->info = $event->info;
+
+            $this->formatInfoArray($this->info);
         }
 
-        return $this->icons;
+        return $this->info;
+    }
+
+    /**
+     * @param array $providers
+     * @throws \ReflectionException
+     */
+    private function formatInfoArray(array &$providers)
+    {
+        foreach ($providers as $class => &$provider) {
+            if (is_string($provider)) {
+                $provider = [
+                    'icon' => $provider
+                ];
+            }
+
+            $provider['name'] = $provider['name'] ?? ProviderHelper::displayName($class);
+        }
     }
 }
