@@ -1,5 +1,10 @@
 Changelog
 =========
+
+## 2.1.1 - 2019-05-08
+### Fixed
+- Check if columns already exist prior to adding them via migration.
+
 ## 2.0.0 - 2019-01-10
 ### Changed
 - Updated dependencies and moved class structures
