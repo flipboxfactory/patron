@@ -25,7 +25,7 @@ class m190426_101341_project_config extends Migration
         $schema = $this->getDb()->getSchema();
         $table = $schema->getTableSchema($schema->getRawTableName(Provider::tableName()));
 
-        if (!isset($table->columns['clientId'])) {
+        if (!array_key_exists('clientId', $table->columns)) {
             $this->addColumn(
                 Provider::tableName(),
                 'clientId',
@@ -33,7 +33,7 @@ class m190426_101341_project_config extends Migration
             );
         }
 
-        if (!isset($table->columns['clientSecret'])) {
+        if (!array_key_exists('clientSecret', $table->columns)) {
             $this->addColumn(
                 Provider::tableName(),
                 'clientSecret',
@@ -41,7 +41,7 @@ class m190426_101341_project_config extends Migration
             );
         }
 
-        if (!isset($table->columns['settings'])) {
+        if (!array_key_exists('settings', $table->columns)) {
             $this->addColumn(
                 Provider::tableName(),
                 'settings',

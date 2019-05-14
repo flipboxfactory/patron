@@ -1,6 +1,10 @@
 Changelog
 =========
 
+## 2.1.3 - 2019-05-14
+### Fixed
+- Check if columns already exist prior to adding them via migration.
+
 ## 2.1.2 - 2019-05-13
 ### Fixed
 - Error setting project config event on Craft before v3.1.20
