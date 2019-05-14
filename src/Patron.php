@@ -170,14 +170,19 @@ class Patron extends Plugin
                 ]
             );
 
-        Event::on(
-            ProjectConfig::class,
-            ProjectConfig::EVENT_REBUILD,
-            [
-                events\handlers\ProjectConfigHandler::class,
-                'rebuild'
-            ]
-        );
+        /**
+         * Rebuilding project configs was introduce in 3.1.20
+         */
+        if (version_compare(Craft::$app->getVersion(), '3.1.20', '>=')) {
+            Event::on(
+                ProjectConfig::class,
+                ProjectConfig::EVENT_REBUILD,
+                [
+                    events\handlers\ProjectConfigHandler::class,
+                    'rebuild'
+                ]
+            );
+        }
 
         Event::on(
             Provider::class,
