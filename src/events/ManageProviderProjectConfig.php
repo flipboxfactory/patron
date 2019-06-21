@@ -9,8 +9,8 @@
 namespace flipbox\patron\events;
 
 use Craft;
-use craft\events\ConfigEvent;
 use flipbox\patron\records\Provider;
+use yii\base\Event;
 use yii\db\AfterSaveEvent;
 
 /**
@@ -38,9 +38,9 @@ class ManageProviderProjectConfig
     }
 
     /**
-     * @param ConfigEvent $event
+     * @param Event $event
      */
-    public static function delete(ConfigEvent $event)
+    public static function delete(Event $event)
     {
         /** @var Provider $record */
         $record = $event->sender;

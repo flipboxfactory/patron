@@ -9,8 +9,8 @@
 namespace flipbox\patron\events;
 
 use Craft;
-use craft\events\ConfigEvent;
 use flipbox\patron\records\Token;
+use yii\base\Event;
 use yii\db\AfterSaveEvent;
 
 /**
@@ -38,9 +38,9 @@ class ManageTokenProjectConfig
     }
 
     /**
-     * @param ConfigEvent $event
+     * @param Event $event
      */
-    public static function delete(ConfigEvent $event)
+    public static function delete(Event $event)
     {
         /** @var Token $record */
         $record = $event->sender;
