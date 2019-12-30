@@ -1,8 +1,10 @@
 Changelog
 =========
 
-## Unreleased
+## 2.2.0 - 2019-12-30
 ### Changed
+- `patronProviders` project config key is now saved under 'plugins.patron.providers'.  When upgrading, manually moving this key is recommended.
+- `patronTokens` project config key is now saved under 'plugins.patron.tokens'.  When upgrading, manually moving this key is recommended.
 - Tokens can be saved even if saving to project config is disabled.
 
 ## 2.1.3 - 2019-05-14
