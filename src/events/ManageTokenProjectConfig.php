@@ -41,7 +41,7 @@ class ManageTokenProjectConfig
         }
 
         Craft::$app->getProjectConfig()->set(
-            'patronTokens.' . $record->uid,
+            'plugins.patron.tokens.' . $record->uid,
             $record->toProjectConfig()
         );
     }
@@ -55,7 +55,7 @@ class ManageTokenProjectConfig
         $record = $event->sender;
 
         Craft::$app->getProjectConfig()->remove(
-            'patronTokens.' . $record->uid
+            'plugins.patron.tokens.' . $record->uid
         );
     }
 }

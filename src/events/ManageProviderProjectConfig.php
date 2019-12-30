@@ -32,7 +32,7 @@ class ManageProviderProjectConfig
         $record = $event->sender;
 
         Craft::$app->getProjectConfig()->set(
-            'patronProviders.' . $record->uid,
+            'plugins.patron.providers.' . $record->uid,
             $record->toProjectConfig()
         );
     }
@@ -46,7 +46,7 @@ class ManageProviderProjectConfig
         $record = $event->sender;
 
         Craft::$app->getProjectConfig()->remove(
-            'patronProviders.' . $record->uid
+            'plugins.patron.providers.' . $record->uid
         );
     }
 }
