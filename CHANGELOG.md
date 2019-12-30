@@ -1,6 +1,10 @@
 Changelog
 =========
 
+## Unreleased
+### Changed
+- Tokens can be saved even if saving to project config is disabled.
+
 ## 2.1.3 - 2019-05-14
 ### Fixed
 - Check if columns already exist prior to adding them via migration.

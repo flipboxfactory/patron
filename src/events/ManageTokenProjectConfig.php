@@ -9,6 +9,7 @@
 namespace flipbox\patron\events;
 
 use Craft;
+use flipbox\patron\Patron;
 use flipbox\patron\records\Token;
 use yii\base\Event;
 use yii\db\AfterSaveEvent;
@@ -30,6 +31,14 @@ class ManageTokenProjectConfig
     {
         /** @var Token $record */
         $record = $event->sender;
+
+        if (!Craft::$app->getProjectConfig()->readOnly) {
+            Patron::warning(
+                "Saving Token to project config is not possible while in read-only mode.",
+                __METHOD__
+            );
+            return;
+        }
 
         Craft::$app->getProjectConfig()->set(
             'patronTokens.' . $record->uid,
