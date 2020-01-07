@@ -1,6 +1,11 @@
 Changelog
 =========
 
+## 2.2.1 - 2019-01-07
+### Fixed
+- Admins were unable to create a new token via the admin panel when admin changes are not allowed.  
+- Removed button / forms when admin changes are not allowed
+
 ## 2.2.0 - 2019-12-30
 ### Changed
 - `patronProviders` project config key is now saved under 'plugins.patron.providers'.  When upgrading, manually moving this key is recommended.

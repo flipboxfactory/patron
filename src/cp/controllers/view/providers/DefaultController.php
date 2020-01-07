@@ -37,7 +37,7 @@ class DefaultController extends AbstractViewController
         $this->baseVariables($variables);
 
         // Full page form in the CP
-        $variables['fullPageForm'] = true;
+        $variables['fullPageForm'] = Craft::$app->getConfig()->getGeneral()->allowAdminChanges;
 
         // Configured providers
         $variables['providers'] = Provider::findAll([
@@ -117,7 +117,7 @@ class DefaultController extends AbstractViewController
         $variables['pluginLocks'] = $pluginLocks;
 
         // Full page form in the CP
-        $variables['fullPageForm'] = true;
+        $variables['fullPageForm'] = Craft::$app->getConfig()->getGeneral()->allowAdminChanges;
 
         // Tabs
         $variables['tabs'] = $this->getTabs($provider);

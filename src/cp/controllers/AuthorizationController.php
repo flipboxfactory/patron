@@ -40,4 +40,13 @@ class AuthorizationController extends AbstractController
             'id' => $id
         ]);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function checkAdminAccess(): bool
+    {
+        $this->requireAdmin(false);
+        return true;
+    }
 }

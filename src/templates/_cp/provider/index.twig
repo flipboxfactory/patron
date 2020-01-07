@@ -2,9 +2,11 @@
 {% import "_includes/forms" as forms %}
 
 {% block actionButton %}
+    {% if craft.app.config.general.allowAdminChanges %}
     <div class="buttons right">
         <a href="{{ url(baseCpPath ~ '/new') }}" class="btn submit add icon">{{ "New provider"|t('patron') }}</a>
     </div>
+    {% endif %}
 {% endblock %}
 
 {% block content %}

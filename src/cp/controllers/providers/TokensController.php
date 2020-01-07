@@ -170,4 +170,13 @@ class TokensController extends AbstractController
             'token' => $token
         ]);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function checkAdminAccess(): bool
+    {
+        $this->requireAdmin(false);
+        return true;
+    }
 }

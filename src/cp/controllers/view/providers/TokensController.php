@@ -16,11 +16,6 @@ class TokensController extends AbstractViewController
     const TEMPLATE_INDEX = AbstractViewController::TEMPLATE_BASE . '/tokens';
 
     /**
-     * The index view template path
-     */
-    const TEMPLATE_INSERT = self::TEMPLATE_INDEX . '/index';
-
-    /**
      * The upsert view template path
      */
     const TEMPLATE_UPSERT = self::TEMPLATE_INDEX . '/upsert';

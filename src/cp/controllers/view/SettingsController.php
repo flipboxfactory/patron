@@ -32,7 +32,7 @@ class SettingsController extends AbstractViewController
         $variables = [];
         $this->baseVariables($variables);
 
-        $variables['fullPageForm'] = true;
+        $variables['fullPageForm'] = Craft::$app->getConfig()->getGeneral()->allowAdminChanges;
 
         return $this->renderTemplate(static::TEMPLATE_INDEX, $variables);
     }
