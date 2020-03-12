@@ -100,7 +100,8 @@
         <div id="{{ class|id }}"{% if not isCurrent %} class="hidden"{% endif %}>
             {% namespace 'settings['~class~']' %}
                 {% if isCurrent %}
-                    {{ provider.settings.inputHtml()|raw }}
+                    {% set providerSettingsObj = craft.patron.providerSettings(class, provider.settings) %}
+                    {{ providerSettingsObj.inputHtml()|raw }}
                 {% else %}
                     {{ craft.patron.providerSettings(class).inputHtml()|raw }}
                 {% endif %}
