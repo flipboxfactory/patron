@@ -1,6 +1,10 @@
 Changelog
 =========
 
+## 2.2.2 - 2020-03-17
+### Fixed
+- Merged in settings update provided by [PR #6](https://github.com/flipboxfactory/patron/pull/6).  Thanks Mark.
+
 ## 2.2.1 - 2019-01-07
 ### Fixed
 - Admins were unable to create a new token via the admin panel when admin changes are not allowed.  
