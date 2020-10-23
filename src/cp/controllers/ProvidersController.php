@@ -85,7 +85,7 @@ class ProvidersController extends AbstractController
         return [
             'create' => [
                 'class' => CreateProvider::class,
-                'checkAccess' => [$this, 'checkAdminAccess']
+                'checkAccess' => [$this, 'checkAdminChanges']
             ]
         ];
     }
@@ -104,7 +104,7 @@ class ProvidersController extends AbstractController
 
         $action = Craft::createObject([
             'class' => UpdateProvider::class,
-            'checkAccess' => [$this, 'checkAdminAccess']
+            'checkAccess' => [$this, 'checkAdminChanges']
         ], [
             'update',
             $this
@@ -129,7 +129,7 @@ class ProvidersController extends AbstractController
 
         $action = Craft::createObject([
             'class' => DeleteProvider::class,
-            'checkAccess' => [$this, 'checkAdminAccess']
+            'checkAccess' => [$this, 'checkAdminChanges']
         ], [
             'delete',
             $this
@@ -154,7 +154,7 @@ class ProvidersController extends AbstractController
 
         $action = Craft::createObject([
             'class' => EnableProvider::class,
-            'checkAccess' => [$this, 'checkAdminAccess']
+            'checkAccess' => [$this, 'checkAdminChanges']
         ], [
             'enable',
             $this
@@ -179,7 +179,7 @@ class ProvidersController extends AbstractController
 
         $action = Craft::createObject([
             'class' => DisableProvider::class,
-            'checkAccess' => [$this, 'checkAdminAccess']
+            'checkAccess' => [$this, 'checkAdminChanges']
         ], [
             'disable',
             $this

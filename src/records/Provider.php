@@ -452,7 +452,8 @@ class Provider extends ActiveRecordWithId
             'clientSecret',
             'class',
             'scopes',
-            'enabled'
+            'enabled',
+            'dateUpdated'
         ]);
     }
 }

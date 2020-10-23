@@ -135,7 +135,8 @@ class Token extends ActiveRecordWithId
             'refreshToken',
             'providerId',
             'values',
-            'enabled'
+            'enabled',
+            'dateUpdated'
         ]);
     }
 }

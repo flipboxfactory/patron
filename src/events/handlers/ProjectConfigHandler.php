@@ -97,7 +97,8 @@ class ProjectConfigHandler
         $uid = $event->tokenMatches[0];
 
         if (null === $provider = Provider::findOne([
-                'uid' => $uid
+                'uid' => $uid,
+                'enabled' => null
             ])) {
             return;
         }
@@ -141,10 +142,28 @@ class ProjectConfigHandler
         $uid = $event->tokenMatches[0];
 
         if (null === ($token = Token::findOne([
-                'uid' => $uid
+                'uid' => $uid,
+                'enabled' => null
             ]))) {
             $token = new Token();
         }
+
+        // Compare dates from config
+        $configDateUpdated = $event->newValue['dateUpdated'] ?? null;
+        $tokenDateUpdated = $token->dateUpdated ?? null;
+
+        // If the token has been updated more recently in the database, use it
+        if ($configDateUpdated && $tokenDateUpdated && strtotime($tokenDateUpdated) > strtotime($configDateUpdated)) {
+            $event->newValue = array_merge(
+                $event->newValue,
+                [
+                    'accessToken' => $token->accessToken,
+                ]
+            );
+        }
+
+        // Ignore
+        unset($event->newValue['dateUpdated']);
 
         Craft::configure($token, $event->newValue);
 
@@ -213,12 +232,12 @@ class ProjectConfigHandler
     {
         $return = [];
 
-        foreach (Provider::findAll([]) as $provider) {
-            $return['patronProviders'][$provider->uid] = $provider->toProjectConfig();
+        foreach (Provider::findAll(['enabled' => null]) as $provider) {
+            $return['plugins.patron.providers'][$provider->uid] = $provider->toProjectConfig();
         }
 
-        foreach (Token::findAll([]) as $token) {
-            $return['patronProviders'][$token->uid] = $token->toProjectConfig();
+        foreach (Token::findAll(['enabled' => null]) as $token) {
+            $return['plugins.patron.tokens'][$token->uid] = $token->toProjectConfig();
         }
 
         return $return;

@@ -133,38 +133,38 @@ class Patron extends Plugin
         // Project Config
         Craft::$app->projectConfig
             ->onAdd(
-                'patronProviders.{uid}',
+                'plugins.patron.providers.{uid}',
                 [
                     ProjectConfigHandler::class,
                     'handleChangedProvider'
                 ]
             )
             ->onUpdate(
-                'patronProviders.{uid}',
+                'plugins.patron.providers.{uid}',
                 [ProjectConfigHandler::class,
                     'handleChangedProvider'
                 ]
             )
             ->onRemove(
-                'patronProviders.{uid}',
+                'plugins.patron.providers.{uid}',
                 [ProjectConfigHandler::class,
                     'handleDeletedProvider'
                 ]
             )
             ->onAdd(
-                'patronTokens.{uid}',
+                'plugins.patron.tokens.{uid}',
                 [ProjectConfigHandler::class,
                     'handleChangedToken'
                 ]
             )
             ->onUpdate(
-                'patronTokens.{uid}',
+                'plugins.patron.tokens.{uid}',
                 [ProjectConfigHandler::class,
                     'handleChangedToken'
                 ]
             )
             ->onRemove(
-                'patronTokens.{uid}',
+                'plugins.patron.tokens.{uid}',
                 [ProjectConfigHandler::class,
                     'handleDeletedToken'
                 ]

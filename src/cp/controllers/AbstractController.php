@@ -2,6 +2,7 @@
 
 namespace flipbox\patron\cp\controllers;
 
+use Craft;
 use flipbox\craft\ember\filters\FlashMessageFilter;
 use flipbox\craft\ember\filters\ModelErrorFilter;
 use flipbox\craft\ember\filters\RedirectFilter;
@@ -38,9 +39,28 @@ abstract class AbstractController extends \flipbox\craft\ember\controllers\Abstr
      * @return bool
      * @throws \yii\web\ForbiddenHttpException
      */
+    public function checkAdminChanges(): bool
+    {
+        $this->checkAdminAccess();
+        return $this->checkCanMakeAdminChanges();
+    }
+
+    /**
+     * @return bool
+     * @throws \yii\web\ForbiddenHttpException
+     */
     public function checkAdminAccess(): bool
     {
         $this->requireAdmin();
         return true;
+    }
+
+    /**
+     * @return bool
+     * @throws \yii\web\ForbiddenHttpException
+     */
+    public function checkCanMakeAdminChanges(): bool
+    {
+        return !Craft::$app->getProjectConfig()->readOnly;
     }
 }

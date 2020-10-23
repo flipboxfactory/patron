@@ -51,6 +51,7 @@
         label: "Provider"|t('patron'),
         id: 'class',
         name: 'class',
+        disabled: not craft.app.config.general.allowAdminChanges,
         showAllOption: true,
         value: provider.class,
         options: providerOptions,
@@ -65,6 +66,7 @@
         class: "code",
         id: 'handle',
         name: 'handle',
+        disabled: not craft.app.config.general.allowAdminChanges,
         value: provider.handle,
         errors: provider.getErrors('handle'),
         autofocus: true,
@@ -79,6 +81,7 @@
         instructions: "The client/consumer Id assigned to you from the provider."|t('patron'),
         id: 'clientId',
         name: 'clientId',
+        disabled: not craft.app.config.general.allowAdminChanges,
         value: provider.clientId,
         errors: provider.getErrors('clientId'),
         required: true
@@ -90,6 +93,7 @@
         id: 'clientSecret',
         name: 'clientSecret',
         type: 'password',
+        disabled: not craft.app.config.general.allowAdminChanges,
         value: provider.clientSecret,
         errors: provider.getErrors('clientSecret')
     }) }}
@@ -116,6 +120,7 @@
             label: "Enabled"|t('app'),
             id: 'enabled',
             name: 'enabled',
+            disabled: not craft.app.config.general.allowAdminChanges,
             on: provider.id ? provider.enabled : true,
             errors: provider.getErrors('enabled')
         }) }}
