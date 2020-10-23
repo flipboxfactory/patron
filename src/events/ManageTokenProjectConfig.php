@@ -32,7 +32,7 @@ class ManageTokenProjectConfig
         /** @var Token $record */
         $record = $event->sender;
 
-        if (!Craft::$app->getProjectConfig()->readOnly) {
+        if (Craft::$app->getProjectConfig()->readOnly) {
             Patron::warning(
                 "Saving Token to project config is not possible while in read-only mode.",
                 __METHOD__
