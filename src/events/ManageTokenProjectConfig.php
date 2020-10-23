@@ -32,7 +32,7 @@ class ManageTokenProjectConfig
         /** @var Token $record */
         $record = $event->sender;
 
-        if (Craft::$app->getProjectConfig()->readOnly) {
+        if (static::bypassSavingToProjectConfig($event->changedAttributes)) {
             Patron::warning(
                 "Saving Token to project config is not possible while in read-only mode.",
                 __METHOD__
@@ -57,5 +57,22 @@ class ManageTokenProjectConfig
         Craft::$app->getProjectConfig()->remove(
             'plugins.patron.tokens.' . $record->uid
         );
+    }
+
+    /**
+     * In some automated scenarios, we want to bypass saving to the project config.
+     *
+     * @param array $changedAttributes
+     * @return bool
+     */
+    protected static function bypassSavingToProjectConfig(array $changedAttributes): bool
+    {
+        // If project config is not in read only mode, don't bypass
+        if (!Craft::$app->getProjectConfig()->readOnly) {
+            return false;
+        }
+
+        // Also, only allow the 'accessToken' to be updated -> this would be triggered by a refresh token operation
+        return count($changedAttributes) === 2 && array_key_exists('accessToken', $changedAttributes);
     }
 }
