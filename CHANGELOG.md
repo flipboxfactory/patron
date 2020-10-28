@@ -1,9 +1,12 @@
 Changelog
 =========
 
-## Unreleased
+## 2.3.0 - 2020-10-28
 ### Fixed
 - Do not attempt to save tokens to project config when in read-only mode. [Issue #7](https://github.com/flipboxfactory/patron/issues/7)
+
+### Changed
+- Replaced legacy project config key values that were not properly changed before.
 
 ## 2.2.2 - 2020-03-17
 ### Fixed
