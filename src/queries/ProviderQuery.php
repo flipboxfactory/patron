@@ -79,7 +79,7 @@ class ProviderQuery extends Query
      * @return mixed
      * @throws \yii\base\InvalidConfigException
      */
-    protected function createObject(array $config)
+    protected function createObject($config)
     {
         $config = $this->prepareConfig($config);
 
