@@ -71,7 +71,7 @@ class TokenQuery extends Query
      * @return AccessToken
      * @throws \Exception
      */
-    protected function createObject(array $config)
+    protected function createObject($config)
     {
         $config['revoked'] = !(bool)ArrayHelper::remove($config, 'enabled', true);
         $config['access_token'] = ArrayHelper::remove($config, 'accessToken');
