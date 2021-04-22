@@ -1,7 +1,7 @@
 Changelog
 =========
 
-## Unreleased
+## 2.4.0 - 2021-4-22
 ### Fixed
 - Callback provider lookup with config overrides [ISSUE #8](https://github.com/flipboxfactory/patron/issues/8).
 
