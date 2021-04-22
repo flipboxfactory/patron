@@ -19,6 +19,7 @@ use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 use yii\base\Event;
+use yii\base\Exception;
 use yii\web\HttpException;
 
 /**
@@ -129,13 +130,17 @@ class Callback extends Action
         AbstractProvider $provider
     ): bool {
 
+        if (!$providerId = ProviderHelper::lookupId($provider)) {
+            throw new Exception("Unable to find provider.");
+        }
+
         $record = new Token();
 
         $record->setAttributes(
             [
                 'accessToken' => $accessToken->getToken(),
                 'refreshToken' => $accessToken->getRefreshToken(),
-                'providerId' => ProviderHelper::lookupId($provider),
+                'providerId' => $providerId,
                 'values' => $accessToken->getValues(),
                 'dateExpires' => $accessToken->getExpires(),
                 'enabled' => true

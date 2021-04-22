@@ -9,7 +9,7 @@
     "email": "hello@flipboxfactory.com"
   }],
   "require": {
-    "craftcms/cms": "^3.0",
+    "craftcms/cms": "^3.1",
     "flipboxfactory/craft-ember": "^2.3.1",
     "league/oauth2-client": "^2.4",
     "league/oauth2-facebook": "^2.0",

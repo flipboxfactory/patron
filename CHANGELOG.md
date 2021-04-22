@@ -1,6 +1,13 @@
 Changelog
 =========
 
+## Unreleased
+### Fixed
+- Callback provider lookup with config overrides [ISSUE #8](https://github.com/flipboxfactory/patron/issues/8).
+
+### Changed
+- Bumping Craft requirement to v3.1+
+
 ## 2.3.0 - 2020-10-28
 ### Fixed
 - Do not attempt to save tokens to project config when in read-only mode. [Issue #7](https://github.com/flipboxfactory/patron/issues/7)

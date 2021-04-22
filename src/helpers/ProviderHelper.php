@@ -8,6 +8,7 @@
 
 namespace flipbox\patron\helpers;
 
+use craft\helpers\ArrayHelper;
 use craft\helpers\StringHelper;
 use flipbox\patron\records\Provider;
 use League\OAuth2\Client\Provider\AbstractProvider;
@@ -81,20 +82,22 @@ class ProviderHelper
 
         $condition = [
             'class' => get_class($provider),
-            'clientId' => $clientId,
-            'clientSecret' => $clientSecret
         ];
 
-        if (!$providerId = (new Query())
-            ->select(['id'])
-            ->from([Provider::tableName() . ' ' . Provider::tableAlias()])
-            ->where($condition)
-            ->scalar()
-        ) {
-            return null;
-        };
+        // Not all, but those w/ same type
+        $providers = Provider::findAll($condition);
 
-        return (int)$providerId;
+        // Find those w/ matching clientId / clientSecret
+        $matchingProvider = ArrayHelper::firstWhere(
+            ArrayHelper::where($providers, 'clientId', $clientId, true),
+            'clientSecret', $clientSecret, true
+        );
+
+        if (!$matchingProvider) {
+            return null;
+        }
+
+        return (int)$matchingProvider->id;
     }
 
 
