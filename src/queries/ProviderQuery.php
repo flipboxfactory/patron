@@ -141,7 +141,12 @@ class ProviderQuery extends Query
             $settings = [$settings];
         }
 
-        return $settings;
+        return array_map(
+            function($item) {
+                return App::parseEnv($item);
+            },
+            $settings
+        );
     }
 
     /*******************************************
