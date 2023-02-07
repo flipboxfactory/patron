@@ -9,7 +9,7 @@
 namespace flipbox\patron\actions\authorization;
 
 use Craft;
-use flipbox\craft\ember\actions\LookupTrait;
+use flipbox\craft\ember\actions\NotFoundTrait;
 use flipbox\patron\Patron;
 use flipbox\patron\queries\ProviderQuery;
 use League\OAuth2\Client\Provider\AbstractProvider;
@@ -23,7 +23,7 @@ use yii\web\Controller;
  */
 class Authorize extends Action
 {
-    use LookupTrait;
+    use NotFoundTrait;
 
     /**
      * @param int $id
