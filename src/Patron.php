@@ -247,7 +247,7 @@ class Patron extends Plugin
     /**
      * @inheritdoc
      */
-    public function getCpNavItem()
+    public function getCpNavItem(): ?array
     {
         return array_merge(
             parent::getCpNavItem(),
@@ -275,7 +275,7 @@ class Patron extends Plugin
      * @inheritdoc
      * @return SettingsModel
      */
-    public function createSettingsModel()
+    public function createSettingsModel(): ?\craft\base\Model
     {
         return new SettingsModel();
     }
@@ -284,7 +284,7 @@ class Patron extends Plugin
      * @inheritdoc
      * @throws \yii\base\ExitException
      */
-    public function getSettingsResponse()
+    public function getSettingsResponse(): mixed
     {
         Craft::$app->getResponse()->redirect(
             UrlHelper::cpUrl('patron/settings')

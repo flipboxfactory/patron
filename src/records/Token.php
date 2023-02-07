@@ -52,7 +52,7 @@ class Token extends ActiveRecordWithId
      * @return TokenActiveQuery
      * @throws \yii\base\InvalidConfigException
      */
-    public static function find()
+    public static function find(): \craft\db\ActiveQuery
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return Craft::createObject(TokenActiveQuery::class, [get_called_class()]);

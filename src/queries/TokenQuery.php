@@ -31,7 +31,7 @@ class TokenQuery extends Query
     /**
      * @inheritdoc
      */
-    public function init()
+    public function init(): void
     {
         $this->orderBy = [
             Token::tableAlias() . '.enabled' => SORT_DESC,
@@ -53,7 +53,7 @@ class TokenQuery extends Query
      * @inheritdoc
      * @throws \Exception
      */
-    public function one($db = null)
+    public function one($db = null): mixed
     {
         if (null === ($config = parent::one($db))) {
             return null;

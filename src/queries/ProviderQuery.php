@@ -40,7 +40,7 @@ class ProviderQuery extends Query
     /**
      * @inheritdoc
      */
-    public function init()
+    public function init(): void
     {
         $this->from = [Provider::tableName() . ' ' . Provider::tableAlias()];
 
@@ -61,7 +61,7 @@ class ProviderQuery extends Query
      * @return array|mixed|null
      * @throws \yii\base\InvalidConfigException
      */
-    public function one($db = null)
+    public function one($db = null): mixed
     {
         if (null === ($config = parent::one($db))) {
             return null;

@@ -59,7 +59,7 @@ class Provider extends ActiveRecordWithId
      * @return ProviderActiveQuery
      * @throws \yii\base\InvalidConfigException
      */
-    public static function find()
+    public static function find(): \craft\db\ActiveQuery
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return Craft::createObject(ProviderActiveQuery::class, [get_called_class()]);
