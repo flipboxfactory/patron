@@ -33,10 +33,15 @@ class DisableToken extends Action
     }
 
     /**
+     * @param Token $token
      * @inheritdoc
      */
-    protected function performAction(Token $token): bool
+    protected function performAction($token): bool
     {
+        if (!$token instanceof Token) {
+            return false;
+        }
+
         $token->enabled = false;
         return $token->save(true, ['enabled']);
     }
