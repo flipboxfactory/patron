@@ -1,6 +1,9 @@
 Changelog
 =========
-
+## 3.0.0 - 2023-02-06
+### Added
+- Craft 4.0 support
+- 
 ## 2.3.0 - 2020-10-28
 ### Fixed
 - Do not attempt to save tokens to project config when in read-only mode. [Issue #7](https://github.com/flipboxfactory/patron/issues/7)
