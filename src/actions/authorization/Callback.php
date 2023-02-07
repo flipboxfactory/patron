@@ -9,9 +9,8 @@
 namespace flipbox\patron\actions\authorization;
 
 use Craft;
-use flipbox\craft\ember\actions\LookupTrait;
+use flipbox\craft\ember\actions\NotFoundTrait;
 use flipbox\patron\events\PersistToken;
-use flipbox\patron\helpers\ProviderHelper;
 use flipbox\patron\Patron;
 use flipbox\patron\queries\ProviderQuery;
 use flipbox\patron\records\Token;
@@ -27,7 +26,7 @@ use yii\web\HttpException;
  */
 class Callback extends Action
 {
-    use LookupTrait;
+    use NotFoundTrait;
 
     /**
      * @inheritdoc
@@ -54,7 +53,8 @@ class Callback extends Action
 
         return $this->runInternal(
             $code,
-            $provider
+            $provider,
+            $identifier
         );
     }
 
@@ -73,33 +73,36 @@ class Callback extends Action
     /**
      * @param $code
      * @param AbstractProvider $provider
+     * @param int|string $providerId
      * @return AccessToken|mixed
      * @throws HttpException
      */
     public function runInternal(
         $code,
-        AbstractProvider $provider
+        AbstractProvider $provider,
+        $providerId
     ) {
         if (($access = $this->checkAccess($provider)) !== true) {
             return $access;
         }
 
-        return $this->performAction($code, $provider);
+        return $this->performAction($code, $provider, $providerId);
     }
 
     /**
      * @param $code
      * @param AbstractProvider $provider
+     * @param int|string $providerId
      * @return AccessToken
      * @throws HttpException
      */
     public function performAction(
         $code,
-        AbstractProvider $provider
+        AbstractProvider $provider,
+        $providerId
     ): AccessToken {
 
-        return $this->handleExceptions(function () use ($code, $provider) {
-
+        return $this->handleExceptions(function () use ($code, $provider, $providerId) {
             // Get token via authorization code grant.
             $accessToken = $provider->getAccessToken(
                 'authorization_code',
@@ -111,7 +114,8 @@ class Callback extends Action
             // Save token
             $this->persistNewToken(
                 $accessToken,
-                $provider
+                $provider,
+                $providerId
             );
 
             return $accessToken;
@@ -126,7 +130,8 @@ class Callback extends Action
      */
     protected function persistNewToken(
         AccessTokenInterface $accessToken,
-        AbstractProvider $provider
+        AbstractProvider $provider,
+        $providerId
     ): bool {
 
         $record = new Token();
@@ -135,7 +140,7 @@ class Callback extends Action
             [
                 'accessToken' => $accessToken->getToken(),
                 'refreshToken' => $accessToken->getRefreshToken(),
-                'providerId' => ProviderHelper::lookupId($provider),
+                'providerId' => $providerId,
                 'values' => $accessToken->getValues(),
                 'dateExpires' => $accessToken->getExpires(),
                 'enabled' => true

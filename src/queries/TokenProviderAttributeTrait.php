@@ -11,10 +11,8 @@ namespace flipbox\patron\queries;
 use craft\db\QueryAbortedException;
 use craft\helpers\Db;
 use flipbox\craft\ember\helpers\QueryHelper;
-use flipbox\patron\helpers\ProviderHelper;
 use flipbox\patron\records\Provider as ProviderRecord;
 use flipbox\patron\records\Token;
-use League\OAuth2\Client\Provider\AbstractProvider;
 use yii\db\Query;
 
 /**
@@ -26,12 +24,12 @@ trait TokenProviderAttributeTrait
     /**
      * The provider(s) that the resulting must have.
      *
-     * @var string|string[]|int|int[]|ProviderRecord|ProviderRecord[]|AbstractProvider|AbstractProvider[]|null
+     * @var string|string[]|int|int[]|ProviderRecord|ProviderRecord[]|null
      */
     public $provider;
 
     /**
-     * @param string|string[]|int|int[]|ProviderRecord|ProviderRecord[]|AbstractProvider|AbstractProvider[]|null $value
+     * @param string|string[]|int|int[]|ProviderRecord|ProviderRecord[]|null $value
      * @return static The query object
      */
     public function setProvider($value)
@@ -41,7 +39,7 @@ trait TokenProviderAttributeTrait
     }
 
     /**
-     * @param string|string[]|int|int[]|ProviderRecord|ProviderRecord[]|AbstractProvider|AbstractProvider[]|null $value
+     * @param string|string[]|int|int[]|ProviderRecord|ProviderRecord[]|null $value
      * @return static The query object
      */
     public function provider($value)
@@ -50,7 +48,7 @@ trait TokenProviderAttributeTrait
     }
 
     /**
-     * @param string|string[]|int|int[]|ProviderRecord|ProviderRecord[]|AbstractProvider|AbstractProvider[]|null $value
+     * @param string|string[]|int|int[]|ProviderRecord|ProviderRecord[]|null $value
      * @return static The query object
      */
     public function setProviderId($value)
@@ -59,7 +57,7 @@ trait TokenProviderAttributeTrait
     }
 
     /**
-     * @param string|string[]|int|int[]|ProviderRecord|ProviderRecord[]|AbstractProvider|AbstractProvider[]|null $value
+     * @param string|string[]|int|int[]|ProviderRecord|ProviderRecord[]|null $value
      * @return static The query object
      */
     public function providerId($value)
@@ -75,10 +73,6 @@ trait TokenProviderAttributeTrait
      */
     protected function parseProviderValue($value)
     {
-        if ($value instanceof AbstractProvider) {
-            $value = ProviderHelper::lookupId($value);
-        }
-
         $return = QueryHelper::prepareParam(
             $value,
             function (string $identifier) {

@@ -9,10 +9,7 @@
 namespace flipbox\patron\helpers;
 
 use craft\helpers\StringHelper;
-use flipbox\patron\records\Provider;
-use League\OAuth2\Client\Provider\AbstractProvider;
 use ReflectionClass;
-use yii\db\Query;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -36,82 +33,5 @@ class ProviderHelper
 
         // Assemble
         return StringHelper::toString($parts, ' ');
-    }
-
-    /**
-     * @param AbstractProvider $provider
-     * @param array $properties
-     * @return array
-     * @throws \ReflectionException
-     */
-    public static function getProtectedProperties(
-        AbstractProvider $provider,
-        array $properties
-    ): array {
-        $reflection = new ReflectionClass($provider);
-
-        $values = [];
-
-        foreach ($properties as $property) {
-            $values[] = static::getProtectedProperty(
-                $provider,
-                $reflection,
-                $property
-            );
-        }
-
-        return $values;
-    }
-
-    /*******************************************
-     * GET ID
-     *******************************************/
-
-    /**
-     * @param AbstractProvider $provider
-     * @return int|null
-     * @throws \ReflectionException
-     */
-    public static function lookupId(AbstractProvider $provider)
-    {
-        list($clientId, $clientSecret) = ProviderHelper::getProtectedProperties(
-            $provider,
-            ['clientId', 'clientSecret']
-        );
-
-        $condition = [
-            'class' => get_class($provider),
-            'clientId' => $clientId,
-            'clientSecret' => $clientSecret
-        ];
-
-        if (!$providerId = (new Query())
-            ->select(['id'])
-            ->from([Provider::tableName() . ' ' . Provider::tableAlias()])
-            ->where($condition)
-            ->scalar()
-        ) {
-            return null;
-        };
-
-        return (int)$providerId;
-    }
-
-
-    /**
-     * @param AbstractProvider $provider
-     * @param ReflectionClass $reflectionClass
-     * @param string $property
-     * @return mixed
-     * @throws \ReflectionException
-     */
-    public static function getProtectedProperty(
-        AbstractProvider $provider,
-        ReflectionClass $reflectionClass,
-        string $property
-    ) {
-        $reflectionProperty = $reflectionClass->getProperty($property);
-        $reflectionProperty->setAccessible(true);
-        return $reflectionProperty->getValue($provider);
     }
 }
