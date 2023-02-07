@@ -10,6 +10,7 @@ namespace flipbox\patron\queries;
 
 use craft\db\Query;
 use craft\db\QueryAbortedException;
+use craft\helpers\App;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 use flipbox\craft\ember\helpers\ObjectHelper;
@@ -111,6 +112,14 @@ class ProviderQuery extends Query
 
         // This doesn't change
         $config['redirectUri'] = Patron::getInstance()->getSettings()->getCallbackUrl();
+
+        if ($config['clientId']) {
+            $config['clientId'] = App::parseEnv($config['clientId']);
+        }
+
+        if ($config['clientSecret']) {
+            $config['clientSecret'] = App::parseEnv($config['clientSecret']);
+        }
 
         return $config;
     }

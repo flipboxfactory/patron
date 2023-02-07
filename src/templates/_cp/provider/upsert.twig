@@ -84,7 +84,8 @@
         disabled: not craft.app.config.general.allowAdminChanges,
         value: provider.clientId,
         errors: provider.getErrors('clientId'),
-        required: true
+        required: true,
+        suggestEnvVars: true
     }) }}
 
     {{ forms.textField({
@@ -95,7 +96,8 @@
         type: 'password',
         disabled: not craft.app.config.general.allowAdminChanges,
         value: provider.clientSecret,
-        errors: provider.getErrors('clientSecret')
+        errors: provider.getErrors('clientSecret'),
+        suggestEnvVars: true
     }) }}
 
     {% for providerOption in providerOptions %}
