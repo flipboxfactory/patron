@@ -12,6 +12,7 @@ use flipbox\craft\ember\actions\records\LookupRecordTrait;
 use flipbox\craft\ember\actions\records\ManageRecordTrait;
 use flipbox\patron\records\Provider;
 use yii\base\Action;
+use yii\db\ActiveRecord;
 
 /**
  * @author Flipbox Factory <hello@flipboxfactory.com>
@@ -44,10 +45,15 @@ class DisableProvider extends Action
     }
 
     /**
+     * @param Provider $record
      * @inheritdoc
      */
-    protected function performAction(Provider $record): bool
+    protected function performAction(ActiveRecord $record): bool
     {
+        if (!$record instanceof Provider) {
+            return false;
+        }
+
         $record->enabled = false;
         return $record->save(true, ['enabled']);
     }
