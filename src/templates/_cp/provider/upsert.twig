@@ -76,7 +76,7 @@
 
     <hr>
 
-    {{ forms.textField({
+    {{ forms.autosuggestField({
         label: "Client Id"|t('patron'),
         instructions: "The client/consumer Id assigned to you from the provider."|t('patron'),
         id: 'clientId',
@@ -88,12 +88,11 @@
         suggestEnvVars: true
     }) }}
 
-    {{ forms.textField({
+    {{ forms.autosuggestField({
         label: "Client Secret"|t('patron'),
         instructions: "The client/consumer secret assigned to you from the provider."|t('patron'),
         id: 'clientSecret',
         name: 'clientSecret',
-        type: 'password',
         disabled: not craft.app.config.general.allowAdminChanges,
         value: provider.clientSecret,
         errors: provider.getErrors('clientSecret'),
