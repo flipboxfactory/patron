@@ -1,0 +1,24 @@
+<svg width="80px" height="80px" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(10, 10)">
+        <rect
+            x="0"
+            y="0"
+            width="60"
+            height="60"
+            fill="none"
+        />
+        <text
+            x="30"
+            y="36"
+            font-family="Arial, sans-serif"
+            font-size="50"
+            font-weight="bold"
+            fill="#000000"
+            text-anchor="middle"
+            class="ignore"
+            dominant-baseline="middle"
+        >
+            ?
+        </text>
+    </g>
+</svg>

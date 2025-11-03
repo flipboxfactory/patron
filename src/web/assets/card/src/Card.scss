@@ -16,12 +16,14 @@ $minHorizontalUiWidth: $minFullUiWidth - $sidebarWidth;
       padding: 20px 20px 10px;
       margin-bottom: 48px;
       position: relative;
+      overflow: visible;
 
       .circle-icon {
         position: absolute;
         top: -16px;
         left: 50%;
         margin-left: -24px;
+        z-index: 100;
 
       }
 
@@ -76,7 +78,7 @@ $minHorizontalUiWidth: $minFullUiWidth - $sidebarWidth;
         -webkit-transition: opacity .25s ease-in-out;
 
         &:after {
-          content: '';
+          display: none;
 
         }
 

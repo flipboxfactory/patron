@@ -1,5 +1,10 @@
 Changelog
 =========
+
+## 5.0.0 - 2025-11-03
+### Added
+- Craft 5.0 support
+
 ## 3.0.0 - 2023-02-06
 ### Added
 - Craft 4.0 support
@@ -21,7 +26,7 @@ Changelog
 
 ## 2.2.1 - 2019-01-07
 ### Fixed
-- Admins were unable to create a new token via the admin panel when admin changes are not allowed.  
+- Admins were unable to create a new token via the admin panel when admin changes are not allowed.
 - Removed button / forms when admin changes are not allowed
 
 ## 2.2.0 - 2019-12-30
@@ -67,7 +72,7 @@ Changelog
 
 ## 1.0.0-rc.4 - 2018-06-28
 ### Added
-- `flipbox\patron\events\PersistToken` event is triggered before and after storing a new token. 
+- `flipbox\patron\events\PersistToken` event is triggered before and after storing a new token.
 - testing framework and docs framework
 
 ## 1.0.0-rc.3 - 2018-04-26

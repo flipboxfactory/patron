@@ -17,7 +17,7 @@ abstract class AbstractController extends \flipbox\craft\ember\controllers\Abstr
     /**
      * @return array
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return ArrayHelper::merge(
             parent::behaviors(),

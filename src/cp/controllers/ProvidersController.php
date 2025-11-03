@@ -15,7 +15,7 @@ class ProvidersController extends AbstractController
     /**
      * @return array
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return ArrayHelper::merge(
             parent::behaviors(),

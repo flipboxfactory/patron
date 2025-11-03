@@ -8,6 +8,7 @@
     padding: 20px 20px 10px;
     margin-bottom: 48px;
     position: relative;
+    overflow: visible;
 }
 
 .card-items .card-item .card .circle-icon {
@@ -15,6 +16,7 @@
     top: -16px;
     left: 50%;
     margin-left: -24px;
+    z-index: 100;
 }
 
 .card-items .card-item .card > .title {
@@ -63,7 +65,7 @@
 }
 
 .card-items .card-item .card .menubtn:after {
-    content: '';
+    display: none;
 }
 
 .card-items .card-item .card .menubtn.active {

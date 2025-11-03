@@ -61,7 +61,6 @@ class Provider extends ActiveRecordWithId
      */
     public static function find(): \craft\db\ActiveQuery
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return Craft::createObject(ProviderActiveQuery::class, [get_called_class()]);
     }
 

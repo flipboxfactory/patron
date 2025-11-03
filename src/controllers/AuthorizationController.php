@@ -23,7 +23,7 @@ class AuthorizationController extends AbstractController
     /**
      * @inheritdoc
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return ArrayHelper::merge(
             parent::behaviors(),

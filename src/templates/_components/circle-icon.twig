@@ -23,7 +23,7 @@
         {%- if icon -%}
             {{ (svg(icon) ?: "<span data-icon='#{icon}'></span>")|raw }}
         {%- else -%}
-            {% include "_includes/defaulticon.svg" with { label: label } %}
+            {% include "patron/_includes/defaulticon.svg" with { label: label } %}
         {%- endif -%}
     </span>
     {% if status is not null %}<span class="status {{ status }}"></span>{% endif %}

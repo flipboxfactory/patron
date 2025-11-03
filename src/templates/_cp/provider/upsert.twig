@@ -143,10 +143,11 @@
 
     {% if pluginLocks|length %}
         <hr/>
-        <div id="locks" class="meta">
-            <h4 class="heading">{{ "Locks"|t('patron') }} <span
-                        class="info">{{ "The plugins listed blow have locked this provider from being deleted.  This provider should be deleted through the plugin."|t('patron') }}</span>
-            </h4>
+        <fieldset>
+            <legend class="h6">
+                {{ "Locks"|t('patron') }}
+                <span class="info">{{ "The plugins listed below have locked this provider from being deleted.  This provider should be deleted through the plugin."|t('patron') }}</span>
+            </legend>
             <ul id="plugin-locks">
                 {% for plugin in pluginLocks %}
                     <li>
@@ -163,7 +164,7 @@
                     </li>
                 {% endfor %}
             </ul>
-        </div>
+        </fieldset>
     {% endif %}
 
     {% hook 'patron.clients.edit.sidebar' %}

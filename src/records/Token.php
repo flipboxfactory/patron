@@ -54,7 +54,6 @@ class Token extends ActiveRecordWithId
      */
     public static function find(): \craft\db\ActiveQuery
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return Craft::createObject(TokenActiveQuery::class, [get_called_class()]);
     }
 

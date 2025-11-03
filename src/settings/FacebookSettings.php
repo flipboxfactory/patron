@@ -51,7 +51,7 @@ class FacebookSettings extends BaseSettings
                         'graphApiVersion'
                     ],
                     'match',
-                    'pattern' => Facebook::GRAPH_API_VERSION_REGEX
+                    'pattern' => '~^v\d+\.\d+$~'
                 ],
                 [
                     [
